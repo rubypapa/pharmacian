@@ -1,0 +1,61 @@
+<!-- 대표에게 보내는 링크. 세 안을 한 화면에서 고르게 한다. -->
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<title>PHARMACIAN 자사몰 — 세 가지 안</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="favicon.svg">
+<style>
+:root{--paper:#f7f5ee;--ink:#1b1a18;--muted:#77726a;--rule:#e3ded3;--pt:#ac6152}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#141311;--ink:#f2efe6;--muted:#9a948a;--rule:#2c2a26;--pt:#d08b78}}
+:root[data-theme="dark"]{--paper:#141311;--ink:#f2efe6;--muted:#9a948a;--rule:#2c2a26;--pt:#d08b78}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:-apple-system,"Segoe UI Variable Text","Segoe UI",system-ui,"Malgun Gothic",sans-serif;
+  line-height:1.7;word-break:keep-all;-webkit-font-smoothing:antialiased}
+.wrap{max-width:940px;margin:0 auto;padding:60px 22px 90px}
+.kick{font-family:ui-monospace,Consolas,monospace;font-size:11px;letter-spacing:.18em;color:var(--pt);margin:0}
+h1{margin:12px 0 0;font-size:clamp(26px,4.6vw,40px);font-weight:300;letter-spacing:-.03em;text-wrap:balance}
+.dek{margin:14px 0 0;color:var(--muted);max-width:60ch;font-size:15.5px}
+ul.opts{list-style:none;margin:44px 0 0;padding:0;display:flex;flex-direction:column;gap:0}
+ul.opts li{border-top:1px solid var(--rule)}
+ul.opts li:last-child{border-bottom:1px solid var(--rule)}
+a.opt{display:grid;grid-template-columns:52px 1fr auto;gap:20px;align-items:baseline;
+  padding:26px 4px;text-decoration:none;color:inherit}
+a.opt:hover{background:color-mix(in srgb,var(--pt) 7%,transparent)}
+a.opt:focus-visible{outline:2px solid var(--pt);outline-offset:-2px}
+.no{font-family:ui-monospace,Consolas,monospace;font-size:13px;color:var(--pt)}
+.ttl{font-size:19px;font-weight:600;letter-spacing:-.02em}
+.sub{display:block;margin-top:5px;font-size:14px;color:var(--muted);font-weight:400}
+.go{font-size:13px;color:var(--muted)}
+footer{margin-top:46px;padding-top:22px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--muted)}
+@media(max-width:560px){a.opt{grid-template-columns:40px 1fr;gap:12px}.go{display:none}}
+</style></head><body>
+<div class="wrap">
+  <p class="kick">PHARMACIAN</p>
+  <h1>자사몰 세 가지 안</h1>
+  <p class="dek">제품·가격·법정 표기는 셋 다 같습니다. <b>파는 방식과 첫인상만 다릅니다.</b>
+     아직 도메인을 붙이기 전이고, 가격·배송비 같은 숫자는 확정 전 초안입니다.</p>
+
+  <ul class="opts">
+    <li><a class="opt" href="index-v.html">
+      <span class="no">01</span>
+      <span class="ttl">브랜드형 · 영상<span class="sub">첫 화면이 5초 영상입니다. 어두운 화면에서 시작해 크림을 펴 바르면 주변이 화사해집니다.</span></span>
+      <span class="go">보기 →</span></a></li>
+    <li><a class="opt" href="index.html">
+      <span class="no">02</span>
+      <span class="ttl">브랜드형 · 이미지<span class="sub">같은 구성인데 영상 대신 사진이 넘어갑니다. 어느 기기에서나 가볍게 열립니다.</span></span>
+      <span class="go">보기 →</span></a></li>
+    <li><a class="opt" href="index-b.html">
+      <span class="no">03</span>
+      <span class="ttl">판매형<span class="sub">첫 화면부터 쿠폰과 혜택이 나옵니다. 브랜드보다 지금 사는 이유를 먼저 말합니다.</span></span>
+      <span class="go">보기 →</span></a></li>
+  </ul>
+
+  <footer>
+    주식회사 와이엘트레이딩 · 검색에 노출되지 않도록 막아둔 페이지입니다.<br>
+    <a href="privacy.html" style="color:inherit">개인정보처리방침</a> ·
+    <a href="terms.html" style="color:inherit">이용약관</a> ·
+    <a href="refund.html" style="color:inherit">교환/반품 안내</a>
+  </footer>
+</div></body></html>
