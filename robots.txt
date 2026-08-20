@@ -1,3 +1,10 @@
-# 발행 전이다. 도메인 연결·가격 확정 후 이 파일을 지우면 색인이 열린다.
+# 발행함(2026-08-21). 상품·브랜드 화면은 열고, 결제·가입 같은 개인 화면만 막는다.
 User-agent: *
-Disallow: /
+Allow: /
+Disallow: /checkout.html
+Disallow: /pay-done.html
+Disallow: /join.html
+Disallow: /cart.html
+Disallow: /안.html
+
+Sitemap: https://pharmacian.kr/sitemap.xml
