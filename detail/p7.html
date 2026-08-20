@@ -1,0 +1,293 @@
+<!-- 파머시안 PDRN 7000 크림 상세 · 발행판 (카페24 상세설명용 HTML 조각, 860px, 접두 p7n-) -->
+<!-- 사진·영상은 자사 촬영 원본. 제작 경위와 검수 기록은 저장소 문서에 있다. -->
+<div class="p7n-wrap">
+<style>
+/* ============ PDRN7000 상세 v3 - scope: .p7n- ============ */
+.p7n-wrap{max-width:860px;margin:0 auto;background:#faf6f0;color:#241a12;
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+  font-size:17px;line-height:1.7;letter-spacing:-0.01em;word-break:keep-all;}
+.p7n-wrap *,.p7n-wrap *::before,.p7n-wrap *::after{box-sizing:border-box;margin:0;padding:0;}
+.p7n-wrap img,.p7n-wrap video{display:block;width:100%;height:auto;}
+
+.p7n-sec{padding:88px 48px;}
+.p7n-center{text-align:center;}
+.p7n-eyebrow{display:block;font-size:15px;font-weight:700;letter-spacing:0.12em;
+  color:#c04502;text-transform:uppercase;margin-bottom:16px;}
+.p7n-h2{font-size:38px;line-height:1.3;font-weight:800;letter-spacing:-0.03em;}
+.p7n-sub{margin-top:16px;font-size:17px;color:#5d4f42;}
+.p7n-note{font-size:13px;color:#6e6254;line-height:1.6;}
+.p7n-fine{margin-top:18px;font-size:13px;color:#8d8175;line-height:1.6;}
+
+/* 실사용 */
+.p7n-real{background:#faf6f0;}
+.p7n-duo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:44px;}
+.p7n-duo figure{border-radius:16px;overflow:hidden;background:#eee3d6;}
+.p7n-duo img{aspect-ratio:3/4;object-fit:cover;}
+.p7n-duo figcaption{font-size:13px;color:#6e6254;padding:12px 6px 0;text-align:center;}
+.p7n-ugc{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;background:#e8dcd2;}
+.p7n-ugc img{aspect-ratio:1/1;object-fit:cover;}
+.p7n-ugc-cap{padding:14px 48px 0;font-size:12.5px;color:#6e6254;text-align:center;}
+
+/* 갤러리 - 자사 촬영본 그리드 */
+.p7n-gal{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:#e8dcd2;}
+.p7n-gal img{aspect-ratio:1/1;object-fit:cover;}
+@media (max-width:640px){.p7n-gal{grid-template-columns:repeat(2,1fr);}}
+
+/* 약국 */
+.p7n-pharm{background:#2c2016;color:#f5ece1;}
+.p7n-pharm .p7n-h2{color:#faf3ea;}
+.p7n-pharm .p7n-sub{color:#c8b6a2;}
+.p7n-pharm .p7n-eyebrow{color:#fd6b1c;}
+.p7n-pharm .p7n-duo figcaption{color:#6e6254;}  /* figure 배경이 밝다 */
+
+/* 패키지 */
+.p7n-package{background:#ffffff;}
+
+/* 가격 */
+.p7n-offer{background:#c04502;color:#fff;text-align:center;padding:88px 48px;}
+.p7n-offer-name{font-size:15px;font-weight:700;letter-spacing:0.04em;color:rgba(255,255,255,0.85);}
+.p7n-offer-price{margin-top:20px;font-size:70px;font-weight:800;letter-spacing:-0.03em;line-height:1;}
+.p7n-offer-price small{font-size:28px;font-weight:700;}
+.p7n-offer-line{margin-top:18px;font-size:17px;color:rgba(255,255,255,0.92);}
+.p7n-offer-box{margin:34px auto 0;max-width:460px;background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.34);border-radius:16px;padding:24px 30px;}
+.p7n-offer-row{display:flex;justify-content:space-between;font-size:16px;padding:7px 0;}
+.p7n-offer-row.total{border-top:1px solid rgba(255,255,255,0.38);margin-top:10px;padding-top:16px;
+  font-size:19px;font-weight:800;}
+
+/* FAQ */
+.p7n-faq{background:#ffffff;}
+.p7n-q{border-bottom:1px solid #ece1d3;}
+.p7n-q:first-of-type{border-top:1px solid #ece1d3;margin-top:38px;}
+.p7n-q summary{cursor:pointer;list-style:none;padding:24px 40px 24px 4px;position:relative;
+  font-size:19px;font-weight:700;color:#33261b;}
+.p7n-q summary::-webkit-details-marker{display:none;}
+.p7n-q summary::after{content:"+";position:absolute;right:6px;top:20px;
+  font-size:26px;font-weight:700;color:#c04502;line-height:1;}
+.p7n-q[open] summary::after{content:"−";}
+.p7n-q p{padding:0 4px 26px;font-size:16px;color:#5d4f42;line-height:1.75;}
+
+/* 정보 표 */
+.p7n-info{background:#faf6f0;}
+.p7n-table{width:100%;border-collapse:collapse;margin-top:38px;font-size:15px;}
+.p7n-table th{width:170px;text-align:left;vertical-align:top;padding:14px 16px;background:#f1e8dd;
+  color:#5d4f42;font-weight:700;border-bottom:1px solid #fff;}
+.p7n-table td{padding:14px 18px;border-bottom:1px solid #ece1d3;color:#40332a;}
+.p7n-legal{margin-top:32px;border-top:1px solid #e5d5c4;padding-top:24px;}
+.p7n-legal p{font-size:13px;color:#6e6254;line-height:1.7;margin-top:6px;}
+
+@media (max-width:640px){
+  .p7n-sec{padding:60px 24px;}
+  .p7n-h2{font-size:29px;}
+  .p7n-duo{grid-template-columns:1fr;}
+  .p7n-ugc{grid-template-columns:repeat(3,1fr);}
+  .p7n-ugc-cap{padding:12px 22px 0;}
+  .p7n-offer-price{font-size:52px;}
+  /* ★375px 실측에서 표가 530px 로 벌어져 페이지가 187px 넘쳤다(발행판정 8번).
+     th/td 를 블록으로 내려 스택시킨다. 넓은 표는 페이지 본체를 밀면 안 된다. */
+  .p7n-table,.p7n-table tbody,.p7n-table tr,.p7n-table th,.p7n-table td{display:block;width:auto;}
+  .p7n-table tr{border-bottom:1px solid #ece1d3;}
+  .p7n-table th{width:auto;padding:12px 14px 4px;background:transparent;color:#8a7c6c;
+    font-size:13px;border-bottom:0;}
+  .p7n-table td{padding:0 14px 14px;border-bottom:0;word-break:break-all;}
+}
+</style>
+
+<!-- 1. 히어로 (조판) -->
+<img src="img/p7-b93a42955d.jpg" alt="PHARMACIAN 함량을 숫자로 여는 PDRN 7,000ppm 크림. 파머시안 피디알엔 7000 크림 30g. 미백 · 주름개선 이중 기능성. 소듐디엔에이 7,000ppm. 30g (1.05oz.)">
+
+<!-- 2. 고민 체크 (조판) -->
+<!-- 기능성 표기 근거는 제품 표시사항이다. -->
+<img src="img/p7-28076b6acd.jpg" alt="Check. 거울 앞에서 이런 생각을 하셨다면. 아침에 얼굴이 푸석해 보일 때. 눈가 잔주름이 신경 쓰이기 시작할 때. 피부 톤이 칙칙해 보일 때. 발라도 발라도 속이 당길 때. 그렇다면 이제, 함량을 확인할 차례입니다.">
+
+<!-- 3. 함량 공개 (조판) - ★벤치 8곳 중 핵심 성분 ppm 을 숫자로 여는 곳은 0곳이다. 우리 자리다. -->
+<img src="img/p7-bf5f9379dd.jpg" alt="Formula. 표시 함량을 그대로 공개합니다. 숫자를 가리지 않는 것이 이 크림의 방식입니다. 소듐디엔에이 연어 유래 PDRN 7,000ppm. 락토바실러스세포외소포 5,580ppm. 효모세포외소포 5,580ppm. 알란토인 3,000ppm. 우유엑소좀 우유 유래 엑소좀 600ppm. 나이아신아마이드 · 아데노신 · 판테놀 · 세라마이드엔피 함유. 위 수치는 제품 표시사항에 적힌 전성분 표시 함량 기준입니다.">
+
+<!-- 4. PDRN 이 무엇인가 (조판) - 벤치 8곳이 전부 핵심 성분 설명 블록을 따로 둔다.
+     ★효능은 한 줄도 안 쓰고 유래·표기명·함량만 말한다. 아누아가 "연어 DNA 유래 성분" 옆에
+     "*원료적 특성에 한함"을 붙이는 것과 같은 처리다. -->
+<img src="img/p7-f304b80f35.jpg" alt="Ingredient. PDRN이 무엇인지부터. 효능을 말하기 전에, 이 성분이 무엇인지 그대로 적습니다. 연어에서 유래한 원료. 소듐디엔에이 전성분표의 표기명. 7,000ppm 이 들어 있습니다. 연어에서 온 원료라 특유의 향이 약간 느껴질 수 있습니다. 제품 이상이 아닙니다. 위 내용은 성분의 유래와 표기에 관한 것으로, 원료적 특성에 한합니다. 본품이 말할 수 있는 효능은 미백 · 주름개선 기능성 범위까지입니다.">
+
+<!-- 5. 7,000ppm 해설 (조판) - ★벤치 8곳 중 아무도 안 하는 블록이다. 아누아는 PDRN 함량을
+     아예 안 밝히고("3중 PDRN"), 나머지는 성분명만 쓴다. 숫자를 여는 게 우리 자리라면
+     그 숫자가 무엇인지도 우리가 말한다. 계산은 30g x 7000/1,000,000 = 0.21g 실계산이다. -->
+<img src="img/p7-69d7c5ad92.jpg" alt="What is 7,000ppm. 7,000ppm은 실제로 얼마일까요. ppm은 백만분율입니다. 계산하면 이렇게 됩니다. 30g 한 튜브 용량. 0.21g 그중 소듐디엔에이. 작아 보이는 숫자입니다. 그래서 더 정확히 적었습니다. 표시 함량 7,000ppm 을 30g 기준으로 환산한 값입니다.">
+
+<!-- 6. 성분 유래 5종 (조판) - ★유래와 함량만 쓴다. 성분별 효능 서술은 2레인이다. -->
+<img src="img/p7-965daeb672.jpg" alt="Origin. 어디서 온 성분인지도 적어 두었습니다. 연어 - 소듐디엔에이, 연어에서 얻은 원료. 유산균 - 락토바실러스세포외소포, 유산균 배양에서 얻은 원료. 효모 - 효모세포외소포, 효모 배양에서 얻은 원료. 우유 - 우유엑소좀, 우유에서 얻은 원료. 합성 - 알란토인, 화장품 원료로 널리 쓰이는 성분. 표시 함량은 앞의 Formula 블록에 적었습니다. 위 내용은 성분의 유래 표기이며 원료적 특성에 한합니다.">
+
+<!-- 7. 매크로 모션 - 벤치 8곳이 곳당 1~9장의 GIF 를 쓴다. 우리는 로컬로 뽑은 mp4 를 쓴다. -->
+<video autoplay muted loop playsinline webkit-playsinline aria-label="크림 제형 표면을 확대 촬영한 영상" poster="../../assets/웹/pdrn7000-macro.jpg">
+  <source src="img/p7-81117d2a6b.mp4" type="video/mp4">
+</video>
+
+<!-- 전폭 제품컷 (자사 촬영본) - 벤치 8곳이 섹션 사이에 전폭 컷을 넣는다 -->
+<img src="img/p7-539a226a0f.jpg" alt="흰 연단 위에 세운 파머시안 PDRN 7000 크림">
+
+<!-- 피부 단면 도식 (조판) -->
+<img src="img/p7-66dc5657b1.jpg" alt="Where it sits. 크림이 놓이는 자리. 화장품은 피부 바깥층에 얹힙니다. 그 위치를 그림으로 적습니다. 크림. 각질층. 표피. 진피. 이 크림은 씻어내지 않고 마지막 단계에 얇게 펴 바르는 제품입니다. 위 그림은 소비자의 이해를 돕기 위한 자료에 한합니다. 본품이 말할 수 있는 효능은 미백 · 주름개선 기능성 범위까지입니다.">
+
+<!-- 8. 기능성 (조판) -->
+<img src="img/p7-7851f6aae8.jpg" alt="기능성화장품. 이 크림이 말할 수 있는 것은 두 가지입니다. 피부의 미백에 도움을 준다. 피부의 주름개선에 도움을 준다. 기미 · 주근깨 완화에 도움을 주는 미백 기능성과 잔주름 케어를 위한 주름개선 기능성. 미백 고시성분 나이아신아마이드, 주름개선 고시성분 아데노신 함유. 위 문구는 제품 표시사항에 적힌 효능효과 원문입니다.">
+
+<!-- 9. 제형 (조판 머리말 + 영상 + 사진) - 벤치 8곳 전부 텍스처 구간에 카피를 붙인다.
+     ★사용감 서술은 3레인(통과)이다. 효능이 아니라 촉감·마무리만 말한다. -->
+<img src="img/p7-2cb16fb794.jpg" alt="Texture. 쫀쫀하게 안기고, 산뜻하게 마무리됩니다. 촉촉한 보습감. 부드러운 밀착. 끈적임 없는 마무리. 사용감은 개인차가 있습니다. 아래는 실제 제형을 촬영한 영상과 사진입니다.">
+<video autoplay muted loop playsinline webkit-playsinline aria-label="크림 제형이 퍼지는 모습을 촬영한 영상" poster="../../assets/웹/pdrn7000-texture.jpg">
+  <source src="img/p7-86e6e0af9b.mp4" type="video/mp4">
+</video>
+<img src="img/p7-2472f16d5e.jpg" alt="유리 디시 위 크림 제형 스와치, 피치 배경">
+<!-- 10. 사용법 (조판) -->
+<img src="img/p7-28a4cc24a2.jpg" alt="How to Use. 하루 두 번이면 충분합니다. STEP 01 아침저녁 세안 후, 스킨케어 마지막 단계에. STEP 02 진주알 크기만큼 덜어냅니다. STEP 03 신경 쓰이는 부위부터 얼굴 전체에 부드럽게. 건조가 심한 부위에는 얇게 한 번 더 덧발라 주세요.">
+
+<!-- 전폭 제형컷 -->
+<img src="img/p7-2472f16d5e.jpg" alt="유리 디시 위 크림 제형 스와치">
+
+<!-- 사용 루틴 도식 (조판) -->
+<img src="img/p7-5a8e2aa865.jpg" alt="Routine. 어느 단계에 쓰나요. 01 세안. 02 토너. 03 에센스. 04 크림 본품. 05 선케어. 아침저녁 세안 후 스킨케어 마지막 단계에 사용합니다. 사용 순서는 일반적인 예이며 개인차가 있습니다.">
+
+<!-- 11. 실사용 · 자사 촬영본 -->
+<section class="p7n-sec p7n-real p7n-center">
+  <span class="p7n-eyebrow">Real Shot</span>
+  <h2 class="p7n-h2">바르는 모습 그대로</h2>
+  <p class="p7n-sub">자사 촬영 원본입니다. 보정하지 않았습니다.</p>
+</section>
+<video autoplay muted loop playsinline webkit-playsinline aria-label="튜브에서 크림을 짜내는 영상" poster="../../assets/웹/p7-gif-squeeze.jpg">
+  <source src="img/p7-949b9e2e93.mp4" type="video/mp4">
+</video>
+<video autoplay muted loop playsinline webkit-playsinline aria-label="손등에 크림을 펴 바르는 영상" poster="../../assets/웹/p7-gif-apply.jpg">
+  <source src="img/p7-46dbc73888.mp4" type="video/mp4">
+</video>
+<div class="p7n-gal">
+  <img src="img/p7-5f1d3c9565.jpg" alt="파머시안 PDRN 7000 크림을 손에 든 컷">
+  <img src="img/p7-66e47244e0.jpg" alt="손등에 크림을 짜는 컷">
+  <img src="img/p7-0f7243b169.jpg" alt="크림 제형 클로즈업">
+  <img src="img/p7-47a78d9d72.jpg" alt="아크릴 디시 위 크림과 튜브">
+  <img src="img/p7-333e3b905c.jpg" alt="돌 위에 세운 파머시안 PDRN 7000 크림">
+  <img src="img/p7-f765f4a360.jpg" alt="베이지 배경의 크림 튜브와 제형 스와치">
+</div>
+
+<!-- 신뢰 (조판) - 리뷰 0건인 동안 이 블록이 그 자리를 대신한다.
+     벤치는 리뷰 인용 카드와 정품 인증 배지를 쓴다. 우리는 둘 다 없으니 실제로 가진 것 셋만 쓴다. -->
+<img src="img/p7-9955ee92e2.jpg" alt="Why Trust. 내세울 수 있는 것만 내세웁니다. 약국. 약국에 납품되어 판매되고 있습니다. 보고. 미백 · 주름개선 이중 기능성 보고 제품. 공개. 표시 함량을 숫자로 적었습니다. 공식 판매처 (주)와이엘트레이딩. 후기는 아직 0건입니다. 저희가 대신 써 둔 후기는 없습니다. 약국 진열 사진은 실제 납품처에서 촬영한 것이며, 식별 가능한 타사 상표는 모자이크 처리했습니다.">
+
+<!-- 이런 분께 (조판) - 벤치 다수가 쓰는 타깃 블록.
+     ★효능이 아니라 사용 상황만 말한다. 증상·질환을 적으면 1레인이다. -->
+<img src="img/p7-358021baec.jpg" alt="For You. 이런 분께 권합니다. 1 성분표를 읽고 사는 편이다. 2 함량을 밝히지 않는 제품이 아쉬웠다. 3 미백과 주름개선을 한 번에 두고 싶다. 4 크림 하나로 마무리하고 싶다. 화장품이며 질병의 예방이나 치료를 위한 제품이 아닙니다.">
+
+<!-- 12. 약국 판매 -->
+<section class="p7n-sec p7n-pharm p7n-center">
+  <span class="p7n-eyebrow">Where to Find</span>
+  <h2 class="p7n-h2">약국 매대에서<br>판매되고 있습니다</h2>
+  <p class="p7n-sub">파머시안 PDRN 7000 크림은 약국에 납품되어 판매 중인 크림입니다.</p>
+  <div class="p7n-duo">
+    <figure>
+      <img src="img/p7-f56f9bb390.jpg" alt="약국 매대에 진열된 파머시안 PDRN 7000 크림">
+      <figcaption>약국 매대 진열 컷</figcaption>
+    </figure>
+    <figure>
+      <img src="img/p7-d475d3f28d.jpg" alt="약국 진열대의 파머시안 PDRN 7000 크림 박스">
+      <figcaption>약국 진열대 컷</figcaption>
+    </figure>
+  </div>
+  <p class="p7n-fine" style="color:#c8b6a2;">식별 가능한 타사 상표는 모자이크 처리했습니다.</p>
+</section>
+
+<!-- 13. 패키지 · 표기 공개 -->
+<section class="p7n-sec p7n-package p7n-center">
+  <span class="p7n-eyebrow">Package</span>
+  <h2 class="p7n-h2">표기로 말하는 크림</h2>
+  <p class="p7n-sub">핵심 성분과 함량은 포장에 그대로 적었습니다.<br>자세한 전성분은 아래 제품 정보에서 확인할 수 있습니다.</p>
+  <!-- ★2026-08-18 뒷면 표기 컷을 뺐다 (루비). 실물 벤치 8곳 전부 정보고시를 표로 싣고
+       뒷면 라벨 사진을 건 곳은 0곳이다. 뒷면은 아래 제품 정보 표가 대신한다. -->
+  <div class="p7n-duo">
+    <figure>
+      <img src="img/p7-f32ecacb1f.jpg" alt="파머시안 PDRN 7000 크림 단상자 스튜디오 컷">
+      <figcaption>단상자</figcaption>
+    </figure>
+    <figure>
+      <img src="img/p7-9a2e19a326.jpg" alt="파머시안 PDRN 7000 크림 단상자와 30g 튜브">
+      <figcaption>단상자와 튜브</figcaption>
+    </figure>
+  </div>
+  <div class="p7n-gal" style="margin-top:14px;">
+    <img src="img/p7-125652cf76.jpg" alt="파머시안 PDRN 7000 크림 단상자 진열">
+    <img src="img/p7-ff1153f22c.jpg" alt="파머시안 PDRN 7000 크림 진열 박스">
+    <img src="img/p7-808239c974.jpg" alt="파머시안 PDRN 7000 크림 튜브 두 개와 제형">
+  </div>
+</section>
+
+<!-- 라인업 (조판) - 자사 두 제품 비교라 타사 비교(2레인) 대상이 아니다.
+     ★PDRN 12000 은 가격 미고지 제품이다 - 가격도 구매 유도도 넣지 않았다. -->
+<img src="img/p7-d72cffe060.jpg" alt="Line-up. 7000과 12000의 차이. 소듐디엔에이(PDRN) 함량이 다릅니다. PDRN 7000 소듐디엔에이 7,000ppm, PDRN 12000 12,000ppm. 락토바실러스세포외소포 둘 다 5,580ppm. 효모세포외소포 둘 다 5,580ppm. 알란토인 둘 다 3,000ppm. 펩타이드 성분 7000 없음, 12000 추가 함유. 기능성 보고 둘 다 미백 · 주름개선. 두 제품 모두 미백 · 주름개선 이중 기능성화장품입니다. PDRN 12000은 판매 준비 중이며 이 페이지에서 구매할 수 없습니다.">
+
+<!-- FAQ - 벤치 다수가 쓴다. JS 없이 <details> 네이티브로. -->
+<section class="p7n-sec p7n-faq">
+  <div class="p7n-center">
+    <span class="p7n-eyebrow">FAQ</span>
+    <h2 class="p7n-h2">자주 묻는 것</h2>
+  </div>
+  <details class="p7n-q"><summary>PDRN이 뭔가요?</summary>
+    <p>전성분표에 "소듐디엔에이"로 표기된 성분입니다. 연어에서 유래했고, 본품에는 7,000ppm이 들어 있습니다. 본품이 말할 수 있는 효능은 기능성 보고 범위인 미백과 주름개선까지입니다.</p></details>
+  <details class="p7n-q"><summary>연어향이 날 수 있나요?</summary>
+    <p>연어에서 유래한 원료를 쓰기 때문에 특유의 향이 약간 느껴질 수 있습니다. <strong>제품 이상이 아닙니다.</strong> 바르고 나면 곧 옅어집니다.</p></details>
+  <details class="p7n-q"><summary>7000과 12000은 뭐가 다른가요?</summary>
+    <p>소듐디엔에이(PDRN) 함량이 다릅니다. 7000은 7,000ppm, 12000은 12,000ppm입니다. 12000에는 펩타이드 성분이 추가로 들어 있습니다. 그 밖의 기능성 보고 내용은 같습니다.</p></details>
+  <details class="p7n-q"><summary>기능성 화장품인가요?</summary>
+    <p>미백과 주름개선, 두 가지로 기능성화장품 보고를 마친 제품입니다. 등록된 효능효과 문구는 <strong>"피부의 미백에 도움을 준다. 피부의 주름개선에 도움을 준다."</strong>이며, 저희가 말할 수 있는 것은 여기까지입니다. 그 이상은 약속하지 않습니다.</p></details>
+</section>
+
+<!-- 14. 가격 -->
+<section class="p7n-offer">
+  <p class="p7n-offer-name">PHARMACIAN PDRN 7000 CREAM 30g</p>
+  <p class="p7n-offer-price">20,000<small>원</small></p>
+  <p class="p7n-offer-line">연어 유래 PDRN 7,000ppm. 표시 함량 그대로.</p>
+  <p class="p7n-offer-line" style="margin-top:26px;font-size:22px;font-weight:800;">8월 22일 판매 시작</p>
+  <div class="p7n-offer-box">
+    <div class="p7n-offer-row"><span>판매가</span><span>20,000원</span></div>
+    <div class="p7n-offer-row"><span>배송비</span><span>3,000원</span></div>
+    <div class="p7n-offer-row total"><span>실결제 금액</span><span>23,000원</span></div>
+  </div>
+</section>
+
+<!-- 15. 제품 정보 -->
+<section class="p7n-sec p7n-info">
+  <span class="p7n-eyebrow">Information</span>
+  <h2 class="p7n-h2">제품 정보</h2>
+  <table class="p7n-table">
+    <tr><th scope="row">제품명</th><td>파머시안 피디알엔 7000 크림 (PHARMACIAN PDRN 7000 CREAM)</td></tr>
+    <tr><th scope="row">내용량</th><td>30g (1.05oz.)</td></tr>
+    <tr><th scope="row">기능성</th><td>미백 · 주름개선 이중 기능성화장품</td></tr>
+    <tr><th scope="row">주요 성분</th><td>소듐디엔에이(연어 유래 PDRN) 7,000ppm · 락토바실러스세포외소포 5,580ppm · 효모세포외소포 5,580ppm · 알란토인 3,000ppm · 우유엑소좀 600ppm · 나이아신아마이드 · 아데노신 · 판테놀 · 세라마이드엔피</td></tr>
+    <!-- ★2026-08-18 추가. 패키지 블록이 "자세한 전성분은 아래 제품 정보에서 확인할 수 있습니다"라고
+         쓰는데 표에 전성분이 없었다 - 그 문장이 거짓이었다. 원문은 tools/_legal.json 에서 가져온다. -->
+    <tr><th scope="row">전성분</th><td style="line-height:1.8;">정제수, 다이프로필렌글라이콜, 글리세린, 부틸렌글라이콜, 카프릴릴메티콘, 1,2-헥산다이올, 나이아신아마이드, 베타인, 판테놀, 하이드로제네이티드폴리데센, 소듐디엔에이(7000ppm), 세테아릴올리베이트, C14-22알코올, 락토바실러스세포외소포(5580ppm), 효모세포외소포(5580ppm), 솔비탄올리베이트, 알란토인(3000ppm), 암모늄아크릴로일다이메틸타우레이트/브이피코폴리머, 유청여과물, 카보머, 카프릴릭/카프릭트라이글리세라이드, 트로메타민, C12-20알킬글루코사이드, 푸코실락토오스, 에틸헥실글리세린, 우유엑소좀(600ppm), 토코페릴아세테이트, 세라마이드엔피, 아데노신, 피토스테롤, 올레익애씨드, 하이드로제네이티드레시틴, 다이소듐이디티에이, 글리세릴스테아레이트, 레몬껍질오일, 베르가모트오일, 칸디다 봄비콜라/글루코오스/메틸레이프씨데이트발효물, 세테아릴알코올, 리씨열매오일, 스테아릭애씨드, 폴리글리세릴-3메틸글루코오스다이스테아레이트, 발삼아미리스껍질오일, 소두구씨오일, 연필향나무오일, 모란뿌리추출물, 쌀배아오일, 코코넛야자오일, 프로판다이올, 클레리오일, 사철쑥추출물, 타임꽃/잎오일, 올리브추출물</td></tr>
+    <tr><th scope="row">판매가</th><td>20,000원 (배송비 3,000원, 실결제 23,000원)</td></tr>
+    <!-- 상품정보제공고시 필수항목. 값 출처는 tools/_legal.json 의 p7 항목이다.
+         ★실물 표기와의 대조 결과는 저장소 문서에 있다(카페24 소스에 내부 협의를 싣지 않는다). -->
+    <tr><th scope="row">화장품제조업자</th><td>린제이앤코스 주식회사 / 경기도 포천시 군내면 용정경제로1길 94-63 나동</td></tr>
+    <tr><th scope="row">화장품책임판매업자</th><td>(주)와이엘트레이딩 / 경기도 안양시 동안구 시민대로 401, 2001호(관양동, 대륭테크노타운15차)</td></tr>
+    <tr><th scope="row">판매업자</th><td>(주)와이엘트레이딩 · 대표 이권선</td></tr>
+    <tr><th scope="row">사업자등록번호</th><td>741-86-03645</td></tr>
+    <tr><th scope="row">통신판매업</th><td>제2025-안양동안-0740호</td></tr>
+    <tr><th scope="row">고객센터</th><td>02-6177-7350</td></tr>
+    <tr><th scope="row">주소</th><td>경기도 안양시 동안구 시민대로 401, 2001호 (관양동, 대륭테크노타운15차)</td></tr>
+    <tr><th scope="row">청약철회</th><td>수령 후 7일 이내(전자상거래법 제17조)</td></tr>
+    <tr><th scope="row">배송</th><td>배송비 3,000원 · 주문 후 영업일 기준 1~3일 이내 출고</td></tr>
+    <tr><th scope="row">사용 시 주의사항</th><td>1. 화장품 사용 시 또는 사용 직후 직사광선에 의하여 사용부위가 붉은 반점, 부어오름 또는 가려움증 등의 이상 증상이나 부작용이 있는 경우 전문의 등과 상담할 것<br>2. 상처가 있는 부위 등에는 사용을 자제할 것<br>3. 보관 및 취급 시의 주의사항 - 가) 어린이의 손이 닿지 않는 곳에 보관할 것 나) 직사광선을 피해서 보관할 것</td></tr>
+    <tr><th scope="row">품질보증기준</th><td>본 제품에 이상이 있을 경우 공정거래위원회 고시 「소비자 분쟁 해결기준」에 의해 보상해 드립니다.</td></tr>
+    <tr><th scope="row">교환 · 반품 · 환불</th><td>개봉 · 사용한 제품은 화장품 특성상 재판매가 어려워 교환 · 반품이 제한됩니다. 문의 02-6177-7350</td></tr>
+  </table>
+  <div class="p7n-legal">
+    <p>본 제품은 기능성화장품으로, 효능효과는 다음과 같습니다. "피부의 미백에 도움을 준다. 피부의 주름개선에 도움을 준다."</p>
+    <p>본 페이지에 표기된 성분 함량은 전성분 표시 함량 기준입니다.</p>
+    <p>본 페이지의 사용 컷과 약국 진열 컷은 사용권과 동의를 확보한 실제 촬영본입니다.</p>
+  </div>
+</section>
+
+<!-- 마감 (조판) - 벤치 8곳이 전부 브랜드 문장으로 닫는다.
+     ★우리 브랜드 슬로건 두 개는 사용 불가(Prescribed by Pharmacist / Clinical Skin Recovery)라
+     슬로건 대신 이 페이지가 지킨 원칙을 쓴다. -->
+<img src="img/p7-dd83f5f327.jpg" alt="PHARMACIAN. 적을 수 있는 것만 적었습니다. 함량은 표시된 숫자 그대로, 효능은 보고된 문구 그대로, 후기는 0건 그대로. 파머시안 피디알엔 7000 크림">
+
+</div>
