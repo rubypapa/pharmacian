@@ -163,9 +163,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pt);outline-offset:
     }
   }
   async function boot(u){
-    $('#auth').textContent = u ? '로그아웃' : '로그인';
-    $('#auth').setAttribute('href', u ? '#' : 'join.html');
-    $('#auth').onclick = u ? function(e){ e.preventDefault(); sb.auth.signOut(); } : null;
+    // ★로그인 표시는 공용 머리(shell.js)가 한다. 여기서 #auth 를 만지면
+    //   그 요소가 없어서 예외가 나고 아래 가격 조회까지 통째로 죽는다(실측: 금액이 "-"로 남았다).
     if(!priceRows) await loadPrices();
     if(!u && priceRows) $('#note').innerHTML = '주문하실 때 로그인이 필요합니다. 담아두신 것은 그대로 이어집니다.';
     draw();
