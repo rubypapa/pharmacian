@@ -1,0 +1,187 @@
+<!-- 장바구니. 담은 것은 이 브라우저에만 있고, 금액은 로그인해야 서버 가격표에서 온다. -->
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8">
+<title>장바구니 — PHARMACIAN</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="favicon.svg">
+<style>
+:root{--paper:#f7f5ee;--surface:#fff;--ink:#1b1a18;--muted:#77726a;--rule:#e3ded3;--pt:#ac6152}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#141311;--surface:#1c1a18;--ink:#f2efe6;--muted:#9a948a;--rule:#2c2a26;--pt:#d08b78}}
+:root[data-theme="dark"]{--paper:#141311;--surface:#1c1a18;--ink:#f2efe6;--muted:#9a948a;--rule:#2c2a26;--pt:#d08b78}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);line-height:1.65;word-break:keep-all;
+ font-family:-apple-system,"Segoe UI Variable Text","Segoe UI",system-ui,"Malgun Gothic",sans-serif;
+ -webkit-font-smoothing:antialiased}
+.bar{position:sticky;top:0;z-index:9;background:var(--paper);border-bottom:1px solid var(--rule)}
+.bar-in{max-width:860px;margin:0 auto;padding:15px 20px;display:flex;align-items:center;gap:14px}
+.bar a.logo{font-weight:800;letter-spacing:-.03em;font-size:17px;color:inherit;text-decoration:none}
+.bar .sp{flex:1}
+.bar a.util{font-size:13px;color:var(--muted);text-decoration:none}
+.bar a.util:hover{color:var(--ink)}
+.wrap{max-width:860px;margin:0 auto;padding:34px 20px 120px}
+h1{margin:0;font-size:24px;font-weight:700;letter-spacing:-.03em}
+.sub{margin:8px 0 0;color:var(--muted);font-size:14px}
+ul{list-style:none;margin:28px 0 0;padding:0;border-top:1px solid var(--rule)}
+li{border-bottom:1px solid var(--rule);padding:18px 2px;display:grid;
+  grid-template-columns:84px 1fr auto;gap:16px;align-items:center}
+li img{width:84px;height:84px;object-fit:cover;border-radius:4px;background:var(--surface);display:block}
+.nm{font-weight:600;font-size:15px}
+.cap{color:var(--muted);font-size:13px;margin-top:3px}
+.qty{display:flex;align-items:center;border:1px solid var(--rule);border-radius:4px;overflow:hidden;width:max-content}
+.qty button{width:34px;height:34px;border:0;background:transparent;color:inherit;font:600 16px/1 inherit;cursor:pointer}
+.qty button:hover{background:var(--rule)}
+.qty span{min-width:34px;text-align:center;font-variant-numeric:tabular-nums;font-size:14px}
+.right{text-align:right;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.price{font-weight:700;font-variant-numeric:tabular-nums}
+.dim{font-weight:400;color:var(--muted);font-size:13px}
+.del{background:none;border:0;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;padding:0}
+.sum{margin-top:26px;background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:18px 20px}
+.sum div{display:flex;justify-content:space-between;padding:6px 0;font-size:14.5px}
+.sum .tot{border-top:1px solid var(--rule);margin-top:10px;padding-top:14px;font-size:17px;font-weight:700}
+.num{font-variant-numeric:tabular-nums}
+.go{margin-top:20px;display:flex;gap:10px;flex-wrap:wrap}
+.go a{font:600 15px/1 inherit;padding:15px 26px;border-radius:4px;text-decoration:none;border:1px solid transparent}
+.b1{background:var(--ink);color:var(--paper)}
+.b2{background:transparent;color:var(--ink);border-color:var(--rule)}
+.empty{margin-top:40px;padding:44px 20px;text-align:center;border:1px dashed var(--rule);border-radius:6px;color:var(--muted)}
+.note{margin-top:14px;font-size:13px;color:var(--muted)}
+.note b{color:var(--ink)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--pt);outline-offset:2px}
+@media(max-width:560px){li{grid-template-columns:64px 1fr}li img{width:64px;height:64px}
+  .right{grid-column:1/-1;flex-direction:row;justify-content:space-between;align-items:center}}
+</style></head><body>
+
+<header class="bar"><div class="bar-in">
+  <a class="logo" href="./">PHARMACIAN</a>
+  <span class="sp"></span>
+  <a class="util" id="auth" href="join.html">로그인</a>
+  <a class="util" href="cart.html">장바구니 <b data-cart-count hidden></b></a>
+</div></header>
+
+<div class="wrap">
+  <h1>장바구니</h1>
+  <p class="sub" id="sub">담은 상품을 확인하고 주문으로 넘어갑니다.</p>
+
+  <ul id="list"></ul>
+  <div class="empty" id="empty" hidden>담은 상품이 없습니다. <a href="./" style="color:inherit">제품 보러 가기</a></div>
+
+  <div class="sum" id="sum" hidden>
+    <div><span>상품 금액</span><span class="num" id="s-goods">-</span></div>
+    <div><span>배송비</span><span class="num" id="s-ship">-</span></div>
+    <div class="tot"><span>결제 예정 금액</span><span class="num" id="s-tot">-</span></div>
+  </div>
+
+  <div class="go" id="go" hidden>
+    <a class="b1" href="checkout.html">주문하기</a>
+    <a class="b2" href="./">계속 둘러보기</a>
+  </div>
+  <p class="note" id="note"></p>
+</div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="cart.js"></script>
+<script>
+(function(){
+  var C = window.PHARMACIAN || {};
+  var sb = (window.supabase && C.SUPABASE_URL)
+    ? window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON) : null;
+
+  var NAMES = {
+    p7:  ['PDRN 7000 크림',       '연어 PDRN 7,000ppm · 30g',   'img/prod-p7.jpg',  'detail/p7.html'],
+    p12: ['PDRN 12000 크림',      '연어 PDRN 12,000ppm · 30g',  'img/prod-p12.jpg', 'detail/p12.html'],
+    nmn: ['NMN 30,000 크림',      'NMN 30,000ppm 리포좀 · 30g', 'img/prod-nmn.jpg', 'detail/nmn.html'],
+    mel: ['멜라리스 100,000 크림', '미백 기능성 · 30g',          'img/prod-mel.jpg', 'detail/mel.html']
+  };
+  var $ = function(s){ return document.querySelector(s); };
+  var won = function(n){ return n.toLocaleString('ko-KR'); };
+  var priceRows = null;
+
+  function draw(){
+    var cart = PH_CART.read();
+    var keys = Object.keys(cart);
+    $('#list').innerHTML = '';
+    $('#empty').hidden = keys.length > 0;
+    $('#sum').hidden = keys.length === 0;
+    $('#go').hidden  = keys.length === 0;
+    if(!keys.length){ $('#sub').textContent = '아직 담은 상품이 없습니다.'; return; }
+    $('#sub').textContent = '담은 상품 ' + keys.length + '종 · 총 ' + PH_CART.count() + '개';
+
+    keys.forEach(function(k){
+      var m = NAMES[k]; if(!m) return;
+      var row = priceRows && priceRows.filter(function(r){ return r.key===k; })[0];
+      var li = document.createElement('li');
+      li.innerHTML =
+        '<a href="'+m[3]+'"><img src="'+m[2]+'" alt=""></a>'
+      + '<div><div class="nm">'+m[0]+'</div><div class="cap">'+m[1]+'</div>'
+      +   '<div class="qty" style="margin-top:10px">'
+      +     '<button type="button" data-m="'+k+'" aria-label="수량 줄이기">-</button>'
+      +     '<span>'+cart[k]+'</span>'
+      +     '<button type="button" data-p="'+k+'" aria-label="수량 늘리기">+</button>'
+      +   '</div></div>'
+      + '<div class="right"><div class="price">'
+      +   (row ? won(row.price*cart[k])+'원' : '<span class="dim">로그인 후 표시</span>')
+      + '</div><button class="del" type="button" data-x="'+k+'">삭제</button></div>';
+      $('#list').appendChild(li);
+    });
+    drawSum();
+  }
+
+  function drawSum(){
+    var cart = PH_CART.read();
+    if(!priceRows){
+      $('#s-goods').textContent = '로그인 후 표시';
+      $('#s-ship').textContent  = '로그인 후 표시';
+      $('#s-tot').textContent   = '로그인 후 표시';
+      return;
+    }
+    var goods = 0;
+    priceRows.forEach(function(r){ if(cart[r.key]) goods += r.price * cart[r.key]; });
+    var ship = goods ? priceRows[0].ship : 0;
+    $('#s-goods').textContent = won(goods)+'원';
+    $('#s-ship').textContent  = won(ship)+'원';
+    $('#s-tot').textContent   = won(goods+ship)+'원';
+  }
+
+  document.addEventListener('click', function(e){
+    var t = e.target.closest ? e.target.closest('button') : null;
+    if(!t) return;
+    var cart = PH_CART.read();
+    if(t.dataset.p){ PH_CART.set(t.dataset.p, (cart[t.dataset.p]||0)+1); draw(); }
+    if(t.dataset.m){ PH_CART.set(t.dataset.m, (cart[t.dataset.m]||0)-1); draw(); }
+    if(t.dataset.x){ PH_CART.set(t.dataset.x, 0); draw(); }
+  });
+
+  async function boot(u){
+    $('#auth').textContent = u ? '로그아웃' : '로그인';
+    $('#auth').setAttribute('href', u ? '#' : 'join.html');
+    if(u){
+      $('#auth').onclick = function(e){ e.preventDefault(); sb.auth.signOut(); };
+      var r = await sb.from('ph_product_price').select('key,price,ship');
+      if(r.error || !r.data || !r.data.length){
+        priceRows = null;
+        $('#note').innerHTML = '<b>가격표를 아직 불러오지 못했습니다.</b> 담아두시면 주문 화면에서 금액이 계산됩니다.';
+      } else {
+        priceRows = r.data;
+        $('#note').textContent = '';
+      }
+    } else {
+      priceRows = null;
+      $('#auth').onclick = null;
+      $('#note').innerHTML = '금액은 <b>회원에게만</b> 보입니다. 담아두시고 로그인하시면 그대로 이어집니다.';
+    }
+    draw();
+  }
+
+  if(sb){
+    sb.auth.getSession().then(function(r){ boot(r.data.session && r.data.session.user); });
+    sb.auth.onAuthStateChange(function(_e,s){ boot(s && s.user); });
+  } else {
+    $('#note').innerHTML = '<b>가격을 불러올 수 없습니다.</b> 설정이 아직 연결되지 않았습니다.';
+  }
+  draw();
+})();
+</script>
+</body></html>

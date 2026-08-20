@@ -70,6 +70,7 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
 </div>
 
 <script src="config.js"></script>
+<script src="cart.js"></script>
 <script src="track.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" onerror="window.__nosb=1"></script>
 <script src="https://js.tosspayments.com/v2/standard" onerror="window.__notoss=1"></script>
@@ -141,7 +142,9 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
     if (error || !data || !data.length) { $('#items').textContent = '가격을 불러오지 못했습니다.'; return; }
     rows = data.sort((a, b) => a.key.localeCompare(b.key));
     ship = rows[0].ship;
-    rows.forEach(r => qty[r.key] = 0);
+    // ★장바구니에 담아둔 수량을 이어받는다. 없으면 0에서 시작한다.
+    const cart = (window.PH_CART ? PH_CART.read() : {});
+    rows.forEach(r => qty[r.key] = cart[r.key] || 0);
     drawItems(); drawSum();
 
     if (window.__notoss || !window.TossPayments) { $('#note').textContent = '결제 모듈을 불러오지 못했습니다.'; return; }
@@ -167,6 +170,7 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
       const order = await res.json();
       if (!res.ok) throw new Error(order.error || '주문 생성 실패');
       if (window.PHARMACIAN_TRACK) window.PHARMACIAN_TRACK.beginCheckout({ value: order.amount, orderId: order.orderId });
+      if (window.PH_CART) PH_CART.clear();   // 주문이 만들어졌으면 담아둔 것을 비운다
 
       const first = NAMES[items[0].key] || 'PHARMACIAN 주문';
       const orderName = items.length > 1 ? `${first} 외 ${items.length - 1}건` : first;
@@ -174,8 +178,9 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
       await widgets.requestPayment({
         orderId: order.orderId,
         orderName,
-        successUrl: location.origin + '/pay-done.html',
-        failUrl: location.origin + '/pay-done.html',
+        // ★origin에 붙이면 하위 경로 배포(/pharmacian/)에서 깨진다. 지금 주소 기준으로 만든다.
+        successUrl: new URL('pay-done.html', location.href).href,
+        failUrl: new URL('pay-done.html', location.href).href,
         customerEmail: user.email || undefined,
       });
     } catch (e) {
