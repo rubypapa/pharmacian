@@ -1,3 +1,6 @@
+/* 홈만 이 폰트를 불러오고 있어서 장바구니·가입이 시스템 폰트로 떨어졌다. 여기서 같이 부른다. */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
+
 /* 몰 공용 껍데기. 홈·장바구니·가입·결제가 같은 머리와 같은 색을 쓴다.
    전에는 화면마다 머리가 달라서 장바구니를 누르면 메뉴가 통째로 사라졌다.
    ★색은 어느 안에서 들어왔는지에 따라 갈린다 — data-skin="a"(브랜드형) / "b"(판매형) */
@@ -36,3 +39,32 @@
 .sh-head a:focus-visible{outline:2px solid var(--sh-pt);outline-offset:2px}
 /* 좁은 화면에서는 로고와 겹치니 메뉴를 접는다 */
 @media(max-width:820px){.sh-nav{display:none}.sh-in{gap:10px;padding:12px 16px}}
+
+/* ── 하위 화면이 쓰던 옛 이름들을 여기에 잇는다 ─────────────────────
+   전에는 화면마다 :root 색을 따로 들고 있어서 장바구니·가입이 다른 사이트로 보였다.
+   ★특히 --accent 가 ODEAL 주황(#E8380D)이었다. 색은 이제 여기서만 정한다. */
+:root[data-skin]{
+  --page:var(--sh-bg); --paper:var(--sh-bg);
+  --ink:var(--sh-ink); --ink-2:var(--sh-muted); --ink-3:var(--sh-muted); --muted:var(--sh-muted);
+  --line:var(--sh-rule); --line-2:var(--sh-rule); --rule:var(--sh-rule);
+  --accent:var(--sh-hot); --pt:var(--sh-pt);
+  --kakao:#FEE500; --bad:#C4271A; --ok:#0E7C4A;
+}
+:root[data-skin="a"]{ --surface:#fff; --accent-soft:#f1e6e2 }
+:root[data-skin="b"]{ --surface:#fff; --accent-soft:#FDECE7 }
+@media (prefers-color-scheme:dark){
+  :root[data-skin="a"]:not([data-theme="light"]){ --surface:#1c1a18; --accent-soft:#2a201d }
+  :root[data-skin="b"]:not([data-theme="light"]){ --surface:#1b1b1b; --accent-soft:#2a1c1a }
+}
+
+/* ── 글자체는 홈과 같은 것 하나로 ────────────────────────────────
+   전에는 홈이 Pretendard, 장바구니가 시스템 폰트라 글씨가 달라 보였다. */
+html[data-skin] body{
+  font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,
+    'Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
+  line-height:1.6;
+  word-break:keep-all;
+  -webkit-font-smoothing:antialiased;
+  background:var(--sh-bg);
+  color:var(--sh-ink);
+}

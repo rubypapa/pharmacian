@@ -81,6 +81,9 @@
     if (!(w.supabase && C.SUPABASE_URL)) return;
     var sb = w.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON);
     function put(u) {
+      // 이미 로그인한 사람에게 "1초 가입"을 보여줄 이유가 없다
+      var cta = d.getElementById('joincta');
+      if (cta) cta.hidden = !!u;
       [].slice.call(d.querySelectorAll('.u-auth')).forEach(function (a) {
         var en = (a.getAttribute('data-login') || '로그인') === 'LOGIN';
         a.textContent = u ? (en ? 'LOGOUT' : '로그아웃') : (en ? 'LOGIN' : '로그인');
@@ -105,7 +108,7 @@
                  applyFilterFromQuery: applyFilterFromQuery };
 
   d.addEventListener('DOMContentLoaded', function () {
-    if (SKIN[file()]) { remember(); applyFilterFromQuery(); }
+    if (SKIN[file()]) { remember(); applyFilterFromQuery(); auth(); }
     else paint();
   });
 })(window, document);

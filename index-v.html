@@ -280,6 +280,21 @@ footer div{max-width:1120px;margin:0 auto}
 article h3{height:calc(2 * 1lh);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 @supports not (height: 1lh){article h3{height:2.9em}}   /* 1lh 미지원 브라우저 대비 */
 article .cap{min-height:1.5em}
+
+/* ── 하단 가입 자리 ────────────────────────────────────────────
+   로그인을 눌러도 여기와 같은 화면(join.html)으로 간다. 가입과 로그인이 한 버튼이다. */
+.joincta{border-top:1px solid var(--rule,#e3ded3);margin-top:0}
+.joincta .in{max-width:1140px;margin:0 auto;padding:56px 20px;text-align:center}
+.joincta h2{margin:0;font-size:clamp(20px,3vw,27px);font-weight:700;letter-spacing:-.03em}
+.joincta p{margin:10px 0 0;font-size:14.5px;color:var(--muted,#77726a)}
+.joincta .btns{margin-top:22px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.joincta a{display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+  font-size:15px;font-weight:700;padding:15px 28px;border-radius:6px}
+.joincta .k{background:#FEE500;color:#181600}
+.joincta .g{background:var(--surface,#fff);color:var(--ink,#1b1a18);border:1px solid var(--rule,#e3ded3)}
+.joincta small{display:block;margin-top:14px;font-size:12.5px;color:var(--muted,#77726a)}
+.joincta a:focus-visible{outline:2px solid var(--pt,#ac6152);outline-offset:2px}
+.joincta[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -369,6 +384,15 @@ article .cap{min-height:1.5em}
   </div>
 </div></section>
 
+<section class="joincta" id="joincta"><div class="in">
+  <h2>1초면 가입이 끝납니다.</h2>
+  <p>따로 적을 것이 없습니다. 쓰던 계정으로 누르면 회원 가격이 바로 보입니다.</p>
+  <div class="btns">
+    <a class="k" href="join.html">카카오로 1초 가입</a>
+    <a class="g" href="join.html">구글로 1초 가입</a>
+  </div>
+  <small>이미 가입하셨다면 같은 버튼으로 로그인됩니다.</small>
+</div></section>
 <footer><div>
   주식회사 와이엘트레이딩 · 대표 이권선 · 사업자등록번호 741-86-03645 · 통신판매업신고 2025-안양동안-0740<br>
   경기도 안양시 동안구 시민대로 401, 2001호 · 고객센터 02-6177-7350 · 개인정보 보호책임자 이권선<br>
