@@ -1,10 +1,6 @@
-# 발행함(2026-08-21). 상품·브랜드 화면은 열고, 결제·가입 같은 개인 화면만 막는다.
+# ★가격·배송비가 확정 전이라 다시 닫는다(2026-08-21). 확정되면 이 파일을 아래로 바꾼다.
+#   User-agent: *
+#   Allow: /
+#   Disallow: /checkout.html ... (결제·가입만)
 User-agent: *
-Allow: /
-Disallow: /checkout.html
-Disallow: /pay-done.html
-Disallow: /join.html
-Disallow: /cart.html
-Disallow: /안.html
-
-Sitemap: https://pharmacian.kr/sitemap.xml
+Disallow: /
