@@ -1,1 +1,0 @@
-CNAME에는 파머시안 도메인 한 줄만 적는다(예: pharmacian.co.kr — https://나 경로 없이). config.js의 SITE_DOMAIN과 같은 값이어야 한다.
