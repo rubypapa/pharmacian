@@ -68,3 +68,8 @@ html[data-skin] body{
   background:var(--sh-bg);
   color:var(--sh-ink);
 }
+
+/* 손가락으로 누를 자리를 넓힌다. 글씨는 그대로 두고 눌리는 범위만 키운다.
+   실측: 헤더 로그인·장바구니가 20px, 푸터 법정링크가 13px 높이였다(권장 최소 44px). */
+.sh-util a{display:inline-flex;align-items:center;min-height:44px;padding:0 4px}
+@media(max-width:820px){ .sh-in{padding:6px 16px} }
