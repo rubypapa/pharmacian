@@ -5,6 +5,7 @@
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="favicon.svg">
+<link rel="stylesheet" href="shell.css">
 <style>
 :root{--paper:#f7f5ee;--surface:#fff;--ink:#1b1a18;--muted:#77726a;--rule:#e3ded3;--pt:#ac6152}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
@@ -51,14 +52,10 @@ li img{width:84px;height:84px;object-fit:cover;border-radius:4px;background:var(
 a:focus-visible,button:focus-visible{outline:2px solid var(--pt);outline-offset:2px}
 @media(max-width:560px){li{grid-template-columns:64px 1fr}li img{width:64px;height:64px}
   .right{grid-column:1/-1;flex-direction:row;justify-content:space-between;align-items:center}}
-</style></head><body>
+</style><style>body{background:var(--sh-bg);color:var(--sh-ink)}</style>
+</head><body>
 
-<header class="bar"><div class="bar-in">
-  <a class="logo" href="./">PHARMACIAN</a>
-  <span class="sp"></span>
-  <a class="util" id="auth" href="join.html">로그인</a>
-  <a class="util" href="cart.html">장바구니 <b data-cart-count hidden></b></a>
-</div></header>
+<div data-shell></div>
 
 <div class="wrap">
   <h1>장바구니</h1>
@@ -184,4 +181,5 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pt);outline-offset:
   draw();
 })();
 </script>
+<script src="shell.js"></script>
 </body></html>

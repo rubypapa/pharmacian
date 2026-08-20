@@ -8,6 +8,7 @@
 <title>결제 · PHARMACIAN</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="shell.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <style>
 :root{--page:#F3F3F1;--ink:#17181A;--ink-2:#5A5D63;--ink-3:#8E9299;--line:#E3E3DF;--accent:#E8380D}
@@ -47,16 +48,17 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
 .hide{display:none}
 #payment-method,#agreement{margin-top:18px}
 </style>
+<style>body{background:var(--sh-bg);color:var(--sh-ink)}</style>
 </head>
 <body>
+<div data-shell></div>
 <div class="wrap">
-  <a class="back" href="/">← PHARMACIAN</a>
   <h1>결제</h1>
 
   <!-- 비로그인: 가격도 결제도 안 열린다 -->
   <div class="gate" id="gate">
     <p>회원에게만 열리는 가격입니다.<br>로그인하시면 상품과 금액이 보입니다.</p>
-    <a href="/">로그인하러 가기</a>
+    <a href="./" data-home>로그인하러 가기</a>
   </div>
 
   <div id="shop" class="hide">
@@ -193,5 +195,6 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
   sb.auth.onAuthStateChange((_e, s) => boot(s && s.user));
 })();
 </script>
+<script src="shell.js"></script>
 </body>
 </html>

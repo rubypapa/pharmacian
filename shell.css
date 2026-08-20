@@ -1,0 +1,38 @@
+/* 몰 공용 껍데기. 홈·장바구니·가입·결제가 같은 머리와 같은 색을 쓴다.
+   전에는 화면마다 머리가 달라서 장바구니를 누르면 메뉴가 통째로 사라졌다.
+   ★색은 어느 안에서 들어왔는지에 따라 갈린다 — data-skin="a"(브랜드형) / "b"(판매형) */
+
+:root[data-skin="a"]{
+  --sh-bg:#f7f5ee; --sh-head:#f7f5ee; --sh-ink:#1b1a18; --sh-muted:#77726a;
+  --sh-rule:#e3ded3; --sh-pt:#ac6152; --sh-hot:#ac6152; --sh-band:0;
+}
+:root[data-skin="b"]{
+  --sh-bg:#fff; --sh-head:#fff; --sh-ink:#191919; --sh-muted:#7a7a7a;
+  --sh-rule:#eee; --sh-pt:#1b4ed8; --sh-hot:#e02b20; --sh-band:1;
+}
+@media (prefers-color-scheme:dark){
+  :root[data-skin="a"]:not([data-theme="light"]){
+    --sh-bg:#141311; --sh-head:#141311; --sh-ink:#f2efe6; --sh-muted:#9a948a;
+    --sh-rule:#2c2a26; --sh-pt:#d08b78; --sh-hot:#d08b78;
+  }
+  :root[data-skin="b"]:not([data-theme="light"]){
+    --sh-bg:#131313; --sh-head:#131313; --sh-ink:#f0f0f0; --sh-muted:#9a9a9a;
+    --sh-rule:#2a2a2a; --sh-pt:#8ea6ff; --sh-hot:#ff6a5e;
+  }
+}
+
+.sh-band{background:var(--sh-hot);color:#fff;text-align:center;font-size:12.5px;font-weight:700;padding:10px}
+.sh-head{border-bottom:1px solid var(--sh-rule);position:sticky;top:0;background:var(--sh-head);z-index:20}
+.sh-in{max-width:1140px;margin:0 auto;padding:13px 20px;display:flex;align-items:center;gap:18px}
+.sh-logo{font-weight:800;letter-spacing:-.03em;font-size:17px;color:var(--sh-ink);text-decoration:none;flex:none}
+.sh-nav{display:flex;gap:17px;font-size:14px;font-weight:700}
+.sh-nav a{color:var(--sh-ink);text-decoration:none}
+.sh-nav a:hover{color:var(--sh-hot)}
+.sh-nav a.hot{color:var(--sh-hot)}
+.sh-util{margin-left:auto;display:flex;gap:12px;font-size:12.5px;color:var(--sh-muted);white-space:nowrap}
+.sh-util a{color:inherit;text-decoration:none}
+.sh-util a:hover{color:var(--sh-ink)}
+.sh-util b{font-variant-numeric:tabular-nums}
+.sh-head a:focus-visible{outline:2px solid var(--sh-pt);outline-offset:2px}
+/* 좁은 화면에서는 로고와 겹치니 메뉴를 접는다 */
+@media(max-width:820px){.sh-nav{display:none}.sh-in{gap:10px;padding:12px 16px}}

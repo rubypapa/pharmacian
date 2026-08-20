@@ -8,6 +8,7 @@
 <title>가입 · PHARMACIAN</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="shell.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <style>
 :root{--page:#F3F3F1;--surface:#fff;--ink:#17181A;--ink-2:#5A5D63;--ink-3:#8E9299;
@@ -74,14 +75,11 @@ h1{font-size:24px;font-weight:800;letter-spacing:-.04em;line-height:1.32}
 .hide{display:none}
 @media (max-width:560px){.wrap{padding:20px 16px 64px}.card{padding:22px 18px}h1{font-size:21px}}
 </style>
+<style>body{background:var(--sh-bg);color:var(--sh-ink)}</style>
 </head>
 <body>
 
-<header class="bar"><div class="bar-in">
-  <a href="/" style="display:flex;align-items:center">
-    <span style="font-size:18px;font-weight:800;letter-spacing:-.03em;color:#17181A">PHARMACIAN</span></a>
-  <span class="bar-t">가입 · 배송지</span><a href="cart.html" style="font-size:13px;color:inherit;text-decoration:none;opacity:.72">장바구니 <b data-cart-count hidden></b></a>
-</div></header>
+<div data-shell></div>
 
 <main class="wrap">
   <div class="steps">
@@ -317,5 +315,6 @@ $('#form').addEventListener('submit', async e => {
   go(3);
 });
 </script>
+<script src="shell.js"></script>
 </body>
 </html>
