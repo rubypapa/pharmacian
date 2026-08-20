@@ -1,0 +1,111 @@
+<!-- 쿠폰 안내. "쿠폰 받기"를 눌렀는데 아무 일도 안 일어나면 안 되니 실제로 갈 곳을 만든다.
+     ★쿠폰은 회원에게만 붙는다. 그래서 이 화면의 결론은 "가입하기"다.
+     실제 발급(코드·유효기간·중복 제한)은 결제를 붙일 때 서버에서 정한다. -->
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8">
+<title>쿠폰 — PHARMACIAN</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="favicon.svg">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="shell.css">
+<style>
+*{box-sizing:border-box}
+body{margin:0}
+.wrap{max-width:720px;margin:0 auto;padding:44px 20px 110px}
+h1{margin:0;font-size:clamp(23px,4vw,30px);font-weight:700;letter-spacing:-.03em}
+.sub{margin:10px 0 0;color:var(--sh-muted);font-size:15px}
+.cps{list-style:none;margin:30px 0 0;padding:0;display:flex;flex-direction:column;gap:14px}
+.cp{position:relative;border:1px solid var(--sh-rule);border-radius:10px;padding:20px 22px;
+  background:var(--surface);display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center}
+.cp .big{font-size:26px;font-weight:800;letter-spacing:-.03em;color:var(--sh-hot);
+  font-variant-numeric:tabular-nums}
+.cp .nm{margin-top:4px;font-weight:600;font-size:15px}
+.cp .cond{margin-top:6px;font-size:13px;color:var(--sh-muted);line-height:1.7}
+.cp .state{font-size:12.5px;font-weight:700;padding:8px 14px;border-radius:999px;
+  border:1px solid var(--sh-rule);color:var(--sh-muted);white-space:nowrap}
+.cp .state.on{background:var(--sh-hot);color:#fff;border-color:transparent}
+.go{margin-top:30px;display:flex;gap:10px;flex-wrap:wrap}
+.go a{font:700 15px/1 inherit;padding:15px 26px;border-radius:6px;text-decoration:none;
+  display:inline-flex;align-items:center}
+.k{background:#FEE500;color:#181600}
+.g{background:var(--surface);color:var(--sh-ink);border:1px solid var(--sh-rule)}
+.note{margin-top:22px;font-size:13px;color:var(--sh-muted);line-height:1.85;
+  border-top:1px solid var(--sh-rule);padding-top:18px}
+.note b{color:var(--sh-ink)}
+a:focus-visible{outline:2px solid var(--sh-pt);outline-offset:2px}
+@media(max-width:520px){.cp{grid-template-columns:1fr}.cp .state{justify-self:start}}
+</style></head><body>
+
+<div data-shell></div>
+
+<div class="wrap">
+  <h1>쿠폰</h1>
+  <p class="sub" id="sub">가입하시면 아래 쿠폰이 계정에 함께 들어갑니다.</p>
+
+  <ul class="cps">
+    <li class="cp">
+      <div>
+        <div class="big">15%</div>
+        <div class="nm">첫 구매 할인</div>
+        <div class="cond">처음 주문하실 때 한 번 쓰실 수 있습니다.<br>전 제품 · 다른 쿠폰과 겹쳐 쓸 수 없습니다.</div>
+      </div>
+      <span class="state" data-state>가입하면 지급</span>
+    </li>
+    <li class="cp">
+      <div>
+        <div class="big">5,000원</div>
+        <div class="nm">신규 회원 적립</div>
+        <div class="cond">가입 즉시 지급됩니다.<br>주문 금액에서 바로 빠집니다.</div>
+      </div>
+      <span class="state" data-state>가입하면 지급</span>
+    </li>
+    <li class="cp">
+      <div>
+        <div class="big">무료배송</div>
+        <div class="nm">30,000원 이상</div>
+        <div class="cond">쿠폰이 아니라 상시 적용됩니다.<br>따로 받으실 것이 없습니다.</div>
+      </div>
+      <span class="state on">상시</span>
+    </li>
+  </ul>
+
+  <div class="go" id="go">
+    <a class="k" href="join.html">카카오로 1초 가입</a>
+    <a class="g" href="join.html">구글로 1초 가입</a>
+  </div>
+
+  <p class="note" id="note">
+    <b>쿠폰 금액과 조건은 확정 전 초안입니다.</b>
+    실제 발급 조건(유효기간·중복 사용·최소 주문 금액)은 결제를 열 때 서버에서 정해집니다.
+  </p>
+</div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="cart.js"></script>
+<script src="shell.js"></script>
+<script>
+// 로그인한 사람에게는 "가입하면 지급" 대신 지급 상태를 보여준다.
+(function(){
+  var C = window.PHARMACIAN || {};
+  if(!(window.supabase && C.SUPABASE_URL)) return;
+  var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON);
+  function put(u){
+    var st = [].slice.call(document.querySelectorAll('[data-state]'));
+    st.forEach(function(e){
+      e.textContent = u ? '지급됨' : '가입하면 지급';
+      e.classList.toggle('on', !!u);
+    });
+    var go = document.getElementById('go');
+    if(go) go.hidden = !!u;
+    var sub = document.getElementById('sub');
+    if(sub) sub.textContent = u
+      ? '계정에 들어 있는 쿠폰입니다. 주문 화면에서 자동으로 적용됩니다.'
+      : '가입하시면 아래 쿠폰이 계정에 함께 들어갑니다.';
+  }
+  sb.auth.getSession().then(function(r){ put(r.data.session && r.data.session.user); });
+  sb.auth.onAuthStateChange(function(_e,s){ put(s && s.user); });
+})();
+</script>
+</body></html>

@@ -218,5 +218,14 @@
 
 </div>
 
-<div class="buybar"><a class="b1" href="../checkout.html">구매하기</a><a class="b2" href="../">다른 제품 보기</a></div>
+<div class="buybar"><a class="b1" href="../checkout.html" data-buy="p12">구매하기</a><a class="b2" href="../">다른 제품 보기</a></div>
+<script src="../config.js"></script>
+<script src="../cart.js"></script>
+<script>
+/* 상세에서 바로 구매하면 그 제품을 담고 결제로 간다. 안 담고 가면 결제 화면이 0개로 열린다. */
+(function(){var b=document.querySelector("[data-buy]"); if(!b) return;
+  b.addEventListener("click",function(e){ e.preventDefault();
+    if(window.PH_CART) PH_CART.add(b.getAttribute("data-buy"),1);
+    location.href=b.getAttribute("href"); });})();
+</script>
 </body></html>
