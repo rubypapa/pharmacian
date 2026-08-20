@@ -1,0 +1,320 @@
+<!-- PHARMACIAN 가입·배송지 화면. 카카오는 Supabase가 토큰 교환을 대신하고, 구글은 프론트에서 바로 된다.
+     키가 안 채워져 있으면 버튼이 잠기고 무엇이 없는지 화면에 그대로 뜬다(조용히 실패하지 않게). -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>가입 · PHARMACIAN</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+:root{--page:#F3F3F1;--surface:#fff;--ink:#17181A;--ink-2:#5A5D63;--ink-3:#8E9299;
+      --line:#E3E3DF;--line-2:#D2D2CC;--accent:#E8380D;--accent-soft:#FDECE7;--kakao:#FEE500;--bad:#C4271A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--page);color:var(--ink);line-height:1.55;word-break:keep-all;
+  font-family:'Pretendard Variable',Pretendard,-apple-system,'Malgun Gothic',sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+.num{font-variant-numeric:tabular-nums}
+.bar{background:rgba(243,243,241,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.bar-in{max-width:620px;margin:0 auto;height:60px;padding:0 20px;display:flex;align-items:center;gap:14px}
+.bar-t{font-size:15px;font-weight:700;color:var(--ink-2)}
+.wrap{max-width:620px;margin:0 auto;padding:26px 20px 80px}
+.steps{display:flex;gap:9px;margin-bottom:24px}
+.st{flex:1;display:flex;flex-direction:column;gap:7px}
+.st span{font-size:12.5px;font-weight:700;color:var(--ink-3)}
+.st i{height:4px;border-radius:999px;background:var(--line);display:block}
+.st.on span{color:var(--accent)} .st.on i{background:var(--accent)}
+.st.done span{color:var(--ink)} .st.done i{background:var(--ink)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px 24px}
+h1{font-size:24px;font-weight:800;letter-spacing:-.04em;line-height:1.32}
+.lead{margin-top:11px;font-size:15px;color:var(--ink-2)}
+.btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;border-radius:999px;font-weight:700;
+     transition:transform .12s cubic-bezier(.16,1,.3,1),background .18s,opacity .18s}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn-lg{height:56px;font-size:16.5px}
+.btn-kakao{background:var(--kakao);color:#181600}
+.btn-google{background:var(--surface);border:1px solid var(--line-2)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:disabled{background:var(--line-2);color:#fff}
+.gate{margin-top:22px;display:flex;flex-direction:column;gap:10px}
+.guest{height:44px;font-size:14.5px;color:var(--ink-2);font-weight:600}
+.f{margin-top:18px}
+.f label{display:block;font-size:14px;font-weight:700;margin-bottom:7px}
+.f label em{font-style:normal;color:var(--accent)}
+.in{width:100%;height:52px;padding:0 15px;font-size:16px;border:1px solid var(--line-2);border-radius:10px;background:#fff;font-family:inherit}
+.in:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.row{display:flex;gap:9px}.row .in{flex:1}
+.row .btn{width:auto;padding:0 20px;height:52px;font-size:15px;flex:none;border:1px solid var(--line-2)}
+.help{margin-top:7px;font-size:13px;color:var(--ink-3)}
+.err{margin-top:7px;font-size:13px;color:var(--bad);font-weight:600;display:none}
+.err.on{display:block}
+.agree{margin-top:24px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.ag{display:flex;gap:11px;padding:15px;border-top:1px solid var(--line);align-items:flex-start}
+.ag:first-child{border-top:0;background:var(--page)}
+.ag input{width:21px;height:21px;margin:1px 0 0;accent-color:var(--accent);flex:none;cursor:pointer}
+.ag label{font-size:14.5px;cursor:pointer;flex:1}
+.ag:first-child label{font-weight:800;font-size:15.5px}
+.tag{font-size:12.5px;font-weight:800;margin-right:5px}
+.tag.req{color:var(--accent)} .tag.opt{color:var(--ink-3)}
+.nudge{margin-top:11px;padding:13px 15px;border-radius:10px;background:var(--accent-soft);font-size:13.5px;color:#8C2409;font-weight:600}
+.legal{margin-top:13px;font-size:12.5px;color:var(--ink-3);line-height:1.7}
+.recap{margin-top:20px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.recap div{display:flex;gap:14px;padding:13px 15px;border-top:1px solid var(--line);font-size:14.5px}
+.recap div:first-child{border-top:0}
+.recap b{width:74px;flex:none;color:var(--ink-2);font-weight:600}
+.done-mark{width:60px;height:60px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+/* 설정이 안 됐을 때 조용히 실패하지 않고 이유를 화면에 띄운다 */
+.setup{margin-bottom:18px;padding:14px 16px;border-radius:10px;border:1px solid var(--accent);background:var(--accent-soft);font-size:13.5px;color:#8C2409}
+.setup b{display:block;font-weight:800;margin-bottom:5px}
+.setup code{font-family:ui-monospace,Menlo,monospace;font-size:12.5px}
+.hide{display:none}
+@media (max-width:560px){.wrap{padding:20px 16px 64px}.card{padding:22px 18px}h1{font-size:21px}}
+</style>
+</head>
+<body>
+
+<header class="bar"><div class="bar-in">
+  <a href="/" style="display:flex;align-items:center">
+    <span style="font-size:18px;font-weight:800;letter-spacing:-.03em;color:#17181A">PHARMACIAN</span></a>
+  <span class="bar-t">가입 · 배송지</span>
+</div></header>
+
+<main class="wrap">
+  <div class="steps">
+    <div class="st on" data-s="1"><span>1 본인 확인</span><i></i></div>
+    <div class="st" data-s="2"><span>2 배송지</span><i></i></div>
+    <div class="st" data-s="3"><span>3 완료</span><i></i></div>
+  </div>
+
+  <section class="card" id="s1">
+    <div id="setup" class="setup hide"></div>
+    <h1>계정으로 시작합니다.</h1>
+    <p class="lead">가입 절차는 따로 없습니다. 아래 버튼 하나면 됩니다.</p>
+    <div class="gate">
+      <button class="btn btn-lg btn-kakao" id="kakao" type="button">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3C6.9 3 2.8 6.2 2.8 10.2c0 2.6 1.7 4.8 4.3 6.1-.2.7-.7 2.5-.8 2.9-.1.5.2.5.4.4.2-.1 2.7-1.8 3.8-2.6.5.1 1 .1 1.5.1 5.1 0 9.2-3.2 9.2-7.2S17.1 3 12 3Z"/></svg>
+        카카오로 계속하기</button>
+      <button class="btn btn-lg btn-google" id="google" type="button">
+        <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45 24.5c0-1.6-.1-2.8-.4-4H24v7.5h12c-.2 2-1.6 5-4.5 7l6.9 5.3C42.4 36.4 45 31 45 24.5Z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-2 14.4-5.3l-6.9-5.3c-1.9 1.3-4.4 2.2-7.5 2.2-5.7 0-10.6-3.8-12.3-9.1l-7.1 5.5C8.2 41.1 15.5 46 24 46Z"/><path fill="#FBBC05" d="M11.7 28.5c-.5-1.3-.7-2.7-.7-4.5s.3-3.2.7-4.5l-7.1-5.5C3.6 16.9 3 20.3 3 24s.6 7.1 1.6 10l7.1-5.5Z"/><path fill="#EA4335" d="M24 10.6c3.2 0 6 1.1 8.2 3.2l6.1-6.1C34.9 4.3 29.9 2 24 2 15.5 2 8.2 6.9 4.6 14l7.1 5.5c1.7-5.3 6.6-8.9 12.3-8.9Z"/></svg>
+        구글로 계속하기</button>
+      <button class="btn guest" id="guest" type="button">계정 없이 계속하기</button>
+    </div>
+    <p class="legal">비밀번호는 카카오·구글에 입력하며 PHARMACIAN은 그 값을 보지 않습니다.</p>
+  </section>
+
+  <section class="card hide" id="s2">
+    <p id="who" class="lead hide" style="margin:0 0 14px;padding:11px 14px;background:var(--page);border-radius:10px;font-size:14px"></p>
+    <h1>어디로 보낼까요?</h1>
+    <p class="lead">배송에만 쓰고, 법에서 정한 기간까지만 보관합니다.</p>
+    <form id="form" novalidate>
+      <div class="f"><label for="name">받는 분 <em>*</em></label>
+        <input class="in" id="name" autocomplete="name" placeholder="이름" required>
+        <p class="err" id="e-name">이름을 입력해 주세요.</p></div>
+      <div class="f"><label for="tel">휴대폰 번호 <em>*</em></label>
+        <input class="in" id="tel" type="tel" inputmode="numeric" autocomplete="tel" placeholder="010-0000-0000" maxlength="13" required>
+        <p class="help">배송 안내 문자를 이 번호로 보냅니다.</p>
+        <p class="err" id="e-tel">휴대폰 번호 11자리를 정확히 입력해 주세요.</p></div>
+      <div class="f"><label for="zip">주소 <em>*</em></label>
+        <div class="row"><input class="in" id="zip" placeholder="우편번호" readonly style="max-width:130px">
+          <button class="btn" type="button" id="findzip">주소 찾기</button></div>
+        <input class="in" id="addr1" placeholder="주소" readonly style="margin-top:9px">
+        <input class="in" id="addr2" autocomplete="address-line2" placeholder="상세주소 (동·호수)" style="margin-top:9px">
+        <p class="err" id="e-addr">주소를 찾아 주세요.</p></div>
+      <div class="f"><label for="memo">배송 메모</label>
+        <input class="in" id="memo" placeholder="예: 부재 시 경비실에 맡겨주세요"></div>
+
+      <div class="agree">
+        <div class="ag"><input type="checkbox" id="all"><label for="all">아래 항목에 모두 동의합니다</label></div>
+        <div class="ag"><input type="checkbox" id="a1"><label for="a1"><span class="tag req">필수</span>개인정보 수집·이용 동의 (이름·연락처·주소 / 배송 목적 / 배송 완료 후 6개월간 보관 후 파기, 전자상거래법이 보존을 정한 기록은 그 기간까지) <a href="privacy.html" target="_blank" style="text-decoration:underline;text-underline-offset:3px">전문 보기</a></label></div>
+        <div class="ag"><input type="checkbox" id="a2"><label for="a2"><span class="tag req">필수</span>만 14세 이상이며 <a href="terms.html" target="_blank" style="text-decoration:underline;text-underline-offset:3px">이용약관</a>에 동의합니다</label></div>
+        <div class="ag"><input type="checkbox" id="a3"><label for="a3"><span class="tag opt">선택</span>할인·오픈 소식을 문자와 알림톡으로 받겠습니다. 동의하지 않아도 신청은 그대로 됩니다</label></div>
+      </div>
+      <div class="nudge">다음 소식은 <b>알림 받는 분께 먼저</b> 갑니다.</div>
+      <div class="gate">
+        <button class="btn btn-lg btn-primary" type="submit" id="submit" disabled>이 주소로 등록</button>
+        <button class="btn guest" type="button" id="back">뒤로</button>
+      </div>
+      <p class="legal" id="savenote"></p>
+    </form>
+  </section>
+
+  <section class="card hide" id="s3">
+    <div class="done-mark"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+    <h1>등록됐습니다.</h1>
+    <p class="lead" id="donemsg"></p>
+    <div class="recap">
+      <div><b>계정</b><span id="r-who">-</span></div>
+      <div><b>받는 분</b><span id="r-name">-</span></div>
+      <div><b>연락처</b><span id="r-tel" class="num">-</span></div>
+      <div><b>주소</b><span id="r-addr">-</span></div>
+      <div><b>알림</b><span id="r-ad">-</span></div>
+      <div><b>저장</b><span id="r-save">-</span></div>
+    </div>
+    <div class="gate"><a class="btn btn-lg btn-primary" href="/">돌아가기</a></div>
+  </section>
+</main>
+
+<script src="config.js"></script>
+<script src="track.js"></script>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" onerror="window.__nozip=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" onerror="window.__nosb=1"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+const $ = s => document.querySelector(s);
+const C = window.PHARMACIAN || {};
+let sb = null, me = null, myId = null;
+
+/* ── 무엇이 설정 안 됐는지 화면에 그대로 띄운다 ─────────────── */
+const missing = [];
+if (!C.SUPABASE_URL || !C.SUPABASE_ANON) missing.push("SUPABASE_URL · SUPABASE_ANON");
+if (!C.GOOGLE_CLIENT_ID) missing.push("GOOGLE_CLIENT_ID");
+if (missing.length) {
+  $('#setup').classList.remove('hide');
+  $('#setup').innerHTML = '<b>아직 연결 안 된 것</b>' +
+    missing.map(m => `<code>${m}</code>`).join(' · ') +
+    '<br>config.js 에 값을 넣으면 아래 버튼이 살아납니다.';
+}
+
+if (C.SUPABASE_URL && C.SUPABASE_ANON && !window.__nosb && window.supabase) {
+  sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON);
+}
+$('#kakao').disabled = !sb;                       // 카카오는 토큰 교환에 서버가 필요하다
+$('#google').disabled = !(sb || C.GOOGLE_CLIENT_ID);
+$('#savenote').textContent = sb
+  ? "등록하면 서울 리전 데이터베이스에 저장됩니다. 본인 외에는 조회할 수 없습니다."
+  : "지금은 저장소가 연결되지 않아 이 브라우저에서만 확인됩니다.";
+
+function go(n){
+  [1,2,3].forEach(i => $('#s'+i).classList.toggle('hide', i !== n));
+  document.querySelectorAll('.st').forEach(el => {
+    const s = +el.dataset.s;
+    el.classList.toggle('on', s === n);
+    el.classList.toggle('done', s < n);
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function setWho(label){
+  me = label;
+  if (label){ $('#who').textContent = label + ' 계정으로 진행합니다.'; $('#who').classList.remove('hide'); }
+  go(2);
+}
+
+// scopes는 넘기지 않는다. Supabase는 기본값을 교체하지 않고 덧붙이기 때문에 중복만 생긴다.
+// 카카오 기본값 = account_email · profile_image · profile_nickname 셋이고, 콘솔에 셋 다 켜둬야 KOE205가 안 난다.
+$('#kakao').addEventListener('click', async () => {
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'kakao', options: { redirectTo: location.href }
+  });
+  if (error) alert('카카오 로그인 실패: ' + error.message);
+});
+$('#google').addEventListener('click', async () => {
+  if (sb) {
+    const { error } = await sb.auth.signInWithOAuth({
+      provider: 'google', options: { redirectTo: location.href }
+    });
+    if (error) alert('구글 로그인 실패: ' + error.message);
+  }
+});
+$('#guest').addEventListener('click', () => setWho('비회원'));
+$('#back').addEventListener('click', () => go(1));
+
+/* 로그인 후 돌아왔으면 바로 2단계로 */
+(async () => {
+  if (!sb) return;
+  const { data } = await sb.auth.getUser();
+  if (data && data.user) {
+    const u = data.user;
+    myId = u.id;                                   // 배송지를 이 계정에 묶는다
+    setWho(u.email || (u.user_metadata && u.user_metadata.name) || '로그인됨');
+  }
+  dropProviderToken();
+})();
+
+/* 우리는 카카오·구글의 액세스 토큰을 쓰지 않는다. 브라우저에 남겨둘 이유가 없으므로 지운다.
+   남겨두면 화면에 스크립트가 끼어들었을 때 그 토큰까지 같이 새어 나간다. */
+function dropProviderToken(){
+  const k = 'sb-' + new URL(C.SUPABASE_URL).hostname.split('.')[0] + '-auth-token';
+  try {
+    const raw = localStorage.getItem(k);
+    if (!raw) return;
+    const v = JSON.parse(raw);
+    if (v.provider_token == null && v.provider_refresh_token == null) return;
+    delete v.provider_token; delete v.provider_refresh_token;
+    localStorage.setItem(k, JSON.stringify(v));
+  } catch (_) { /* 저장 형식이 바뀌면 조용히 넘어간다. 지우기 실패가 로그인을 막으면 안 된다 */ }
+}
+if (sb) sb.auth.onAuthStateChange(() => dropProviderToken());
+
+/* ── 입력 편의 ─────────────────────────────────────────── */
+$('#tel').addEventListener('input', e => {
+  const v = e.target.value.replace(/\D/g,'').slice(0,11);
+  e.target.value = v.length < 4 ? v : v.length < 8 ? `${v.slice(0,3)}-${v.slice(3)}` : `${v.slice(0,3)}-${v.slice(3,7)}-${v.slice(7)}`;
+  check();
+});
+$('#findzip').addEventListener('click', () => {
+  if (window.__nozip || !window.daum || !daum.Postcode){
+    $('#zip').readOnly = false; $('#addr1').readOnly = false; $('#addr1').focus(); return;
+  }
+  new daum.Postcode({ oncomplete: d => {
+    $('#zip').value = d.zonecode;
+    $('#addr1').value = d.roadAddress || d.jibunAddress;
+    $('#addr2').focus(); check();
+  }}).open();
+});
+const boxes = ['a1','a2','a3'].map(i => $('#'+i));
+$('#all').addEventListener('change', e => { boxes.forEach(b => b.checked = e.target.checked); check(); });
+boxes.forEach(b => b.addEventListener('change', () => { $('#all').checked = boxes.every(x => x.checked); check(); }));
+const valid = () => $('#name').value.trim().length >= 2
+  && $('#tel').value.replace(/\D/g,'').length === 11
+  && $('#addr1').value.trim() !== '' && $('#a1').checked && $('#a2').checked;
+function check(){ $('#submit').disabled = !valid(); }
+['name','addr1','addr2'].forEach(id => $('#'+id).addEventListener('input', check));
+
+/* ── 제출 ─────────────────────────────────────────────── */
+$('#form').addEventListener('submit', async e => {
+  e.preventDefault();
+  let bad = false;
+  const mark = (id, ok) => { $('#e-'+id).classList.toggle('on', !ok); if(!ok) bad = true; };
+  mark('name', $('#name').value.trim().length >= 2);
+  mark('tel', $('#tel').value.replace(/\D/g,'').length === 11);
+  mark('addr', $('#addr1').value.trim() !== '');
+  if (bad || !valid()) return;
+
+  const rec = {
+    // 로그인했으면 그 계정에 묶는다. 안 묶으면 본인도 자기 배송지를 다시 못 본다(RLS가 user_id로 판단한다).
+    user_id: myId,
+    name: $('#name').value.trim(),
+    tel: $('#tel').value,
+    zip: $('#zip').value,
+    addr1: $('#addr1').value,
+    addr2: $('#addr2').value,
+    memo: $('#memo').value,
+    marketing: $('#a3').checked,
+  };
+
+  let saved = '이 브라우저에만 (저장소 미연결)';
+  if (sb) {
+    $('#submit').disabled = true; $('#submit').textContent = '저장 중...';
+    const { error } = await sb.from('shipping_address').insert(rec);
+    if (error) { alert('저장 실패: ' + error.message); $('#submit').disabled = false; $('#submit').textContent = '이 주소로 등록'; return; }
+    saved = '서울 리전 데이터베이스';
+  }
+
+  $('#r-who').textContent  = me || '-';
+  $('#r-name').textContent = rec.name;
+  $('#r-tel').textContent  = rec.tel;
+  $('#r-addr').textContent = `(${rec.zip}) ${rec.addr1} ${rec.addr2}`.trim();
+  $('#r-ad').textContent   = rec.marketing ? '문자·알림톡 받음' : '받지 않음';
+  $('#r-save').textContent = saved;
+  // ★4단계 전환: 배송지까지 입력한 사람 = 구매 의사가 가장 뚜렷한 층
+  if (window.PHARMACIAN_TRACK) window.PHARMACIAN_TRACK.shipping();
+  $('#donemsg').textContent = sb ? '배송지가 저장됐습니다.' : '화면 흐름 확인용입니다. 저장소를 연결하면 실제로 기록됩니다.';
+  go(3);
+});
+</script>
+</body>
+</html>

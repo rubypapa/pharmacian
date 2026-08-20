@@ -1,0 +1,216 @@
+<!-- B안 · 판매형. 대표가 고른 12벌 중 11번(토리든형)을 그대로 두고 홈 한 장으로 완성한 것.
+     ★루비 지시(2026-08-19): "11번 세일 문법은 그대로 가져온다."
+     그래서 타이머·할인율·증정 표기·해시태그 탭을 줄이지 않았다. 대신 없던 것을 채웠다 —
+     성분 근거(후기 0건 대응) · 배송/반품 · 세트 구성.
+     제품 사실·가격·법정 문구는 tools/build.py와 같은 원천을 따른다.
+     ★취소선 정가는 쓰지 않는다. 신규 브랜드라 종전 거래가격이 없어 표시광고법상 기만 표시가 된다. -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PHARMACIAN — B안 판매형</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0}
+:root{--bg:#fff;--ink:#191919;--muted:#7a7a7a;--rule:#eee;--sale:#e02b20;--pt:#1b4ed8;--soft:#f7f5f2}
+body{font-family:'Pretendard Variable',Pretendard,-apple-system,'Malgun Gothic',sans-serif;
+  line-height:1.6;word-break:keep-all;-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--ink)}
+
+.top{background:var(--sale);color:#fff;text-align:center;font-size:12.5px;font-weight:700;padding:10px}
+.strip2{background:#191919;color:#fff;text-align:center;font-size:12px;padding:8px}
+header{border-bottom:1px solid var(--rule);position:sticky;top:0;background:#fff;z-index:9}
+.hd{max-width:1140px;margin:0 auto;padding:13px 20px;display:flex;align-items:center;gap:18px}
+.logo{font-size:19px;font-weight:800;letter-spacing:.16em}
+.gnb{display:flex;gap:17px;font-size:14px;font-weight:700}
+.gnb .hot{color:var(--sale)}
+@media(max-width:900px){.gnb{display:none}}
+.util{margin-left:auto;display:flex;gap:12px;font-size:12.5px;color:var(--muted)}
+
+.hero{position:relative;background:#f6f4f2}
+/* 히어로 글자 대비 — 밝은 튜브 위 흰 글씨가 2.26:1로 기준(3:1) 미달이라 어둠막을 깐다 */
+.hero::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,.30) 45%,rgba(0,0,0,.46) 100%)}
+.hero .txt{z-index:1}
+.hero img{width:100%;height:min(54vh,440px);object-fit:cover;object-position:62% 40%}
+.hero .txt{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding:20px;color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.55)}
+.hero .badge{background:var(--sale);color:#fff;font-size:12px;font-weight:800;padding:6px 14px;border-radius:999px;text-shadow:none}
+.hero h1{margin-top:14px;font-size:clamp(24px,4.4vw,40px);font-weight:800;letter-spacing:-.04em;line-height:1.22}
+.hero p{margin-top:10px;font-size:15px}
+.hero .btns{margin-top:18px;display:flex;gap:9px;flex-wrap:wrap;justify-content:center}
+.hero button{padding:12px 22px;border-radius:4px;font-size:14px;font-weight:800}
+.hero .b1{background:var(--sale);color:#fff}
+.hero .b2{background:#fff;color:#191919}
+.timer{background:#191919;color:#fff;text-align:center;padding:14px 20px;font-size:14px;font-weight:700}
+.timer span{color:#ffd400;font-variant-numeric:tabular-nums}
+.timer small{display:block;margin-top:5px;font-size:11.5px;font-weight:500;color:#9a9a9a}
+
+section{max-width:1140px;margin:0 auto;padding:40px 20px}
+h2{font-size:21px;font-weight:800;letter-spacing:-.03em}
+h2 em{font-style:normal;color:var(--sale)}
+.sub{margin-top:6px;font-size:13.5px;color:var(--muted)}
+.tabs{margin-top:16px;display:flex;gap:8px;overflow-x:auto}
+.tabs span{flex:0 0 auto;font-size:13px;font-weight:700;padding:8px 15px;border:1px solid var(--rule);border-radius:999px}
+.tabs span.on{background:#191919;color:#fff;border-color:#191919}
+.grid{margin-top:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+.card .th{position:relative;background:#f6f4f2;aspect-ratio:1/1.35;overflow:hidden;border-radius:3px}
+.card .th img{width:100%;height:100%;object-fit:cover}
+.card .gift{position:absolute;left:7px;top:7px;background:var(--pt);color:#fff;font-size:11px;font-weight:800;padding:4px 8px;border-radius:3px}
+.card .pct{position:absolute;right:7px;top:7px;background:var(--sale);color:#fff;font-size:12px;font-weight:800;padding:4px 8px;border-radius:3px}
+.card h3{margin-top:10px;font-size:13.5px;font-weight:700;letter-spacing:-.02em;line-height:1.45}
+.card .pr{margin-top:7px;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.card .off{color:var(--sale);font-weight:800;font-size:17px}
+.card .was{font-size:12px;color:var(--muted);font-weight:700}
+.card .rv{margin-top:5px;font-size:11.5px;color:var(--muted)}
+.note{margin-top:16px;font-size:12px;color:var(--muted);line-height:1.8}
+
+/* 세트 */
+.sets{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+@media(max-width:900px){.sets{grid-template-columns:1fr}}
+.set{border:1px solid var(--rule);border-radius:4px;padding:18px;display:flex;gap:16px;align-items:center}
+.set img{width:92px;height:124px;object-fit:cover;border-radius:3px;flex:0 0 auto}
+.set b{font-size:15px;font-weight:800;letter-spacing:-.02em}
+.set p{margin-top:5px;font-size:12.5px;color:var(--muted)}
+.set .pr{margin-top:9px;font-size:17px;font-weight:800}
+.set .pr small{font-size:12px;font-weight:600;color:var(--muted);margin-left:5px}
+
+/* ★후기 0건 대응 — 숫자로 대신한다 */
+.proof{background:var(--soft);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+@media(max-width:900px){.pgrid{grid-template-columns:1fr}}
+.pgrid div{background:#fff;border:1px solid var(--rule);border-radius:4px;padding:18px}
+.pgrid b{display:block;font-size:24px;font-weight:800;letter-spacing:-.04em;color:var(--pt);font-variant-numeric:tabular-nums}
+.pgrid strong{display:block;margin-top:7px;font-size:14.5px}
+.pgrid p{margin-top:5px;font-size:13px;color:var(--muted)}
+
+/* 배송·반품 */
+.policy{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--rule);border-radius:4px;margin-top:20px}
+@media(max-width:900px){.policy{grid-template-columns:1fr}}
+.policy div{padding:20px;border-right:1px solid var(--rule)}
+.policy div:last-child{border-right:0}
+.policy b{font-size:14px;font-weight:800}
+.policy p{margin-top:6px;font-size:13px;color:var(--muted);line-height:1.7}
+
+.welcome{background:#f6f8ff;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.win{max-width:1140px;margin:0 auto;padding:34px 20px;display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.win b{font-size:19px;font-weight:800;letter-spacing:-.03em}
+.win p{margin-top:6px;font-size:13.5px;color:#555}
+.win button{margin-left:auto;background:var(--pt);color:#fff;padding:14px 26px;border-radius:4px;font-size:14.5px;font-weight:800}
+@media(max-width:620px){.win button{margin-left:0;width:100%}}
+
+footer{border-top:1px solid var(--rule);padding:30px 20px 64px;font-size:11.5px;color:var(--muted);line-height:2}
+footer a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+footer div{max-width:1140px;margin:0 auto}
+
+/* 법정 표기 — tools/법정주입.py 가 넣는다. 손으로 고치지 마라(_legal.json이 원천) */
+.legal{margin-top:12px;border-top:1px solid rgba(128,128,128,.28);padding-top:10px}
+.legal summary{font-size:12.5px;font-weight:600;cursor:pointer;list-style:none;opacity:.72}
+.legal summary::-webkit-details-marker{display:none}
+.legal summary::before{content:"+ ";font-weight:800}
+.legal[open] summary::before{content:"- "}
+.legal table{width:100%;border-collapse:collapse;margin-top:10px;font-size:11px;line-height:1.6}
+.legal th,.legal td{border:1px solid rgba(128,128,128,.28);padding:5px 7px;text-align:left;vertical-align:top}
+.legal th{width:30%;font-weight:600;opacity:.8}
+</style>
+</head>
+<body>
+
+<div class="top">🔥 첫 구매 15% 쿠폰 + 전 제품 증정 🔥</div>
+<div class="strip2">30,000원 이상 무료배송 · 신규회원 5,000원 쿠폰 즉시 지급</div>
+<header><div class="hd">
+  <div class="logo">PHARMACIAN</div>
+  <nav class="gnb"><a class="hot">오픈특가💥</a><a>전 제품</a><a>PDRN</a><a>NMN</a><a>미백</a><a>이벤트</a></nav>
+  <div class="util"><span>로그인</span><span>장바구니</span></div>
+</div></header>
+
+<div class="hero"><img src="img/hero-torriden.jpg" alt="">
+  <div class="txt"><span class="badge">OPEN SALE</span>
+    <h1>첫 구매 15% 쿠폰</h1><p>지금 담으면 파우치까지 함께 드립니다 · 첫 구매 1회 한정</p>
+    <div class="btns"><button class="b1">특가 보러가기</button><button class="b2">쿠폰 받기</button></div></div></div>
+
+<div class="timer">오픈 특가 마감까지 <span>02일 11:24:07</span>
+  <small>마감 일시 2026. 8. 24. 23:59 · 연장·리셋 없음</small></div>
+
+<section><h2>지금 <em>먼저 여는</em> 것</h2>
+  <div class="tabs"><span class="on">#오픈특가</span><span>#신제품</span><span>#증정</span><span>#꿀조합SET</span></div>
+  <div class="grid">
+    <article class="card"><div class="th"><img src="img/prod-p7.jpg" alt="">
+        <span class="gift">증정</span><span class="pct">쿠폰 15%</span></div>
+      <h3>[증정] 파머시안 PDRN 7000 크림 30g + 파우치</h3>
+      <div class="pr"><span class="off">17,000원</span><span class="was">쿠폰 적용가</span></div>
+      <p class="rv">판매가 20,000원 · 첫 구매 1회 한정</p><details class="legal"><summary>상품정보 제공고시 · 전성분</summary><table><tr><th>제품명</th><td>파머시안 피디알엔 7000 크림<br>(PHARMACIAN PDRN 7000 CREAM)</td></tr><tr><th>용량</th><td>30g(1.05oz.)</td></tr><tr><th>피부타입</th><td>모든 피부</td></tr><tr><th>효능효과</th><td>피부의 미백에 도움을 준다. 피부의 주름개선에 도움을 준다.</td></tr><tr><th>용법용량</th><td>본품 적당량을 취해 피부에 골고루 펴 바른다.</td></tr><tr><th>전성분</th><td>정제수, 다이프로필렌글라이콜, 글리세린, 부틸렌글라이콜, 카프릴릴메티콘, 1,2-헥산다이올, 나이아신아마이드, 베타인, 판테놀, 하이드로제네이티드폴리데센, 소듐디엔에이(7000ppm), 세테아릴올리베이트, C14-22알코올, 락토바실러스세포외소포(5580ppm), 효모세포외소포(5580ppm), 솔비탄올리베이트, 알란토인(3000ppm), 암모늄아크릴로일다이메틸타우레이트/브이피코폴리머, 유청여과물, 카보머, 카프릴릭/카프릭트라이글리세라이드, 트로메타민, C12-20알킬글루코사이드, 푸코실락토오스, 에틸헥실글리세린, 우유엑소좀(600ppm), 토코페릴아세테이트, 세라마이드엔피, 아데노신, 피토스테롤, 올레익애씨드, 하이드로제네이티드레시틴, 다이소듐이디티에이, 글리세릴스테아레이트, 레몬껍질오일, 베르가모트오일, 칸디다 봄비콜라/글루코오스/메틸레이프씨데이트발효물, 세테아릴알코올, 리씨열매오일, 스테아릭애씨드, 폴리글리세릴-3메틸글루코오스다이스테아레이트, 발삼아미리스껍질오일, 소두구씨오일, 연필향나무오일, 모란뿌리추출물, 쌀배아오일, 코코넛야자오일, 프로판다이올, 클레리오일, 사철쑥추출물, 타임꽃/잎오일, 올리브추출물</td></tr><tr><th>화장품제조업자</th><td>린제이앤코스 주식회사 / 경기도 포천시 군내면 용정경제로1길 94-63 나동</td></tr><tr><th>화장품책임판매업자</th><td>(주)와이엘트레이딩 / 경기도 안양시 동안구 시민대로 401, 2001호(관양동, 대륭테크노타운15차)</td></tr><tr><th>사용기한</th><td>별도표기</td></tr><tr><th>소비자상담실</th><td>02-6177-7350</td></tr><tr><th>주의사항</th><td>화장품 사용 시 또는 사용 직후 직사광선에 의하여 사용부위가 붉은 반점, 부어오름 또는 가려움증 등의 이상 증상이나 부작용이 있는 경우에는 전문의 등과 상담해주세요.<br>상처가 있는 부위 등에는 사용을 자제해주세요.<br>어린이의 손이 닿지 않는 곳에 보관해주세요.<br>직사광선을 피해서 보관해주세요.</td></tr></table></details></article>
+    <article class="card"><div class="th"><img src="img/prod-p12.jpg" alt="">
+        <span class="gift">증정</span><span class="pct">쿠폰 15%</span></div>
+      <h3>[증정] 파머시안 PDRN 12000 크림 30g + 파우치</h3>
+      <div class="pr"><span class="off">32,300원</span><span class="was">쿠폰 적용가</span></div>
+      <p class="rv">판매가 38,000원 · 첫 구매 1회 한정</p><details class="legal"><summary>상품정보 제공고시 · 전성분</summary><table><tr><th>제품명</th><td>브이씨엑소 파머시안 피디알엔 12000 크림<br>(VCXO PHARMACIAN PDRN 12000 CREAM)</td></tr><tr><th>용량</th><td>30g(1.05oz.)</td></tr><tr><th>피부타입</th><td>모든 피부</td></tr><tr><th>효능효과</th><td>피부의 미백에 도움을 준다. 피부의 주름개선에 도움을 준다.</td></tr><tr><th>용법용량</th><td>본품 적당량을 취해 피부에 골고루 펴 바른다.</td></tr><tr><th>전성분</th><td>정제수, 다이프로필렌글라이콜, 글리세린, 부틸렌글라이콜, 카프릴릴메티콘, 1,2-헥산다이올, 나이아신아마이드, 베타인, 소듐디엔에이(12000ppm), 하이드로제네이티드폴리데센, 판테놀, 세테아릴올리베이트, 락토바실러스세포외소포(5580ppm), 효모세포외소포(5580ppm), C14-22알코올, 솔비탄올리베이트, 유청여과물, 칼슘알루미늄보로실리케이트, 알란토인(3000ppm), 암모늄아크릴로일다이메틸타우레이트/브이피코폴리머, 카보머, 카프릴릭/카프릭트라이글리세라이드, 트로메타민, C12-20알킬글루코사이드, 푸코실락토오스, 토코페릴아세테이트, 우유엑소좀, 에틸헥실글리세린, 아데노신, 세라마이드엔피, 피토스테롤, 올레익애씨드, 하이드로제네이티드레시틴, 다이소듐이디티에이, 레몬껍질오일, 글리세릴스테아레이트, 베르가모트오일, 칸디다봄비콜라/글루코오스/메틸레이프씨데이트발효물, 폴리그리세릴-10라우레이트, 세테아릴알코올, 리씨열매오일, 폴리그리세릴-3메틸글루코오스다이스테아레이트, 스테아릭애씨드, 발삼아미리스껍질오일, 소두구씨오일, 연필향나무오일, 코코넛야자오일, 쌀배아오일, 프로판다이올, 클레리오일, 사철쑥추출물, 타임꽃/잎오일, 올리브추출물, 카퍼트라이펩타이드-1, 아세틸헥사펩타이드-8, 아세틸테트라펩타이드-2, 아세틸테트라펩타이드-5, 헥사펩타이드-9, 팔미토일펜타펩타이드-4, 팔미토일트라이펩타이드-1, 트라이펩타이드-1, 아세틸테트라펩타이드-3, 헥사펩타이드-11, 노나펩타이드-1, 팔미토일헥사펩타이드-12, 팔미토일테트라펩타이드-7, 팔미토일트라이펩타이드-5, 트라이펩타이드-32</td></tr><tr><th>화장품제조업자</th><td>(주)위노바 / 경기도 평택시 청북읍 청북산단로 178</td></tr><tr><th>화장품책임판매업자</th><td>(주)와이엘트레이딩 / 경기도 안양시 동안구 시민대로 401, 2001호(관양동, 대륭테크노타운 15차)</td></tr><tr><th>사용기한</th><td>별도표기</td></tr><tr><th>소비자상담실</th><td>02-6342-9496</td></tr><tr><th>주의사항</th><td>화장품 사용 시 또는 사용 직후 직사광선에 의하여 사용부위가 붉은 반점, 부어오름 또는 가려움증 등의 이상 증상이나 부작용이 있는 경우에는 전문의 등과 상담해주세요.<br>상처가 있는 부위 등에는 사용을 자제해주세요.<br>어린이의 손이 닿지 않는 곳에 보관해주세요.<br>직사광선을 피해서 보관해주세요.</td></tr></table></details></article>
+    <article class="card"><div class="th"><img src="img/prod-nmn.jpg" alt="">
+        <span class="gift">증정</span><span class="pct">쿠폰 15%</span></div>
+      <h3>[증정] 파머시안 NMN 30,000 크림 30g + 파우치</h3>
+      <div class="pr"><span class="off">32,300원</span><span class="was">쿠폰 적용가</span></div>
+      <p class="rv">판매가 38,000원 · 첫 구매 1회 한정</p><details class="legal"><summary>상품정보 제공고시 · 전성분</summary><table><tr><th>제품명</th><td>브이씨엑소 파머시안 엔엠엔 30000 크림<br>(VCXO PHARMACIAN NMN 30,000 CREAM)</td></tr><tr><th>용량</th><td>30g(1.05oz.)</td></tr><tr><th>피부타입</th><td>모든 피부</td></tr><tr><th>효능효과</th><td>피부의 미백에 도움을 준다. 피부의 주름개선에 도움을 준다.</td></tr><tr><th>용법용량</th><td>본품 적당량을 취해 피부에 골고루 펴 바른다.</td></tr><tr><th>전성분</th><td>정제수, 카프릴릭/카프릭트라이글리세라이드, 세틸알코올, 나이아신아마이드, 모노-뉴클레오타이드(30,000ppm), 세틸에틸헥사노에이트, 카프릴릴메티콘, 1,2-헥산다이올, 나이아신아마이드, 베타인, 글리세릴스테아레이트, 하이드로제네이티드폴리데센, 세테아릴올리베이트, 스테아릴알코올, 솔비탄올리베이트, 세테아릴글루코사이드, 알란토인, 아크릴레이트/C10-30알킬아크릴레이트크로스폴리머, 트로메타민, 글리세린, 폴리아크릴레이트크로스폴리머-6, 레시틴, 미리 스틸알코올, 에틸헥실글리세린, 흰목이버섯폴리사카라이드, 다이소듐이디티에이, 아데노신, 라우릴알코올, 세라마이드엔피, 피토스테롤, 레몬껍질오일, 올레익애씨드, 하이드로제네이티드레시틴, 베르가모트오일, 소듐하이알루로네이트, 단백질추출물, 리씨열매오일, 부틸렌글라이콜, 연필향나무오일, 소두구씨오일, 발삼아미리스껍질오일, 칸디다 봄비콜라/글루코오스/메틸레이프씨데이트발효물, 세테아릴알코올, 클레리오일, 스테아릭애씨드, 폴리글리세릴-3메틸글루코오스다이스테아레이트, t-부틸알코올, 살베아오일, 코코넛야자오일, 프로판다이올, 튀김꽃/잎/오일, 사과 추출물, 폴리글리세릴-10라우레이트, 카퍼트라이펩타이드-1, 올리브추출물</td></tr><tr><th>화장품제조업자</th><td>(주)위노바 / 경기도 평택시 청북읍 청북산단로 178</td></tr><tr><th>화장품책임판매업자</th><td>(주)와이엘트레이딩 / 경기도 안양시 동안구 시민대로 401, 2001호(관양동, 대륭테크노타운 15차)</td></tr><tr><th>사용기한</th><td>별도표기</td></tr><tr><th>소비자상담실</th><td>02-6342-9496</td></tr><tr><th>주의사항</th><td>화장품 사용 시 또는 사용 직후 직사광선에 의하여 사용부위가 붉은 반점, 부어오름 또는 가려움증 등의 이상 증상이나 부작용이 있는 경우에는 전문의 등과 상담해주세요.<br>상처가 있는 부위 등에는 사용을 자제해주세요.<br>어린이의 손이 닿지 않는 곳에 보관해주세요.<br>직사광선을 피해서 보관해주세요.</td></tr></table></details></article>
+    <article class="card"><div class="th"><img src="img/prod-mel.jpg" alt="">
+        <span class="gift">증정</span><span class="pct">쿠폰 15%</span></div>
+      <h3>[증정] 파머시안 멜라리스 100,000 크림 30g + 파우치</h3>
+      <div class="pr"><span class="off">19,550원</span><span class="was">쿠폰 적용가</span></div>
+      <p class="rv">판매가 23,000원 · 첫 구매 1회 한정</p><details class="legal"><summary>상품정보 제공고시 · 전성분</summary><table><tr><th>제품명</th><td>브이씨엑소 파머시안 멜라리스 10만 크림<br>(VCXO PHARMACIAN MELALESS 100,000 CREAM)</td></tr><tr><th>용량</th><td>30g</td></tr><tr><th>피부타입</th><td>모든 피부</td></tr><tr><th>효능효과</th><td>피부의 미백에 도움을 준다. 피부의 주름개선에 도움을 준다.</td></tr><tr><th>용법용량</th><td>본품 적당량을 취해 피부에 골고루 펴 바른다.</td></tr><tr><th>전성분</th><td>정제수, 카프릴릭/카프릭트라이글리세라이드, 나이아신아마이드, 카프릴릴메티콘, 다이프로필렌그라이콜, 부틸렌그라이콜, 시트릭애씨드, 트라넥사믹애씨드, 세테아릴알코올, 3-O-에틸아스코빅애씨드, 글리세린, 1,2-헥산다이올, 베타인, 세틸알코올, 글리세릴스테아레이트, 판테놀, 시어버터, 세테아릴올리베이트, 베헤닐알코올, 폴리아크릴레이트크로스폴리머-6, 솔비탄올리베이트, 세테아릴글루코사이드, 페룰릭애씨드, 스테아릴알코올, 알란토인, 팔미틱애씨드, 스테아릭애씨드, 알라닌, 푸코실락토오스, 폴리글리세릴-10라우레이트, 흰목이버섯폴리사카라이드, 미리스틸알코올, 아시아티코사이드, 마데카식애씨드, 에틸헥실글리세린, 다이소듐이디티에이, 글리세레스-26, 소듐하이알루로네이트, 토코페릴아세테이트, 아데노신, 아시아틱애씨드, 라우릴알코올, t-부틸알코올, 펜타에리스리틸테트라-다이-t-부틸하이드록시하이드로신나메이트, 아미노부티릭애씨드, 미리스틱애씨드, 글라이신, 아라키딕애씨드, 소듐팔미토일사코시네이트, 글루타믹애씨드, 알지닌, 올레익애씨드, 아스파틱애씨드, 라이신, 세린, 트레오닌, 시스테인, 히스티딘, 타이로신, 토코페롤</td></tr><tr><th>화장품제조업자</th><td>(주)위노바 / 경기도 평택시 청북읍 청북산단로 178</td></tr><tr><th>화장품책임판매업자</th><td>(주)와이엘트레이딩 / 경기도 안양시 동안구 시민대로 401, 2001호(관양동, 대륭테크노타운 15차)</td></tr><tr><th>사용기한</th><td>별도표기</td></tr><tr><th>소비자상담실</th><td>02-6342-9496</td></tr><tr><th>주의사항</th><td>화장품 사용 시 또는 사용 직후 직사광선에 의하여 사용부위가 붉은 반점, 부어오름 또는 가려움증 등의 이상 증상이나 부작용이 있는 경우에는 전문의 등과 상담해주세요.<br>상처가 있는 부위 등에는 사용을 자제해주세요.<br>어린이의 손이 닿지 않는 곳에 보관해주세요.<br>직사광선을 피해서 보관해주세요.</td></tr><tr><th>제품의 pH</th><td>4.1 (기능성화장품 보고서 기재값)</td></tr></table></details></article>
+  </div>
+  <p class="note">★신규 브랜드라 종전 판매 가격이 없습니다. 그래서 정가·취소선 표기를 하지 않고,
+    실제로 드리는 혜택(첫 구매 15% 쿠폰)의 적용가만 적습니다.</p>
+</section>
+
+<section style="padding-top:0"><h2>#꿀조합SET</h2>
+  <p class="sub">따로 사는 것과 값은 같고, 파우치가 하나 더 들어갑니다.</p>
+  <div class="sets">
+    <div class="set"><img src="img/prod-p7.jpg" alt="">
+      <div><b>PDRN 라인 2종</b><p>PDRN 7000 + PDRN 12000 · 각 30g</p>
+        <p class="pr">58,000원<small>단품 합계가</small></p></div></div>
+    <div class="set"><img src="img/prod-mel.jpg" alt="">
+      <div><b>아침·밤 2종</b><p>멜라리스 100,000 + NMN 30,000 · 각 30g</p>
+        <p class="pr">61,000원<small>단품 합계가</small></p></div></div>
+  </div>
+</section>
+
+<div class="proof"><section>
+  <h2>후기가 아직 없습니다. 대신 <em>표기값</em>으로 말합니다.</h2>
+  <p class="sub">이제 막 문을 연 브랜드라 후기가 쌓이지 않았습니다. 광고 문구 대신 전성분표에 적힌 숫자를 그대로 옮깁니다.</p>
+  <div class="pgrid">
+    <div><b>7,000 / 12,000</b><strong>소듐디엔에이 (연어 PDRN)</strong>
+      <p>ppm · 전성분표 표기값. 12000에는 펩타이드 17종이 더 들어갑니다.</p></div>
+    <div><b>30,000</b><strong>모노-뉴클레오타이드 (NMN)</strong>
+      <p>ppm · 리포좀 공법으로 안정화했습니다.</p></div>
+    <div><b>5,580 / 3,000</b><strong>세포외소포 · 알란토인</strong>
+      <p>ppm · 우유 유래 엑소좀 600ppm도 함께 들어 있습니다.</p></div>
+  </div>
+  <p class="note">나이아신아마이드(미백)·아데노신(주름개선)은 기능성 고시성분입니다.
+    본품이 말할 수 있는 효능은 기능성 보고 범위인 미백과 주름개선까지입니다.
+    화장품은 질병의 예방·치료를 위한 의약품이 아닙니다.</p>
+</section></div>
+
+<section>
+  <h2>만든 곳과 보내는 법</h2>
+  <div class="policy">
+    <div><b>만든 곳</b><p>린제이앤코스(PDRN 7000) · 주식회사 위노바(그 외)<br>책임판매 (주)와이엘트레이딩</p></div>
+    <div><b>배송</b><p>배송비 3,000원 · 30,000원 이상 무료<br>평일 오후 2시 이전 주문 당일 출고</p></div>
+    <div><b>교환·반품</b><p>수령 후 7일 이내<br>단순 변심은 왕복 배송비를 부담하십니다</p></div>
+  </div>
+</section>
+
+<div class="welcome"><div class="win">
+  <div><b>신규회원 웰컴 혜택</b><p>가입 즉시 5,000원 쿠폰 + 첫 구매 무료배송</p></div>
+  <button>1초 회원가입</button></div></div>
+
+<footer><div>
+  주식회사 와이엘트레이딩 · 대표 이권선 · 사업자등록번호 741-86-03645 · 통신판매업신고 2025-안양동안-0740<br>
+  경기도 안양시 동안구 시민대로 401, 2001호 · 고객센터 02-6177-7350 · 개인정보 보호책임자 이권선<br>
+  <a href="terms.html">이용약관</a> · <a href="privacy.html"><strong>개인정보처리방침</strong></a> · <a href="refund.html">교환/반품 안내</a> · 구매안전(에스크로) 서비스 가입 확인
+</div></footer>
+
+</body>
+</html>

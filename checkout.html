@@ -1,0 +1,192 @@
+<!-- PHARMACIAN 결제 화면. 폐쇄몰이라 로그인해야 가격이 보이고 결제도 로그인 뒤에만 열린다.
+     ★금액은 이 화면이 정하지 않는다. ph-order-create(서버)가 정하고, 여기는 받아서 보여주기만 한다. -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>결제 · PHARMACIAN</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+:root{--page:#F3F3F1;--ink:#17181A;--ink-2:#5A5D63;--ink-3:#8E9299;--line:#E3E3DF;--accent:#E8380D}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--page);color:var(--ink);line-height:1.6;word-break:keep-all;
+  font-family:'Pretendard Variable',Pretendard,-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:620px;margin:0 auto;padding:48px 20px 80px}
+a{color:inherit}
+h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
+.back{display:inline-block;margin-bottom:20px;font-size:14px;color:var(--ink-3);text-decoration:none}
+.back:hover{color:var(--ink)}
+.box{margin-top:22px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px}
+.row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row .nm{flex:1;font-size:15px;font-weight:700;letter-spacing:-.02em}
+.row .pr{font-size:14px;color:var(--ink-2);font-variant-numeric:tabular-nums;min-width:86px;text-align:right}
+.qty{display:flex;align-items:center;gap:8px}
+.qty button{width:30px;height:30px;border:1px solid var(--line);background:#fff;border-radius:8px;
+  font:inherit;font-weight:800;cursor:pointer;color:var(--ink-2)}
+.qty button:hover{border-color:var(--ink-3)}
+.qty input{width:44px;height:30px;border:1px solid var(--line);border-radius:8px;text-align:center;
+  font:inherit;font-size:14px;font-variant-numeric:tabular-nums}
+.sum{margin-top:6px;padding-top:16px;border-top:1px solid var(--line)}
+.sum div{display:flex;justify-content:space-between;font-size:14px;color:var(--ink-2);padding:4px 0}
+.sum .tot{margin-top:8px;padding-top:12px;border-top:1px solid var(--line);
+  font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-.03em}
+.num{font-variant-numeric:tabular-nums}
+.pay{margin-top:22px;width:100%;height:56px;border:0;border-radius:12px;background:var(--ink);color:#fff;
+  font:inherit;font-size:16.5px;font-weight:700;letter-spacing:-.02em;cursor:pointer}
+.pay:disabled{opacity:.4;cursor:not-allowed}
+.note{margin-top:14px;font-size:13px;color:var(--ink-3)}
+.gate{margin-top:22px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px 22px;text-align:center}
+.gate p{font-size:15px;color:var(--ink-2)}
+.gate a{display:inline-block;margin-top:16px;font-weight:700;color:var(--accent);
+  text-decoration:underline;text-underline-offset:4px}
+.hide{display:none}
+#payment-method,#agreement{margin-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="/">← PHARMACIAN</a>
+  <h1>결제</h1>
+
+  <!-- 비로그인: 가격도 결제도 안 열린다 -->
+  <div class="gate" id="gate">
+    <p>회원에게만 열리는 가격입니다.<br>로그인하시면 상품과 금액이 보입니다.</p>
+    <a href="/">로그인하러 가기</a>
+  </div>
+
+  <div id="shop" class="hide">
+    <div class="box" id="items"></div>
+    <div class="box sum" id="sum"></div>
+    <div id="payment-method"></div>
+    <div id="agreement"></div>
+    <button class="pay" id="pay" type="button" disabled>결제하기</button>
+    <p class="note" id="note">금액은 서버에서 정해집니다. 결제창에서 금액이 바뀌면 승인되지 않습니다.</p>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="track.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" onerror="window.__nosb=1"></script>
+<script src="https://js.tosspayments.com/v2/standard" onerror="window.__notoss=1"></script>
+<script>
+(function () {
+  const $ = s => document.querySelector(s);
+  const C = window.PHARMACIAN || {};
+  const won = n => n.toLocaleString('ko-KR');
+  if (window.__nosb || !window.supabase) { $('#gate').innerHTML = '<p>결제 준비 중입니다.</p>'; return; }
+  const sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON);
+
+  const NAMES = { p7: '파머시안 PDRN 7000 크림', p12: '파머시안 PDRN 12000 크림', nmn: '파머시안 NMN 30,000 크림', mel: '파머시안 멜라리스 100,000 크림' };
+  let rows = [], qty = {}, ship = 0, widgets = null, user = null;
+
+  const goods = () => rows.reduce((s, r) => s + r.price * (qty[r.key] || 0), 0);
+  const count = () => rows.reduce((s, r) => s + (qty[r.key] || 0), 0);
+  const total = () => goods() + (count() ? ship : 0);
+
+  function drawItems() {
+    $('#items').innerHTML = rows.map(r => `
+      <div class="row">
+        <span class="nm">${NAMES[r.key] || r.key}</span>
+        <span class="pr num">${won(r.price)}원</span>
+        <span class="qty">
+          <button type="button" data-k="${r.key}" data-d="-1">-</button>
+          <input type="text" readonly value="${qty[r.key] || 0}" id="q-${r.key}">
+          <button type="button" data-k="${r.key}" data-d="1">+</button>
+        </span>
+      </div>`).join('');
+    $('#items').querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+      const k = b.dataset.k, d = +b.dataset.d;
+      const before = qty[k] || 0;
+      qty[k] = Math.max(0, Math.min(20, before + d));
+      $('#q-' + k).value = qty[k];
+      // ★5단계 전환: 0에서 1로 올라간 순간이 '담았다'이다
+      if (before === 0 && qty[k] === 1 && window.PHARMACIAN_TRACK) {
+        const r = rows.find(x => x.key === k);
+        window.PHARMACIAN_TRACK.addToCart({ key: k, name: NAMES[k] || k, value: r ? r.price : 0 });
+      }
+      drawSum();
+    }));
+  }
+
+  function drawSum() {
+    const n = count();
+    $('#sum').innerHTML = `
+      <div><span>상품 금액</span><span class="num">${won(goods())}원</span></div>
+      <div><span>배송비</span><span class="num">${n ? won(ship) + '원' : '-'}</span></div>
+      <div class="tot"><span>결제 예정 금액</span><span class="num">${won(total())}원</span></div>`;
+    $('#pay').disabled = n === 0 || !widgets;
+    if (widgets && n) widgets.setAmount({ currency: 'KRW', value: total() });
+  }
+
+  // ★getSession()과 onAuthStateChange가 둘 다 부른다. 막지 않으면 위젯이 두 번 그려지고,
+  //   화면에 보이는 위젯과 결제를 요청하는 위젯이 서로 다른 물건이 된다
+  //   ("결제수단이 선택되지 않았어요"가 뜨는데 화면엔 선택돼 있는 상태).
+  let booted = false;
+  async function boot(u) {
+    if (booted && !!u === !!user) return;
+    booted = true;
+    user = u;
+    $('#gate').classList.toggle('hide', !!u);
+    $('#shop').classList.toggle('hide', !u);
+    if (!u) return;
+    // 로그인한 사람의 이메일을 넘기면 광고 전환 매칭률이 오른다(해싱은 메타·구글이 한다)
+    if (window.PHARMACIAN_TRACK) window.PHARMACIAN_TRACK.identify({ email: u.email });
+
+    const { data, error } = await sb.from('ph_product_price').select('key,price,ship');
+    if (error || !data || !data.length) { $('#items').textContent = '가격을 불러오지 못했습니다.'; return; }
+    rows = data.sort((a, b) => a.key.localeCompare(b.key));
+    ship = rows[0].ship;
+    rows.forEach(r => qty[r.key] = 0);
+    drawItems(); drawSum();
+
+    if (window.__notoss || !window.TossPayments) { $('#note').textContent = '결제 모듈을 불러오지 못했습니다.'; return; }
+    // customerKey는 회원마다 고정된 값이어야 한다. 우리 계정 id를 그대로 쓴다.
+    widgets = window.TossPayments(C.TOSS_CLIENT).widgets({ customerKey: u.id });
+    await widgets.setAmount({ currency: 'KRW', value: total() });
+    await widgets.renderPaymentMethods({ selector: '#payment-method', variantKey: 'DEFAULT' });
+    await widgets.renderAgreement({ selector: '#agreement', variantKey: 'AGREEMENT' });
+    drawSum();
+  }
+
+  $('#pay').addEventListener('click', async () => {
+    $('#pay').disabled = true;
+    try {
+      // ★주문은 서버가 만든다. 금액을 브라우저가 보내지 않는다.
+      const items = rows.filter(r => qty[r.key] > 0).map(r => ({ key: r.key, qty: qty[r.key] }));
+      const { data: { session } } = await sb.auth.getSession();
+      const res = await fetch(`${C.SUPABASE_URL}/functions/v1/ph-order-create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ items }),
+      });
+      const order = await res.json();
+      if (!res.ok) throw new Error(order.error || '주문 생성 실패');
+      if (window.PHARMACIAN_TRACK) window.PHARMACIAN_TRACK.beginCheckout({ value: order.amount, orderId: order.orderId });
+
+      const first = NAMES[items[0].key] || 'PHARMACIAN 주문';
+      const orderName = items.length > 1 ? `${first} 외 ${items.length - 1}건` : first;
+      await widgets.setAmount({ currency: 'KRW', value: order.amount });
+      await widgets.requestPayment({
+        orderId: order.orderId,
+        orderName,
+        successUrl: location.origin + '/pay-done.html',
+        failUrl: location.origin + '/pay-done.html',
+        customerEmail: user.email || undefined,
+      });
+    } catch (e) {
+      $('#note').textContent = '결제를 시작하지 못했습니다: ' + e.message;
+      $('#pay').disabled = false;
+    }
+  });
+
+  sb.auth.getSession().then(({ data }) => boot(data.session && data.session.user));
+  sb.auth.onAuthStateChange((_e, s) => boot(s && s.user));
+})();
+</script>
+</body>
+</html>
