@@ -4,7 +4,7 @@ window.PHARMACIAN = {
   // ★사이트 도메인. 도메인이 정해지면 ★이 한 곳만 바꾼다(다른 파일은 이 값을 참조한다).
   //   같은 값을 deploy/CNAME 에도 적어야 한다(그 파일엔 도메인 한 줄만. www·https:// 없이).
   //   아직 도메인이 없어서 자리표시를 넣어뒀다.
-  SITE_DOMAIN: "PHARMACIAN_DOMAIN",
+  SITE_DOMAIN: "pharmacian.kr",
 
   // Supabase (리전 = Northeast Asia / Seoul, ap-northeast-2) — ODEAL과 같은 프로젝트를 쓴다.
   // 표·함수만 ph_ 접두어로 분리했다(ph_product_price · ph_orders · ph-order-create · ph-pay-confirm).
