@@ -7,14 +7,15 @@
 // 하위 화면에서는 <div data-shell></div> 만 두면 여기서 머리를 그린다.
 (function (w, d) {
   var HOME_KEY = 'ph_home', SKIN_KEY = 'ph_skin';
-  var SKIN = { 'index-a.html': 'a', 'index-v.html': 'a', 'index-b.html': 'b' };
+  // ★루트(index.html)가 판매형이다(2026-08-21 대표 결정). 나머지 둘은 주소로만 남는다.
+  var SKIN = { 'index.html': 'b', 'index-b.html': 'b', 'index-a.html': 'a', 'index-v.html': 'a' };
 
   function file() {
     var p = location.pathname.split('/').pop();
     return p || 'index.html';
   }
   function home() {
-    try { return localStorage.getItem(HOME_KEY) || 'index-b.html'; } catch (e) { return 'index-b.html'; }
+    try { return localStorage.getItem(HOME_KEY) || './'; } catch (e) { return './'; }
   }
   function skin() {
     try { return localStorage.getItem(SKIN_KEY) || 'b'; } catch (e) { return 'b'; }
