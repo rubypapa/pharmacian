@@ -118,7 +118,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pt);outline-offset:
       +     '<button type="button" data-p="'+k+'" aria-label="수량 늘리기">+</button>'
       +   '</div></div>'
       + '<div class="right"><div class="price">'
-      +   (row ? won(row.price*cart[k])+'원' : '<span class="dim">로그인 후 표시</span>')
+      +   (row ? won(row.price*cart[k])+'원' : '<span class="dim">-</span>')
       + '</div><button class="del" type="button" data-x="'+k+'">삭제</button></div>';
       $('#list').appendChild(li);
     });
@@ -128,9 +128,9 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pt);outline-offset:
   function drawSum(){
     var cart = PH_CART.read();
     if(!priceRows){
-      $('#s-goods').textContent = '로그인 후 표시';
-      $('#s-ship').textContent  = '로그인 후 표시';
-      $('#s-tot').textContent   = '로그인 후 표시';
+      $('#s-goods').textContent = '-';
+      $('#s-ship').textContent  = '-';
+      $('#s-tot').textContent   = '-';
       return;
     }
     var goods = 0;
@@ -150,24 +150,24 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pt);outline-offset:
     if(t.dataset.x){ PH_CART.set(t.dataset.x, 0); draw(); }
   });
 
+  // ★가격은 공개다(2026-08-20). 로그인 여부와 상관없이 가격표를 읽는다.
+  //   로그인은 "주문"에만 필요하다.
+  async function loadPrices(){
+    var r = await sb.from('ph_product_price').select('key,price,ship');
+    if(r.error || !r.data || !r.data.length){
+      priceRows = null;
+      $('#note').innerHTML = '<b>가격을 아직 불러오지 못했습니다.</b> 담아두시면 주문 화면에서 계산됩니다.';
+    } else {
+      priceRows = r.data;
+      $('#note').textContent = '';
+    }
+  }
   async function boot(u){
     $('#auth').textContent = u ? '로그아웃' : '로그인';
     $('#auth').setAttribute('href', u ? '#' : 'join.html');
-    if(u){
-      $('#auth').onclick = function(e){ e.preventDefault(); sb.auth.signOut(); };
-      var r = await sb.from('ph_product_price').select('key,price,ship');
-      if(r.error || !r.data || !r.data.length){
-        priceRows = null;
-        $('#note').innerHTML = '<b>가격표를 아직 불러오지 못했습니다.</b> 담아두시면 주문 화면에서 금액이 계산됩니다.';
-      } else {
-        priceRows = r.data;
-        $('#note').textContent = '';
-      }
-    } else {
-      priceRows = null;
-      $('#auth').onclick = null;
-      $('#note').innerHTML = '금액은 <b>회원에게만</b> 보입니다. 담아두시고 로그인하시면 그대로 이어집니다.';
-    }
+    $('#auth').onclick = u ? function(e){ e.preventDefault(); sb.auth.signOut(); } : null;
+    if(!priceRows) await loadPrices();
+    if(!u && priceRows) $('#note').innerHTML = '주문하실 때 로그인이 필요합니다. 담아두신 것은 그대로 이어집니다.';
     draw();
   }
 
