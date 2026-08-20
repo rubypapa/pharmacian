@@ -281,12 +281,19 @@ footer div{max-width:1120px;margin:0 auto}
   function lit(on){ hero.classList.toggle('lit', on); }
   v.addEventListener('timeupdate', function(){ lit(v.currentTime >= 3.4); });
   v.addEventListener('ended', function(){ lit(true); });
-  /* 영상을 못 틀면(자동재생 차단·코덱·구간요청 미지원) 스틸 교차로 되돌린다 */
+  /* 영상을 못 틀면 스틸 교차로 되돌린다.
+     ★시간초과로 되돌리지 않는다 - 느린 회선에서 멀쩡한 영상을 사진으로 바꿔버린다.
+       그동안은 poster(어두운 첫 프레임)가 그대로 보이므로 화면이 비지 않는다.
+       실제 실패(error 이벤트 · 자동재생 거부)일 때만 되돌린다. */
   function fallback(){ hero.classList.add('nov'); lit(false); }
   v.addEventListener('error', fallback);
-  var p=v.play&&v.play();
-  if(p&&p.catch) p.catch(fallback);
-  setTimeout(function(){ if(v.readyState<2) fallback(); }, 4000);
+  var pr = v.play && v.play();
+  if(pr && pr.catch) pr.catch(function(){
+    /* 자동재생만 막힌 경우엔 영상을 지우지 말고 사용자가 건드리면 재생한다 */
+    var once=function(){ v.play().catch(fallback); document.removeEventListener('pointerdown',once); };
+    document.addEventListener('pointerdown', once, {once:true});
+    setTimeout(function(){ if(v.paused && v.readyState===0) fallback(); }, 12000);
+  });
 })();
 </script>
 </body>
