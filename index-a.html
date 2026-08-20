@@ -1,14 +1,16 @@
-<!-- A안 영상판 · 브랜드형. index.html(이미지 전환판)과 같은 구성이고 히어로만 실제 영상이다.
-     영상 = 클링 5초. 손이 3.00초에 프레임 밖으로 나가 안 돌아오고, 크림이 펴져 흡수되고, 배경이 상아색으로 밝아진다.
-     ★loop 없음 - 밝은 끝에서 멈춰야 아래 페이지와 이어진다.
-     ★끝이 상아색이라 흰 글씨가 사라진다. 그래서 글자를 영상 밝아지는 시각에 맞춰 먹색으로 넘긴다.
-     ★모바일(<=760px)은 세로 영상이 아직 없어 기존 스틸 교차를 그대로 쓴다. -->
+<!-- A안 · 브랜드형. 대표가 고른 둘 중 하나(어두운 히어로).
+     루비 지시로 B안(판매형)과 따로 완성한다. 히어로는 영상 자리이고 지금은 시작·끝 실물 컷을 교차시킨다.
+     원래 메모 — 루비 정정(2026-08-19):
+     "스크롤로 밝아지는 게 아니라, 도입부 영상 안에서 모델이 바르면 주변이 화사해지는 것."
+     ★지금 히어로는 영상 자리에 스틸을 넣고 CSS로 '어둠 → 밝아짐'을 흉내낸 것이다.
+       시댄스 영상(mp4)이 나오면 <video> 한 줄로 갈아끼운다 — 아래 주석에 그 코드가 있다.
+     제품 사실·법정 문구는 다른 시안과 같은 원천을 따른다. -->
 <!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PHARMACIAN — A안 영상판</title>
+<title>PHARMACIAN — A안 브랜드형</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <style>
@@ -137,12 +139,6 @@ footer div{max-width:1120px;margin:0 auto}
                     rgba(247,245,238,.18) 46%, rgba(247,245,238,0) 62%),
     linear-gradient(to bottom, rgba(247,245,238,.80) 0%, rgba(247,245,238,0) 14%)}
 }
-/* 영상을 못 틀 때 - 스틸 교차 연출로 되돌린다 */
-.hero.nov .media .v{display:none}
-.hero.nov .media picture{display:block}
-.hero.nov .veil{animation:lift 7s cubic-bezier(.4,0,.2,1) .6s forwards;opacity:1}
-.hero.nov .txt{color:#fff}
-
 @media (prefers-reduced-motion:reduce){
   /* 움직임을 줄이도록 설정한 사람에게는 밝아진 끝 상태로 바로 둔다 */
   .hero .media .b{animation:none;opacity:1}
@@ -160,27 +156,6 @@ footer div{max-width:1120px;margin:0 auto}
 .legal table{width:100%;border-collapse:collapse;margin-top:10px;font-size:11px;line-height:1.6}
 .legal th,.legal td{border:1px solid rgba(128,128,128,.28);padding:5px 7px;text-align:left;vertical-align:top}
 .legal th{width:30%;font-weight:600;opacity:.8}
-
-/* ── 영상판 전용 ───────────────────────────────────────────────
-   영상이 어둠 -> 상아색을 직접 한다. 그래서 스틸 교차(.a/.b)와 veil·glow 연출을 끈다.
-   ★영상 실측 타임라인: 3.00s 손 이탈 · 3.25s 밝아지기 시작 · 4.25s 상아색 도달 · 5.04s 끝
-   ★규칙 순서 주의 - 기본값을 먼저 쓰고 미디어쿼리를 뒤에 둔다. 반대로 두면 기본값이 이긴다. */
-.hero .media .v{display:none;width:100%;height:100%;object-fit:cover;object-position:62% 40%}
-
-@media (min-width:761px){
-  .hero .media .v{display:block}
-  .hero .media picture{display:none}          /* 영상이 있으니 스틸은 안 쓴다 */
-  .hero .veil,.hero .glow{animation:none;opacity:0}
-  /* 흰 글씨가 상아 배경에서 사라진다. 밝아지는 시각에 맞춰 먹색으로 넘긴다 */
-  .hero .txt{transition:color .9s linear}
-  .hero.lit .txt{color:#1b1a18}
-  .hero .txt h1,.hero .txt p{text-shadow:none}
-}
-@media (prefers-reduced-motion:reduce){
-  .hero .media .v{display:none}
-  .hero .media picture{display:block}
-  .hero .txt{color:#fff}
-}
 </style>
 </head>
 <body>
@@ -196,16 +171,17 @@ footer div{max-width:1120px;margin:0 auto}
 
 <div class="hero">
   <div class="media">
-    <video class="v" src="video/hero.mp4" poster="video/hero-poster.jpg"
-           autoplay muted playsinline preload="auto"
-           aria-label="모델이 크림을 바르면 주변이 밝아지는 도입부 영상"></video>
+    <!-- ★영상이 들어갈 자리. mp4가 나오면 아래 img를 video로 교체한다.
+         <video src="img/hero.mp4" autoplay muted playsinline
+                poster="img/hero-poster.jpg"></video>
+         ★loop를 쓰지 않는다 - 밝은 끝 상태로 멈춰야 아래 페이지와 이어진다 -->
     <picture class="a">
       <source media="(max-width:760px)" srcset="img/hero-dark-9x16.jpg">
-      <img src="img/hero-dark-16x9.jpg" alt="도입부 · 시작">
+      <img src="img/hero-dark-16x9.jpg" alt="모델이 크림을 바르는 도입부 영상 · 시작">
     </picture>
     <picture class="b">
       <source media="(max-width:760px)" srcset="img/hero-light-9x16.jpg">
-      <img src="img/hero-light-16x9.jpg" alt="도입부 · 끝">
+      <img src="img/hero-light-16x9.jpg" alt="도입부 영상 · 끝">
     </picture>
   </div>
   <div class="veil"></div>
@@ -276,29 +252,5 @@ footer div{max-width:1120px;margin:0 auto}
   <a href="terms.html">이용약관</a> · <a href="privacy.html"><strong>개인정보처리방침</strong></a> · <a href="refund.html">교환/반품 안내</a> · 구매안전(에스크로) 서비스 가입 확인
 </div></footer>
 
-<script>
-/* 글자색을 영상에 붙인다. CSS 시계로 하면 영상 로딩이 늦을 때 배경보다 글자가 먼저 넘어간다.
-   ★3.4초 = 배경이 밝아지기 시작하는 3.25초 직후(프레임 실측값). */
-(function(){
-  var hero=document.querySelector('.hero'), v=hero&&hero.querySelector('video');
-  if(!v) return;
-  function lit(on){ hero.classList.toggle('lit', on); }
-  v.addEventListener('timeupdate', function(){ lit(v.currentTime >= 3.4); });
-  v.addEventListener('ended', function(){ lit(true); });
-  /* 영상을 못 틀면 스틸 교차로 되돌린다.
-     ★시간초과로 되돌리지 않는다 - 느린 회선에서 멀쩡한 영상을 사진으로 바꿔버린다.
-       그동안은 poster(어두운 첫 프레임)가 그대로 보이므로 화면이 비지 않는다.
-       실제 실패(error 이벤트 · 자동재생 거부)일 때만 되돌린다. */
-  function fallback(){ hero.classList.add('nov'); lit(false); }
-  v.addEventListener('error', fallback);
-  var pr = v.play && v.play();
-  if(pr && pr.catch) pr.catch(function(){
-    /* 자동재생만 막힌 경우엔 영상을 지우지 말고 사용자가 건드리면 재생한다 */
-    var once=function(){ v.play().catch(fallback); document.removeEventListener('pointerdown',once); };
-    document.addEventListener('pointerdown', once, {once:true});
-    setTimeout(function(){ if(v.paused && v.readyState===0) fallback(); }, 12000);
-  });
-})();
-</script>
 </body>
 </html>

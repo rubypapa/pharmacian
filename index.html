@@ -1,252 +1,61 @@
-<!-- A안 · 브랜드형. 대표가 고른 둘 중 하나(어두운 히어로).
-     루비 지시로 B안(판매형)과 따로 완성한다. 히어로는 영상 자리이고 지금은 시작·끝 실물 컷을 교차시킨다.
-     원래 메모 — 루비 정정(2026-08-19):
-     "스크롤로 밝아지는 게 아니라, 도입부 영상 안에서 모델이 바르면 주변이 화사해지는 것."
-     ★지금 히어로는 영상 자리에 스틸을 넣고 CSS로 '어둠 → 밝아짐'을 흉내낸 것이다.
-       시댄스 영상(mp4)이 나오면 <video> 한 줄로 갈아끼운다 — 아래 주석에 그 코드가 있다.
-     제품 사실·법정 문구는 다른 시안과 같은 원천을 따른다. -->
-<!doctype html>
-<html lang="ko">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PHARMACIAN — A안 브랜드형</title>
+<!-- 대표에게 보내는 링크. 세 안을 한 화면에서 고르게 한다. -->
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<title>PHARMACIAN 자사몰 — 세 가지 안</title>
 <meta name="robots" content="noindex,nofollow">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="favicon.svg">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-img,video{display:block;max-width:100%}
-a{color:inherit;text-decoration:none}
-button{font:inherit;cursor:pointer;border:0}
+:root{--paper:#f7f5ee;--ink:#1b1a18;--muted:#77726a;--rule:#e3ded3;--pt:#ac6152}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#141311;--ink:#f2efe6;--muted:#9a948a;--rule:#2c2a26;--pt:#d08b78}}
+:root[data-theme="dark"]{--paper:#141311;--ink:#f2efe6;--muted:#9a948a;--rule:#2c2a26;--pt:#d08b78}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:-apple-system,"Segoe UI Variable Text","Segoe UI",system-ui,"Malgun Gothic",sans-serif;
+  line-height:1.7;word-break:keep-all;-webkit-font-smoothing:antialiased}
+.wrap{max-width:940px;margin:0 auto;padding:60px 22px 90px}
+.kick{font-family:ui-monospace,Consolas,monospace;font-size:11px;letter-spacing:.18em;color:var(--pt);margin:0}
+h1{margin:12px 0 0;font-size:clamp(26px,4.6vw,40px);font-weight:300;letter-spacing:-.03em;text-wrap:balance}
+.dek{margin:14px 0 0;color:var(--muted);max-width:60ch;font-size:15.5px}
+ul.opts{list-style:none;margin:44px 0 0;padding:0;display:flex;flex-direction:column;gap:0}
+ul.opts li{border-top:1px solid var(--rule)}
+ul.opts li:last-child{border-bottom:1px solid var(--rule)}
+a.opt{display:grid;grid-template-columns:52px 1fr auto;gap:20px;align-items:baseline;
+  padding:26px 4px;text-decoration:none;color:inherit}
+a.opt:hover{background:color-mix(in srgb,var(--pt) 7%,transparent)}
+a.opt:focus-visible{outline:2px solid var(--pt);outline-offset:-2px}
+.no{font-family:ui-monospace,Consolas,monospace;font-size:13px;color:var(--pt)}
+.ttl{font-size:19px;font-weight:600;letter-spacing:-.02em}
+.sub{display:block;margin-top:5px;font-size:14px;color:var(--muted);font-weight:400}
+.go{font-size:13px;color:var(--muted)}
+footer{margin-top:46px;padding-top:22px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--muted)}
+@media(max-width:560px){a.opt{grid-template-columns:40px 1fr;gap:12px}.go{display:none}}
+</style></head><body>
+<div class="wrap">
+  <p class="kick">PHARMACIAN</p>
+  <h1>자사몰 세 가지 안</h1>
+  <p class="dek">제품·가격·법정 표기는 셋 다 같습니다. <b>파는 방식과 첫인상만 다릅니다.</b>
+     아직 도메인을 붙이기 전이고, 가격·배송비 같은 숫자는 확정 전 초안입니다.</p>
 
-:root{
-  --paper:#f7f5ee;   /* ★영상이 끝나는 밝기와 같은 색. 다르면 영상과 페이지 사이에 경계가 보인다 */
-  --ink:#1b1a18; --muted:#77726a; --rule:#e3ded3; --pt:#ac6152;
-}
-body{font-family:'Pretendard Variable',Pretendard,-apple-system,'Malgun Gothic',sans-serif;
-  line-height:1.6;word-break:keep-all;-webkit-font-smoothing:antialiased;
-  background:var(--paper);color:var(--ink)}
+  <ul class="opts">
+    <li><a class="opt" href="index-v.html">
+      <span class="no">01</span>
+      <span class="ttl">브랜드형 · 영상<span class="sub">첫 화면이 5초 영상입니다. 어두운 화면에서 시작해 크림을 펴 바르면 주변이 화사해집니다.</span></span>
+      <span class="go">보기 →</span></a></li>
+    <li><a class="opt" href="index-a.html">
+      <span class="no">02</span>
+      <span class="ttl">브랜드형 · 이미지<span class="sub">같은 구성인데 영상 대신 사진이 넘어갑니다. 어느 기기에서나 가볍게 열립니다.</span></span>
+      <span class="go">보기 →</span></a></li>
+    <li><a class="opt" href="index-b.html">
+      <span class="no">03</span>
+      <span class="ttl">판매형<span class="sub">첫 화면부터 쿠폰과 혜택이 나옵니다. 브랜드보다 지금 사는 이유를 먼저 말합니다.</span></span>
+      <span class="go">보기 →</span></a></li>
+  </ul>
 
-/* ── 히어로 = 영상 ───────────────────────────────────────────── */
-.hero{position:relative;height:100vh;min-height:600px;overflow:hidden;background:#080807}
-.hero .media{position:absolute;inset:0}
-.hero .media picture{position:absolute;inset:0;display:block}
-.hero .media img,.hero .media video{width:100%;height:100%;object-fit:cover;object-position:62% 40%}
-/* ★시작·끝이 둘 다 실물 컷이다. 밝기를 흉내내지 않고 두 장을 교차시킨다 -
-   실제 영상이 하는 일과 같아서, 어긋난 프레이밍도 여기서 그대로 드러난다. */
-.hero .media .b{opacity:0;animation:xfade 7s cubic-bezier(.4,0,.2,1) .6s forwards}
-@keyframes xfade{ 0%{opacity:0} 30%{opacity:.12} 100%{opacity:1} }
-
-/* ★영상 자리표시. 실제 영상은 이 밝아짐을 프레임 안에서 한다.
-   시댄스 mp4가 나오면 .media 안을 아래로 바꾸고 이 애니메이션은 지운다:
-     <video src="img/hero.mp4" autoplay muted loop playsinline poster="img/hero-poster.jpg"></video> */
-.hero .media .a img{animation:none}
-/* ★이제 원본이 이미 어두운 컷이라(1-A 결과) 억지로 누르지 않는다.
-   밝아짐만 얹는다 — 실제 영상은 이 변화를 프레임 안에서 한다. */
-
-/* 어둠을 만드는 막도 같이 걷힌다 — 배경이 검정에서 상아색으로 올라오는 부분 */
-.hero .veil{position:absolute;inset:0;animation:lift 7s cubic-bezier(.4,0,.2,1) .6s forwards;
-  background:radial-gradient(118% 76% at 50% 30%, rgba(8,8,7,0) 0%, rgba(8,8,7,.72) 58%, rgba(8,8,7,.97) 100%)}
-@keyframes lift{
-  0%   {opacity:1}
-  55%  {opacity:.72}
-  100% {opacity:.14}
-}
-/* ★빛이 오면 글자가 앉을 바닥도 같이 와야 한다.
-   밝아진 뒤 어두운 글자가 얼굴 위에 그냥 얹히면 안 읽힌다 — 상아색 빛이 위아래에서 번져 들어온다. */
-.hero .glow{position:absolute;inset:0;pointer-events:none;opacity:0;
-  animation:bloom 7s cubic-bezier(.4,0,.2,1) .6s forwards;
-  background:
-    linear-gradient(to right, rgba(247,245,238,.92) 0%, rgba(247,245,238,.58) 28%, rgba(247,245,238,.10) 55%),
-    linear-gradient(to top, var(--paper) 0%, rgba(247,245,238,.84) 12%, rgba(247,245,238,.06) 38%),
-    linear-gradient(to bottom, rgba(247,245,238,.84) 0%, rgba(247,245,238,.05) 18%),
-    radial-gradient(130% 96% at 22% 34%, rgba(247,245,238,.34) 0%, rgba(247,245,238,0) 62%)}
-@keyframes bloom{ 0%{opacity:0} 45%{opacity:.15} 100%{opacity:1} }
-/* 문구는 어두울 때 흰 글자였다가 밝아지면 어두운 글자가 된다 */
-.hero .txt{position:absolute;left:0;right:auto;bottom:0;width:min(46%,560px);padding:0 26px 96px;text-align:left;
-  animation:inkturn 7s cubic-bezier(.4,0,.2,1) .6s forwards;color:#efeae3}
-@keyframes inkturn{
-  0%   {color:#efeae3; text-shadow:0 2px 26px rgba(0,0,0,.7)}
-  55%  {color:#efeae3; text-shadow:0 2px 22px rgba(0,0,0,.5)}
-  100% {color:#241f1a; text-shadow:none}
-}
-.hero h1{font-size:clamp(26px,4.6vw,44px);font-weight:300;letter-spacing:-.03em;line-height:1.32}
-.hero p{margin-top:14px;font-size:14.5px;opacity:.86;max-width:30ch}
-
-/* 헤더도 같이 넘어간다 */
-header{position:absolute;top:0;left:0;right:0;z-index:5;
-  animation:inkturn 7s cubic-bezier(.4,0,.2,1) .6s forwards}
-.hd{padding:20px 26px;display:flex;align-items:center}
-.logo{font-size:15px;font-weight:600;letter-spacing:.34em}
-.util{margin-left:auto;display:flex;gap:20px;font-size:11.5px;letter-spacing:.1em;opacity:.85}
-
-.mark{position:absolute;left:26px;bottom:24px;font-size:10.5px;letter-spacing:.14em;
-  color:rgba(160,152,142,.9)}
-
-section{padding:76px 26px}
-.in{max-width:1120px;margin:0 auto}
-.lab{font-size:11px;letter-spacing:.2em;color:var(--muted)}
-h2{margin-top:13px;font-size:clamp(20px,3vw,28px);font-weight:300;letter-spacing:-.02em}
-.grid{margin-top:40px;display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
-@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
-.card .th{aspect-ratio:1/1.35;overflow:hidden;background:#efeae1}
-.card .th img{width:100%;height:100%;object-fit:cover}
-.card h3{margin-top:15px;font-size:13.5px;font-weight:400;letter-spacing:.01em}
-.card .cap{margin-top:5px;font-size:11.5px;color:var(--muted);letter-spacing:.03em}
-.card .pr{margin-top:8px;font-size:13.5px;font-weight:600}
-
-.notes{border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-.nrow{display:grid;grid-template-columns:repeat(4,1fr)}
-@media(max-width:900px){.nrow{grid-template-columns:repeat(2,1fr)}}
-.nrow div{padding:34px 22px;border-right:1px solid var(--rule)}
-.nrow div:last-child{border-right:0}
-.nrow b{font-size:11px;letter-spacing:.18em;color:var(--pt);font-weight:500}
-.nrow p{margin-top:12px;font-size:14px;font-weight:300;letter-spacing:-.01em;line-height:1.6}
-
-.nums{margin-top:34px;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule)}
-@media(max-width:760px){.nums{grid-template-columns:repeat(2,1fr)}}
-.nums div{background:var(--paper);padding:24px 20px}
-.nums b{display:block;font-size:clamp(22px,3vw,30px);font-weight:300;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-.nums b i{font-style:normal;font-size:12px;margin-left:5px;color:var(--muted);letter-spacing:.06em}
-.nums span{display:block;margin-top:8px;font-size:12.5px;color:var(--muted);letter-spacing:-.01em}
-.fine{margin-top:20px;font-size:11.5px;color:var(--muted);line-height:1.9;max-width:74ch}
-.steps{margin-top:34px;display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-@media(max-width:760px){.steps{grid-template-columns:1fr}}
-.steps i{font-style:normal;font-size:11px;letter-spacing:.18em;color:var(--pt)}
-.steps b{display:block;margin-top:10px;font-size:15px;font-weight:400}
-.steps p{margin-top:7px;font-size:13.5px;color:var(--muted);font-weight:300;line-height:1.7}
-footer{border-top:1px solid var(--rule);padding:40px 26px 76px;font-size:11px;
-  color:var(--muted);line-height:2.1;letter-spacing:.02em}
-footer a{color:inherit;text-decoration:underline;text-underline-offset:3px}
-footer div{max-width:1120px;margin:0 auto}
-
-@media(max-width:760px){
-  /* ★세로 컷은 아래 1/3이 검정으로 잘려 있다(문구 자리로 비워 둔 것).
-     히어로 바닥을 같은 검정으로 깔아 두면 잘린 경계가 안 보이고, 문구가 그 자리에 앉는다. */
-  .hero{background:#000}
-  .hero .media img{object-fit:contain;object-position:50% 0}
-  .hero .media .b img{object-fit:cover;object-position:56% 42%}
-  .hero .txt{width:auto;right:0;text-align:center;padding-bottom:64px}
-  /* 좁은 화면에서 로고와 메뉴가 겹친다 - 메뉴는 장바구니만 남긴다 */
-  .hd{padding:16px 18px}
-  .logo{font-size:13px;letter-spacing:.26em}
-  .util span:not(:last-child){display:none}
-  .util{gap:0;font-size:11px}
-  .hero .veil{background:radial-gradient(120% 60% at 50% 26%, rgba(0,0,0,0) 0%, rgba(0,0,0,.5) 70%, rgba(0,0,0,.9) 100%)}
-  /* ★잘린 검정 띠 위에 반투명을 얹으면 회색으로 뜬다. 아래 구간은 상아색으로 꽉 채운다. */
-  .hero .glow{background:
-    linear-gradient(to top, var(--paper) 0%, var(--paper) 20%, rgba(247,245,238,.80) 30%,
-                    rgba(247,245,238,.18) 46%, rgba(247,245,238,0) 62%),
-    linear-gradient(to bottom, rgba(247,245,238,.80) 0%, rgba(247,245,238,0) 14%)}
-}
-@media (prefers-reduced-motion:reduce){
-  /* 움직임을 줄이도록 설정한 사람에게는 밝아진 끝 상태로 바로 둔다 */
-  .hero .media .b{animation:none;opacity:1}
-  .hero .veil{animation:none;opacity:.14}
-  .hero .glow{animation:none;opacity:1}
-  .hero .txt,header{animation:none;color:#241f1a}
-}
-
-/* 법정 표기 — tools/법정주입.py 가 넣는다. 손으로 고치지 마라(_legal.json이 원천) */
-.legal{margin-top:12px;border-top:1px solid rgba(128,128,128,.28);padding-top:10px}
-.legal summary{font-size:12.5px;font-weight:600;cursor:pointer;list-style:none;opacity:.72}
-.legal summary::-webkit-details-marker{display:none}
-.legal summary::before{content:"+ ";font-weight:800}
-.legal[open] summary::before{content:"- "}
-.legal table{width:100%;border-collapse:collapse;margin-top:10px;font-size:11px;line-height:1.6}
-.legal th,.legal td{border:1px solid rgba(128,128,128,.28);padding:5px 7px;text-align:left;vertical-align:top}
-.legal th{width:30%;font-weight:600;opacity:.8}
-</style>
-</head>
-<body>
-
-<header><div class="hd">
-  <div class="logo">PHARMACIAN</div>
-  <div class="util"><span>COLLECTION</span><span>STORE</span><span>CART</span></div>
-</div></header>
-
-<div class="hero">
-  <div class="media">
-    <!-- ★영상이 들어갈 자리. mp4가 나오면 아래 img를 video로 교체한다.
-         <video src="img/hero.mp4" autoplay muted playsinline
-                poster="img/hero-poster.jpg"></video>
-         ★loop를 쓰지 않는다 - 밝은 끝 상태로 멈춰야 아래 페이지와 이어진다 -->
-    <picture class="a">
-      <source media="(max-width:760px)" srcset="img/hero-dark-9x16.jpg">
-      <img src="img/hero-dark-16x9.jpg" alt="모델이 크림을 바르는 도입부 영상 · 시작">
-    </picture>
-    <picture class="b">
-      <source media="(max-width:760px)" srcset="img/hero-light-9x16.jpg">
-      <img src="img/hero-light-16x9.jpg" alt="도입부 영상 · 끝">
-    </picture>
-  </div>
-  <div class="veil"></div>
-  <div class="glow"></div>
-  <div class="txt">
-    <h1>손끝에서 천천히 퍼집니다.</h1>
-    <p>연어에서 온 원료를 담아, 매일 밤 얇게 펴 바르는 크림입니다.</p>
-  </div>
-</div>
-
-<section><div class="in">
-  <p class="lab">COLLECTION</p>
-  <h2>네 개의 크림, 하나의 처방 기준.</h2>
-  <div class="grid">
-    <article class="card"><div class="th"><img src="img/prod-p7.jpg" alt=""></div>
-      <h3>PDRN 7000</h3><p class="cap">연어 PDRN 7,000ppm</p><p class="pr">20,000원</p><details class="legal"><summary>상품정보 제공고시 · 전성분</summary><table><tr><th>제품명</th><td>파머시안 피디알엔 7000 크림<br>(PHARMACIAN PDRN 7000 CREAM)</td></tr><tr><th>용량</th><td>30g(1.05oz.)</td></tr><tr><th>피부타입</th><td>모든 피부</td></tr><tr><th>효능효과</th><td>피부의 미백에 도움을 준다. 피부의 주름개선에 도움을 준다.</td></tr><tr><th>용법용량</th><td>본품 적당량을 취해 피부에 골고루 펴 바른다.</td></tr><tr><th>전성분</th><td>정제수, 다이프로필렌글라이콜, 글리세린, 부틸렌글라이콜, 카프릴릴메티콘, 1,2-헥산다이올, 나이아신아마이드, 베타인, 판테놀, 하이드로제네이티드폴리데센, 소듐디엔에이(7000ppm), 세테아릴올리베이트, C14-22알코올, 락토바실러스세포외소포(5580ppm), 효모세포외소포(5580ppm), 솔비탄올리베이트, 알란토인(3000ppm), 암모늄아크릴로일다이메틸타우레이트/브이피코폴리머, 유청여과물, 카보머, 카프릴릭/카프릭트라이글리세라이드, 트로메타민, C12-20알킬글루코사이드, 푸코실락토오스, 에틸헥실글리세린, 우유엑소좀(600ppm), 토코페릴아세테이트, 세라마이드엔피, 아데노신, 피토스테롤, 올레익애씨드, 하이드로제네이티드레시틴, 다이소듐이디티에이, 글리세릴스테아레이트, 레몬껍질오일, 베르가모트오일, 칸디다 봄비콜라/글루코오스/메틸레이프씨데이트발효물, 세테아릴알코올, 리씨열매오일, 스테아릭애씨드, 폴리글리세릴-3메틸글루코오스다이스테아레이트, 발삼아미리스껍질오일, 소두구씨오일, 연필향나무오일, 모란뿌리추출물, 쌀배아오일, 코코넛야자오일, 프로판다이올, 클레리오일, 사철쑥추출물, 타임꽃/잎오일, 올리브추출물</td></tr><tr><th>화장품제조업자</th><td>린제이앤코스 주식회사 / 경기도 포천시 군내면 용정경제로1길 94-63 나동</td></tr><tr><th>화장품책임판매업자</th><td>(주)와이엘트레이딩 / 경기도 안양시 동안구 시민대로 401, 2001호(관양동, 대륭테크노타운15차)</td></tr><tr><th>사용기한</th><td>별도표기</td></tr><tr><th>소비자상담실</th><td>02-6177-7350</td></tr><tr><th>주의사항</th><td>화장품 사용 시 또는 사용 직후 직사광선에 의하여 사용부위가 붉은 반점, 부어오름 또는 가려움증 등의 이상 증상이나 부작용이 있는 경우에는 전문의 등과 상담해주세요.<br>상처가 있는 부위 등에는 사용을 자제해주세요.<br>어린이의 손이 닿지 않는 곳에 보관해주세요.<br>직사광선을 피해서 보관해주세요.</td></tr></table></details></article>
-    <article class="card"><div class="th"><img src="img/prod-p12.jpg" alt=""></div>
-      <h3>PDRN 12000</h3><p class="cap">연어 PDRN 12,000ppm</p><p class="pr">38,000원</p><details class="legal"><summary>상품정보 제공고시 · 전성분</summary><table><tr><th>제품명</th><td>브이씨엑소 파머시안 피디알엔 12000 크림<br>(VCXO PHARMACIAN PDRN 12000 CREAM)</td></tr><tr><th>용량</th><td>30g(1.05oz.)</td></tr><tr><th>피부타입</th><td>모든 피부</td></tr><tr><th>효능효과</th><td>피부의 미백에 도움을 준다. 피부의 주름개선에 도움을 준다.</td></tr><tr><th>용법용량</th><td>본품 적당량을 취해 피부에 골고루 펴 바른다.</td></tr><tr><th>전성분</th><td>정제수, 다이프로필렌글라이콜, 글리세린, 부틸렌글라이콜, 카프릴릴메티콘, 1,2-헥산다이올, 나이아신아마이드, 베타인, 소듐디엔에이(12000ppm), 하이드로제네이티드폴리데센, 판테놀, 세테아릴올리베이트, 락토바실러스세포외소포(5580ppm), 효모세포외소포(5580ppm), C14-22알코올, 솔비탄올리베이트, 유청여과물, 칼슘알루미늄보로실리케이트, 알란토인(3000ppm), 암모늄아크릴로일다이메틸타우레이트/브이피코폴리머, 카보머, 카프릴릭/카프릭트라이글리세라이드, 트로메타민, C12-20알킬글루코사이드, 푸코실락토오스, 토코페릴아세테이트, 우유엑소좀, 에틸헥실글리세린, 아데노신, 세라마이드엔피, 피토스테롤, 올레익애씨드, 하이드로제네이티드레시틴, 다이소듐이디티에이, 레몬껍질오일, 글리세릴스테아레이트, 베르가모트오일, 칸디다봄비콜라/글루코오스/메틸레이프씨데이트발효물, 폴리그리세릴-10라우레이트, 세테아릴알코올, 리씨열매오일, 폴리그리세릴-3메틸글루코오스다이스테아레이트, 스테아릭애씨드, 발삼아미리스껍질오일, 소두구씨오일, 연필향나무오일, 코코넛야자오일, 쌀배아오일, 프로판다이올, 클레리오일, 사철쑥추출물, 타임꽃/잎오일, 올리브추출물, 카퍼트라이펩타이드-1, 아세틸헥사펩타이드-8, 아세틸테트라펩타이드-2, 아세틸테트라펩타이드-5, 헥사펩타이드-9, 팔미토일펜타펩타이드-4, 팔미토일트라이펩타이드-1, 트라이펩타이드-1, 아세틸테트라펩타이드-3, 헥사펩타이드-11, 노나펩타이드-1, 팔미토일헥사펩타이드-12, 팔미토일테트라펩타이드-7, 팔미토일트라이펩타이드-5, 트라이펩타이드-32</td></tr><tr><th>화장품제조업자</th><td>(주)위노바 / 경기도 평택시 청북읍 청북산단로 178</td></tr><tr><th>화장품책임판매업자</th><td>(주)와이엘트레이딩 / 경기도 안양시 동안구 시민대로 401, 2001호(관양동, 대륭테크노타운 15차)</td></tr><tr><th>사용기한</th><td>별도표기</td></tr><tr><th>소비자상담실</th><td>02-6342-9496</td></tr><tr><th>주의사항</th><td>화장품 사용 시 또는 사용 직후 직사광선에 의하여 사용부위가 붉은 반점, 부어오름 또는 가려움증 등의 이상 증상이나 부작용이 있는 경우에는 전문의 등과 상담해주세요.<br>상처가 있는 부위 등에는 사용을 자제해주세요.<br>어린이의 손이 닿지 않는 곳에 보관해주세요.<br>직사광선을 피해서 보관해주세요.</td></tr></table></details></article>
-    <article class="card"><div class="th"><img src="img/prod-nmn.jpg" alt=""></div>
-      <h3>NMN 30,000</h3><p class="cap">NMN 30,000ppm 리포좀</p><p class="pr">38,000원</p><details class="legal"><summary>상품정보 제공고시 · 전성분</summary><table><tr><th>제품명</th><td>브이씨엑소 파머시안 엔엠엔 30000 크림<br>(VCXO PHARMACIAN NMN 30,000 CREAM)</td></tr><tr><th>용량</th><td>30g(1.05oz.)</td></tr><tr><th>피부타입</th><td>모든 피부</td></tr><tr><th>효능효과</th><td>피부의 미백에 도움을 준다. 피부의 주름개선에 도움을 준다.</td></tr><tr><th>용법용량</th><td>본품 적당량을 취해 피부에 골고루 펴 바른다.</td></tr><tr><th>전성분</th><td>정제수, 카프릴릭/카프릭트라이글리세라이드, 세틸알코올, 나이아신아마이드, 모노-뉴클레오타이드(30,000ppm), 세틸에틸헥사노에이트, 카프릴릴메티콘, 1,2-헥산다이올, 나이아신아마이드, 베타인, 글리세릴스테아레이트, 하이드로제네이티드폴리데센, 세테아릴올리베이트, 스테아릴알코올, 솔비탄올리베이트, 세테아릴글루코사이드, 알란토인, 아크릴레이트/C10-30알킬아크릴레이트크로스폴리머, 트로메타민, 글리세린, 폴리아크릴레이트크로스폴리머-6, 레시틴, 미리 스틸알코올, 에틸헥실글리세린, 흰목이버섯폴리사카라이드, 다이소듐이디티에이, 아데노신, 라우릴알코올, 세라마이드엔피, 피토스테롤, 레몬껍질오일, 올레익애씨드, 하이드로제네이티드레시틴, 베르가모트오일, 소듐하이알루로네이트, 단백질추출물, 리씨열매오일, 부틸렌글라이콜, 연필향나무오일, 소두구씨오일, 발삼아미리스껍질오일, 칸디다 봄비콜라/글루코오스/메틸레이프씨데이트발효물, 세테아릴알코올, 클레리오일, 스테아릭애씨드, 폴리글리세릴-3메틸글루코오스다이스테아레이트, t-부틸알코올, 살베아오일, 코코넛야자오일, 프로판다이올, 튀김꽃/잎/오일, 사과 추출물, 폴리글리세릴-10라우레이트, 카퍼트라이펩타이드-1, 올리브추출물</td></tr><tr><th>화장품제조업자</th><td>(주)위노바 / 경기도 평택시 청북읍 청북산단로 178</td></tr><tr><th>화장품책임판매업자</th><td>(주)와이엘트레이딩 / 경기도 안양시 동안구 시민대로 401, 2001호(관양동, 대륭테크노타운 15차)</td></tr><tr><th>사용기한</th><td>별도표기</td></tr><tr><th>소비자상담실</th><td>02-6342-9496</td></tr><tr><th>주의사항</th><td>화장품 사용 시 또는 사용 직후 직사광선에 의하여 사용부위가 붉은 반점, 부어오름 또는 가려움증 등의 이상 증상이나 부작용이 있는 경우에는 전문의 등과 상담해주세요.<br>상처가 있는 부위 등에는 사용을 자제해주세요.<br>어린이의 손이 닿지 않는 곳에 보관해주세요.<br>직사광선을 피해서 보관해주세요.</td></tr></table></details></article>
-    <article class="card"><div class="th"><img src="img/prod-mel.jpg" alt=""></div>
-      <h3>멜라리스 100,000</h3><p class="cap">미백 기능성</p><p class="pr">23,000원</p><details class="legal"><summary>상품정보 제공고시 · 전성분</summary><table><tr><th>제품명</th><td>브이씨엑소 파머시안 멜라리스 10만 크림<br>(VCXO PHARMACIAN MELALESS 100,000 CREAM)</td></tr><tr><th>용량</th><td>30g</td></tr><tr><th>피부타입</th><td>모든 피부</td></tr><tr><th>효능효과</th><td>피부의 미백에 도움을 준다. 피부의 주름개선에 도움을 준다.</td></tr><tr><th>용법용량</th><td>본품 적당량을 취해 피부에 골고루 펴 바른다.</td></tr><tr><th>전성분</th><td>정제수, 카프릴릭/카프릭트라이글리세라이드, 나이아신아마이드, 카프릴릴메티콘, 다이프로필렌그라이콜, 부틸렌그라이콜, 시트릭애씨드, 트라넥사믹애씨드, 세테아릴알코올, 3-O-에틸아스코빅애씨드, 글리세린, 1,2-헥산다이올, 베타인, 세틸알코올, 글리세릴스테아레이트, 판테놀, 시어버터, 세테아릴올리베이트, 베헤닐알코올, 폴리아크릴레이트크로스폴리머-6, 솔비탄올리베이트, 세테아릴글루코사이드, 페룰릭애씨드, 스테아릴알코올, 알란토인, 팔미틱애씨드, 스테아릭애씨드, 알라닌, 푸코실락토오스, 폴리글리세릴-10라우레이트, 흰목이버섯폴리사카라이드, 미리스틸알코올, 아시아티코사이드, 마데카식애씨드, 에틸헥실글리세린, 다이소듐이디티에이, 글리세레스-26, 소듐하이알루로네이트, 토코페릴아세테이트, 아데노신, 아시아틱애씨드, 라우릴알코올, t-부틸알코올, 펜타에리스리틸테트라-다이-t-부틸하이드록시하이드로신나메이트, 아미노부티릭애씨드, 미리스틱애씨드, 글라이신, 아라키딕애씨드, 소듐팔미토일사코시네이트, 글루타믹애씨드, 알지닌, 올레익애씨드, 아스파틱애씨드, 라이신, 세린, 트레오닌, 시스테인, 히스티딘, 타이로신, 토코페롤</td></tr><tr><th>화장품제조업자</th><td>(주)위노바 / 경기도 평택시 청북읍 청북산단로 178</td></tr><tr><th>화장품책임판매업자</th><td>(주)와이엘트레이딩 / 경기도 안양시 동안구 시민대로 401, 2001호(관양동, 대륭테크노타운 15차)</td></tr><tr><th>사용기한</th><td>별도표기</td></tr><tr><th>소비자상담실</th><td>02-6342-9496</td></tr><tr><th>주의사항</th><td>화장품 사용 시 또는 사용 직후 직사광선에 의하여 사용부위가 붉은 반점, 부어오름 또는 가려움증 등의 이상 증상이나 부작용이 있는 경우에는 전문의 등과 상담해주세요.<br>상처가 있는 부위 등에는 사용을 자제해주세요.<br>어린이의 손이 닿지 않는 곳에 보관해주세요.<br>직사광선을 피해서 보관해주세요.</td></tr><tr><th>제품의 pH</th><td>4.1 (기능성화장품 보고서 기재값)</td></tr></table></details></article>
-  </div>
-</div></section>
-
-<div class="notes"><div class="in nrow">
-  <div><b>PDRN</b><p>연어에서 온 원료.<br>7,000 그리고 12,000.</p></div>
-  <div><b>NMN</b><p>리포좀으로 감싼<br>30,000의 마지막 한 겹.</p></div>
-  <div><b>BRIGHT</b><p>거울 앞에서<br>오래 머무는 자리.</p></div>
-  <div><b>MADE</b><p>린제이앤코스 · 위노바<br>와이엘트레이딩</p></div>
-</div></div>
-
-<section><div class="in">
-  <p class="lab">WHY NUMBERS</p>
-  <h2>후기가 아직 없습니다.<br>대신 표기값을 먼저 답니다.</h2>
-  <div class="nums">
-    <div><b>7,000<i>ppm</i></b><span>소듐디엔에이 · 연어 PDRN</span></div>
-    <div><b>12,000<i>ppm</i></b><span>고함량 라인 · 펩타이드 17종</span></div>
-    <div><b>30,000<i>ppm</i></b><span>모노-뉴클레오타이드 · 리포좀</span></div>
-    <div><b>5,580<i>ppm</i></b><span>락토바실러스 · 효모 세포외소포</span></div>
-    <div><b>3,000<i>ppm</i></b><span>알란토인</span></div>
-    <div><b>600<i>ppm</i></b><span>우유 유래 엑소좀</span></div>
-  </div>
-  <p class="fine">전성분표에 적힌 값을 그대로 옮겼습니다. 나이아신아마이드(미백)·아데노신(주름개선)은 기능성 고시성분이며,
-    본품이 말할 수 있는 효능은 기능성 보고 범위까지입니다. 화장품은 질병의 예방·치료를 위한 의약품이 아닙니다.</p>
-</div></section>
-
-<div class="notes"><div class="in nrow">
-  <div><b>MADE</b><p>린제이앤코스 · 위노바<br>책임판매 (주)와이엘트레이딩</p></div>
-  <div><b>SHIPPING</b><p>배송비 3,000원<br>30,000원 이상 무료</p></div>
-  <div><b>RETURN</b><p>수령 후 7일 이내<br>단순 변심은 왕복 배송비 부담</p></div>
-  <div><b>ORDER</b><p>평일 오후 2시 이전<br>주문 당일 출고</p></div>
-</div></div>
-
-<section><div class="in">
-  <p class="lab">RITUAL</p>
-  <h2>가장 마지막에 얹습니다.</h2>
-  <div class="steps">
-    <div><i>01</i><b>세안</b><p>미지근한 물로 씻어내고 물기를 가볍게 눌러 닦습니다.</p></div>
-    <div><i>02</i><b>기초 정돈</b><p>쓰던 토너나 세럼이 있다면 먼저 정리합니다.</p></div>
-    <div><i>03</i><b>크림</b><p>적당량을 취해 얼굴에 골고루 펴 바릅니다. 아침저녁 모두 씁니다.</p></div>
-  </div>
-</div></section>
-
-<footer><div>
-  주식회사 와이엘트레이딩 · 대표 이권선 · 사업자등록번호 741-86-03645 · 통신판매업신고 2025-안양동안-0740<br>
-  경기도 안양시 동안구 시민대로 401, 2001호 · 고객센터 02-6177-7350 · 개인정보 보호책임자 이권선<br>
-  <a href="terms.html">이용약관</a> · <a href="privacy.html"><strong>개인정보처리방침</strong></a> · <a href="refund.html">교환/반품 안내</a> · 구매안전(에스크로) 서비스 가입 확인
-</div></footer>
-
-</body>
-</html>
+  <footer>
+    주식회사 와이엘트레이딩 · 검색에 노출되지 않도록 막아둔 페이지입니다.<br>
+    <a href="privacy.html" style="color:inherit">개인정보처리방침</a> ·
+    <a href="terms.html" style="color:inherit">이용약관</a> ·
+    <a href="refund.html" style="color:inherit">교환/반품 안내</a>
+  </footer>
+</div></body></html>
