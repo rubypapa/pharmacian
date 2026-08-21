@@ -112,12 +112,6 @@
     gt('begin_checkout', { value: o.value, currency: 'KRW', transaction_id: o.orderId });
   };
 
-  // 7단계 · 나눔·이벤트에 응모한 사람 (결제 퍼널과 별개 축)
-  T.applyEvent = function (name) {
-    fb('SubmitApplication', { content_name: name || 'giveaway' });
-    gt('generate_lead', { event_label: name || 'giveaway' });
-  };
-
   // ★결제 완료. 서버(ph-pay-confirm)도 같은 event_id로 메타에 보낸다.
   T.purchase = function (o) {
     fb('Purchase', { value: o.value, currency: 'KRW' }, o.orderId);
