@@ -28,6 +28,10 @@
   .buybar a{text-decoration:none;padding:12px 22px;border-radius:4px}
   .buybar .b1{background:#1b1a18;color:#f7f5ee}
   .buybar .b2{background:transparent;color:#1b1a18;border:1px solid #cfc8bb}
+.p12n-buy{display:inline-block;margin-top:24px;padding:16px 40px;border-radius:12px;
+  background:#fff;color:#111;font-size:17px;font-weight:800;letter-spacing:-.02em;text-decoration:none}
+.p12n-buy:hover{opacity:.88}
+.p12n-hold-note{margin-top:14px;font-size:13.5px;color:rgba(255,255,255,0.9);line-height:1.6}
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Product", "name": "파머시안 PDRN 12000 크림 30g", "image": "https://pharmacian.kr/detail/img/prod-p12.jpg", "sku": "p12", "brand": {"@type": "Brand", "name": "PHARMACIAN"}, "description": "미백·주름개선 이중 기능성화장품", "offers": {"@type": "Offer", "url": "https://pharmacian.kr/detail/p12.html", "priceCurrency": "KRW", "price": "39000", "availability": "https://schema.org/InStock", "seller": {"@type": "Organization", "name": "주식회사 와이엘트레이딩"}}}</script>
 </head><body>
@@ -180,14 +184,16 @@
   <details class="p12n-q"><summary>후기가 없는데요?</summary>
     <p>맞습니다. <strong>후기는 아직 0건입니다.</strong> 저희가 대신 써 둔 후기는 없습니다. 판매가 시작되면 실제 구매자의 후기가 쌓입니다.</p></details>
   <details class="p12n-q"><summary>언제부터 살 수 있나요?</summary>
-    <p><strong>8월 22일 판매 시작</strong> 예정입니다. 그 전에는 이 페이지에서 주문할 수 없습니다.</p></details>
+    <p data-faqbuy>지금 이 페이지에서 바로 담아 주문하실 수 있습니다.</p></details>
 </section>
 
 <!-- 18. 홀딩 -->
 <section class="p12n-hold">
   <p class="p12n-hold-name">브이씨엑소 파머시안 피디알엔 12000 크림 (VCXO PHARMACIAN PDRN 12000 CREAM)</p>
-  <p class="p12n-hold-big">8월 22일 판매 시작</p>
-  <p class="p12n-hold-sub">가격은 판매 시작에 맞춰 안내드립니다.</p>
+  <p class="p12n-hold-big">39,000<small style="font-size:24px;font-weight:700"> 원</small></p>
+  <p class="p12n-hold-sub">배송비 3,000원 · 30,000원 이상 무료배송</p>
+  <a class="p12n-buy" data-buy="p12" href="../checkout.html">구매하기</a>
+  <p class="p12n-hold-note" data-salenote></p>
 </section>
 
 <!-- 19. 마감 -->
@@ -233,9 +239,24 @@
 <script src="../cart.js"></script>
 <script>
 /* 상세에서 바로 구매하면 그 제품을 담고 결제로 간다. 안 담고 가면 결제 화면이 0개로 열린다. */
-(function(){var b=document.querySelector("[data-buy]"); if(!b) return;
-  b.addEventListener("click",function(e){ e.preventDefault();
-    if(window.PH_CART) PH_CART.add(b.getAttribute("data-buy"),1);
-    location.href=b.getAttribute("href"); });})();
+(function(){
+  /* ★판매 방식은 config.js 한 곳에서 정한다(SALE_MODE). 상세는 그 값을 읽어 말만 바꾼다.
+     토스 승인이 나서 'live'가 되면 이 화면들은 손댈 것 없이 그대로 결제로 이어진다. */
+  var reserve = ((window.PHARMACIAN||{}).SALE_MODE || 'live') === 'reserve';
+  var b = document.querySelector("[data-buy]");
+  var note = document.querySelector("[data-salenote]");
+  var faq = document.querySelector("[data-faqbuy]");
+  if (reserve) {
+    if (b) b.textContent = '예약 신청하기';
+    if (note) note.textContent = '결제는 아직 열리지 않았습니다. 지금은 예약만 받고, 결제되는 금액은 없습니다.';
+    if (faq) faq.textContent = '지금은 예약을 받고 있습니다. 결제가 열리면 남겨 주신 연락처로 순서대로 안내드립니다.';
+  } else if (note) {
+    note.textContent = '30,000원 이상 무료배송 · 첫 구매 15% 쿠폰은 장바구니에서 적용하십니다.';
+  }
+  if (!b) return;
+  b.addEventListener("click", function(e){ e.preventDefault();
+    if (window.PH_CART) PH_CART.add(b.getAttribute("data-buy"), 1);
+    location.href = b.getAttribute("href"); });
+})();
 </script>
 </body></html>

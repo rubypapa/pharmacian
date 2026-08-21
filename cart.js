@@ -3,7 +3,7 @@
 // 담는 것은 "무엇을 몇 개"까지다.
 (function (w) {
   var KEY = 'ph_cart_v1';
-  var VALID = ['p7', 'p12', 'nmn', 'mel'];
+  var VALID = ['p7', 'p12', 'nmn', 'mel', 'set1', 'set2'];   // set = 꿀조합SET(20% 적용가 상품)
 
   function read() {
     try {
