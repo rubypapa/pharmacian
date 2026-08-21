@@ -41,7 +41,7 @@ a:focus-visible{outline:2px solid var(--sh-pt);outline-offset:2px}
 
 <div class="wrap">
   <h1>쿠폰</h1>
-  <p class="sub" id="sub">가입하시면 아래 쿠폰이 계정에 함께 들어갑니다.</p>
+  <p class="sub" id="sub">로그인하시면 첫 구매 때 아래 쿠폰을 쓰실 수 있습니다.</p>
 
   <ul class="cps">
     <li class="cp">
@@ -50,15 +50,7 @@ a:focus-visible{outline:2px solid var(--sh-pt);outline-offset:2px}
         <div class="nm">첫 구매 할인</div>
         <div class="cond">처음 주문하실 때 한 번 쓰실 수 있습니다.<br>전 제품 · 다른 쿠폰과 겹쳐 쓸 수 없습니다.</div>
       </div>
-      <span class="state" data-state>가입하면 지급</span>
-    </li>
-    <li class="cp">
-      <div>
-        <div class="big">5,000원</div>
-        <div class="nm">신규 회원 적립</div>
-        <div class="cond">가입 즉시 지급됩니다.<br>주문 금액에서 바로 빠집니다.</div>
-      </div>
-      <span class="state" data-state>가입하면 지급</span>
+      <span class="state" data-state>로그인 후 사용</span>
     </li>
     <li class="cp">
       <div>
@@ -76,8 +68,8 @@ a:focus-visible{outline:2px solid var(--sh-pt);outline-offset:2px}
   </div>
 
   <p class="note" id="note">
-    <b>쿠폰 금액과 조건은 확정 전 초안입니다.</b>
-    실제 발급 조건(유효기간·중복 사용·최소 주문 금액)은 결제를 열 때 서버에서 정해집니다.
+    첫 구매 15% 쿠폰은 처음 주문하실 때 <b>장바구니·결제 화면에서 직접 적용</b>하십니다.
+    적용 여부와 할인 금액은 결제할 때 서버가 다시 확인합니다.
   </p>
 </div>
 
@@ -94,15 +86,15 @@ a:focus-visible{outline:2px solid var(--sh-pt);outline-offset:2px}
   function put(u){
     var st = [].slice.call(document.querySelectorAll('[data-state]'));
     st.forEach(function(e){
-      e.textContent = u ? '지급됨' : '가입하면 지급';
+      e.textContent = u ? '사용 가능' : '로그인 후 사용';
       e.classList.toggle('on', !!u);
     });
     var go = document.getElementById('go');
     if(go) go.hidden = !!u;
     var sub = document.getElementById('sub');
     if(sub) sub.textContent = u
-      ? '계정에 들어 있는 쿠폰입니다. 주문 화면에서 자동으로 적용됩니다.'
-      : '가입하시면 아래 쿠폰이 계정에 함께 들어갑니다.';
+      ? '장바구니·결제 화면에서 「첫 구매 15% 쿠폰 적용」을 누르시면 반영됩니다.'
+      : '로그인하시면 첫 구매 때 아래 쿠폰을 쓰실 수 있습니다.';
   }
   sb.auth.getSession().then(function(r){ put(r.data.session && r.data.session.user); });
   sb.auth.onAuthStateChange(function(_e,s){ put(s && s.user); });

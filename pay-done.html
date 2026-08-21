@@ -13,8 +13,11 @@
 <style>
 /* 색은 shell.css 가 정한다 — 여기서 따로 두면 다른 사이트로 보인다 */
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--page);color:var(--ink); min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px}
-.card{width:100%;max-width:460px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:34px 28px;text-align:center}
+body{background:var(--page);color:var(--ink);min-height:100dvh;display:flex;flex-direction:column}
+/* 머리는 위에 그대로 두고, 카드만 남은 자리 가운데에 놓는다.
+   전에는 body가 가로 flex라 머리가 카드 옆에 나란히 붙어 있었다. */
+.mid{flex:1;display:flex;align-items:center;justify-content:center;padding:24px}
+.card{width:100%;max-width:460px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:34px 28px;text-align:center}
 .mark{width:54px;height:54px;border-radius:50%;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;
   font-size:26px;font-weight:800;color:#fff;background:var(--ink-3)}
 .mark.ok{background:var(--ok)} .mark.no{background:var(--accent)}
@@ -30,12 +33,14 @@ dt{color:var(--ink-3)} dd{font-weight:700;font-variant-numeric:tabular-nums;word
 </head>
 <body>
 <div data-shell></div>
+<div class="mid">
 <div class="card">
   <div class="mark" id="mark">·</div>
   <h1 id="title">결제를 확인하고 있습니다</h1>
   <p id="msg">잠시만 기다려 주세요.</p>
   <dl id="detail"></dl>
   <a class="go" href="./" data-home>PHARMACIAN로 돌아가기</a>
+</div>
 </div>
 
 <script src="config.js"></script>
@@ -86,6 +91,8 @@ dt{color:var(--ink-3)} dd{font-weight:700;font-variant-numeric:tabular-nums;word
         if (window.PHARMACIAN_TRACK && !body.duplicate) {
           window.PHARMACIAN_TRACK.purchase({ value: body.amount, orderId: body.orderId });
         }
+        // ★장바구니는 승인이 끝난 여기서 비운다. 결제창을 닫고 돌아온 사람 것은 그대로 남는다.
+        if (window.PH_CART) PH_CART.clear();
       } else {
         show('no', '결제가 승인되지 않았습니다',
           body.error || '승인 과정에서 문제가 발생했습니다. 결제가 되었다면 자동으로 취소됩니다.',

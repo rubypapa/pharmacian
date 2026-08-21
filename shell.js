@@ -55,7 +55,7 @@
     }).join('');
 
     var band = (s === 'b')
-      ? '<div class="sh-band">30,000원 이상 무료배송 · 신규회원 5,000원 쿠폰 즉시 지급</div>' : '';
+      ? '<div class="sh-band">30,000원 이상 무료배송 · 첫 구매 15% 쿠폰</div>' : '';
     var here = file();
     var loginLabel = (s === 'a') ? 'LOGIN' : '로그인';
     var cartLabel = (s === 'a') ? 'CART' : '장바구니';
