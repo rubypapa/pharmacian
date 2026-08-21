@@ -15,6 +15,12 @@ window.PHARMACIAN = {
   SUPABASE_URL: "https://rkzcclmcqnyzkyvmovft.supabase.co",
   SUPABASE_ANON: "sb_publishable_3jpxigblPdd5vhdv3nvmCQ_ZBs2nWle",
 
+  // ★판매 방식 스위치. 'reserve' = 예약만 받는다(돈을 안 받는다) / 'live' = 실제 결제.
+  //   토스 전자결제 심사가 끝나면 이 한 줄을 'live'로 바꾸고 아래 TOSS_CLIENT를 라이브 키로 갈면 된다.
+  //   ★예약으로 두는 이유 = 전상법 24조. 계좌로 미리 돈을 받으면 에스크로 가입 의무가 생긴다.
+  //   예약은 돈이 안 오가서 그 의무가 아예 생기지 않는다(2026-08-21 루비 결정).
+  SALE_MODE: "reserve",
+
   // 토스페이먼츠 클라이언트 키. ★공개 키다(결제창을 띄우는 용도).
   // 시크릿 키는 여기 없다 — Supabase 함수 환경변수(PG_SECRET_KEY)에만 있다.
   // 지금 값 = 토스 공식 문서에 공개된 "문서용 테스트 키". 계약 후 라이브 키로 바꾼다.
