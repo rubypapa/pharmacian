@@ -39,6 +39,7 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
   font:inherit;font-size:16.5px;font-weight:700;letter-spacing:-.02em;cursor:pointer}
 .pay:disabled{opacity:.4;cursor:not-allowed}
 .note{margin-top:14px;font-size:13px;color:var(--ink-3)}
+.cbtn{margin-top:16px;width:100%;height:46px;border:1px solid var(--accent);background:#fff;color:var(--accent);font:700 14.5px/1 inherit;border-radius:10px;cursor:pointer}
 .gate{margin-top:22px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:28px 22px;text-align:center}
 .gate p{font-size:15px;color:var(--ink-2)}
 .gate a{display:inline-block;margin-top:16px;font-weight:700;color:var(--accent);
@@ -87,7 +88,12 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
 
   const goods = () => rows.reduce((s, r) => s + r.price * (qty[r.key] || 0), 0);
   const count = () => rows.reduce((s, r) => s + (qty[r.key] || 0), 0);
-  const total = () => goods() + (count() ? ship : 0);
+  const FREE = (window.PHARMACIAN && window.PHARMACIAN.FREE_SHIP_OVER) || 30000;
+  const shipFee = () => (count() && goods() < FREE) ? ship : 0;
+  // 첫 구매 15% 쿠폰. 장바구니에서 적용하면 localStorage에 남고 여기로 이어진다. ★실제 적용은 서버가 최종 판정한다.
+  const coupon = () => (count() > 0 && localStorage.getItem('ph_coupon') === '1');
+  const discount = () => coupon() ? Math.round(goods() * 0.15) : 0;
+  const total = () => goods() - discount() + shipFee();
 
   function drawItems() {
     $('#items').innerHTML = rows.map(r => `
@@ -118,8 +124,16 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
     const n = count();
     $('#sum').innerHTML = `
       <div><span>상품 금액</span><span class="num">${won(goods())}원</span></div>
-      <div><span>배송비</span><span class="num">${n ? won(ship) + '원' : '-'}</span></div>
-      <div class="tot"><span>결제 예정 금액</span><span class="num">${won(total())}원</span></div>`;
+      ${coupon() ? `<div><span>첫 구매 15% 쿠폰</span><span class="num">-${won(discount())}원</span></div>` : ''}
+      <div><span>배송비</span><span class="num">${n ? (shipFee() === 0 ? '무료' : won(shipFee()) + '원') : '-'}</span></div>
+      <div class="tot"><span>결제 예정 금액</span><span class="num">${won(total())}원</span></div>
+      <button type="button" id="cbtn" class="cbtn">${coupon() ? '쿠폰 적용됨 · 해제하기' : '첫 구매 15% 쿠폰 적용'}</button>`;
+    const cb = $('#cbtn');
+    if (cb) cb.addEventListener('click', () => {
+      if (localStorage.getItem('ph_coupon') === '1') localStorage.removeItem('ph_coupon');
+      else localStorage.setItem('ph_coupon', '1');
+      drawSum();
+    });
     $('#pay').disabled = n === 0 || !widgets;
     if (widgets && n) widgets.setAmount({ currency: 'KRW', value: total() });
   }
@@ -165,7 +179,7 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
       const res = await fetch(`${C.SUPABASE_URL}/functions/v1/ph-order-create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({ items, coupon: coupon() }),
       });
       const order = await res.json();
       if (!res.ok) throw new Error(order.error || '주문 생성 실패');

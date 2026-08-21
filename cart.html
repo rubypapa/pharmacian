@@ -48,6 +48,8 @@ li img{width:84px;height:84px;object-fit:cover;border-radius:4px;background:var(
 .empty{margin-top:40px;padding:44px 20px;text-align:center;border:1px dashed var(--rule);border-radius:6px;color:var(--muted)}
 .note{margin-top:14px;font-size:13px;color:var(--muted)}
 .note b{color:var(--ink)}
+.cbtn{margin-top:14px;width:100%;height:44px;border:1px solid var(--pt);background:transparent;color:var(--pt);font:700 14.5px/1 inherit;border-radius:6px;cursor:pointer}
+.cbtn.on{background:var(--pt);color:#fff}
 a:focus-visible,button:focus-visible{outline:2px solid var(--pt);outline-offset:2px}
 @media(max-width:560px){li{grid-template-columns:64px 1fr}li img{width:64px;height:64px}
   .right{grid-column:1/-1;flex-direction:row;justify-content:space-between;align-items:center}}
@@ -65,8 +67,11 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pt);outline-offset:
 
   <div class="sum" id="sum" hidden>
     <div><span>상품 금액</span><span class="num" id="s-goods">-</span></div>
+    <div id="s-cprow" hidden><span>첫 구매 15% 쿠폰</span><span class="num" id="s-coupon">-</span></div>
     <div><span>배송비</span><span class="num" id="s-ship">-</span></div>
     <div class="tot"><span>결제 예정 금액</span><span class="num" id="s-tot">-</span></div>
+    <button type="button" id="cbtn" class="cbtn">첫 구매 15% 쿠폰 적용</button>
+    <p style="margin:8px 0 0;font-size:12px;color:var(--muted)">첫 구매 회원 한정 · 결제 화면에서 최종 확인됩니다.</p>
   </div>
 
   <div class="go" id="go" hidden>
@@ -135,10 +140,16 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pt);outline-offset:
     }
     var goods = 0;
     priceRows.forEach(function(r){ if(cart[r.key]) goods += r.price * cart[r.key]; });
-    var ship = goods ? priceRows[0].ship : 0;
+    var FREE = (window.PHARMACIAN && window.PHARMACIAN.FREE_SHIP_OVER) || 30000;
+    var ship = (goods && goods < FREE) ? priceRows[0].ship : 0;
+    var coupon = (goods>0 && localStorage.getItem('ph_coupon')==='1');
+    var disc = coupon ? Math.round(goods*0.15) : 0;
     $('#s-goods').textContent = won(goods)+'원';
-    $('#s-ship').textContent  = won(ship)+'원';
-    $('#s-tot').textContent   = won(goods+ship)+'원';
+    $('#s-cprow').hidden = !coupon;
+    $('#s-coupon').textContent = coupon ? '-'+won(disc)+'원' : '-';
+    $('#s-ship').textContent  = (goods>0 && ship===0) ? '무료' : won(ship)+'원';
+    $('#s-tot').textContent   = won(goods-disc+ship)+'원';
+    var cb=$('#cbtn'); if(cb){ cb.textContent = coupon ? '쿠폰 적용됨 · 해제하기' : '첫 구매 15% 쿠폰 적용'; cb.classList.toggle('on',coupon); }
   }
 
   document.addEventListener('click', function(e){
@@ -148,6 +159,11 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pt);outline-offset:
     if(t.dataset.p){ PH_CART.set(t.dataset.p, (cart[t.dataset.p]||0)+1); draw(); }
     if(t.dataset.m){ PH_CART.set(t.dataset.m, (cart[t.dataset.m]||0)-1); draw(); }
     if(t.dataset.x){ PH_CART.set(t.dataset.x, 0); draw(); }
+    if(t.id==='cbtn'){
+      if(localStorage.getItem('ph_coupon')==='1') localStorage.removeItem('ph_coupon');
+      else localStorage.setItem('ph_coupon','1');
+      drawSum();
+    }
   });
 
   // ★가격은 공개다(2026-08-20). 로그인 여부와 상관없이 가격표를 읽는다.
