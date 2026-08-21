@@ -122,6 +122,10 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
 
   const NAMES = { p7: '파머시안 PDRN 7000 크림', p12: '파머시안 PDRN 12000 크림', nmn: '파머시안 NMN 30,000 크림', mel: '파머시안 멜라리스 100,000 크림' };
   let rows = [], qty = {}, ship = 0, widgets = null, user = null, addr = null;
+  // ★서버가 금액을 정하고 나면 그 값이 진짜다. 이 화면 계산은 어림이다.
+  //   둘이 어긋난 채로 결제창을 띄우면 손님이 본 금액과 실제 청구액이 달라진다(쿠폰이 거절되는 경우).
+  let srv = null;
+  const stale = () => { srv = null; };
 
   const goods = () => rows.reduce((s, r) => s + r.price * (qty[r.key] || 0), 0);
   const count = () => rows.reduce((s, r) => s + (qty[r.key] || 0), 0);
@@ -130,7 +134,7 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
   // 첫 구매 15% 쿠폰. 장바구니에서 적용하면 localStorage에 남고 여기로 이어진다. ★실제 적용은 서버가 최종 판정한다.
   const coupon = () => (count() > 0 && localStorage.getItem('ph_coupon') === '1');
   const discount = () => coupon() ? Math.round(goods() * 0.15) : 0;
-  const total = () => goods() - discount() + shipFee();
+  const total = () => srv ? srv.amount : goods() - discount() + shipFee();
 
   function drawItems() {
     $('#items').innerHTML = rows.map(r => `
@@ -148,6 +152,7 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
       const before = qty[k] || 0;
       qty[k] = Math.max(0, Math.min(20, before + d));
       $('#q-' + k).value = qty[k];
+      stale();
       // ★5단계 전환: 0에서 1로 올라간 순간이 '담았다'이다
       if (before === 0 && qty[k] === 1 && window.PHARMACIAN_TRACK) {
         const r = rows.find(x => x.key === k);
@@ -159,16 +164,20 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
 
   function drawSum() {
     const n = count();
+    const g = srv ? srv.goods : goods();
+    const dc = srv ? srv.discount : discount();
+    const sh = srv ? srv.ship : shipFee();
     $('#sum').innerHTML = `
-      <div><span>상품 금액</span><span class="num">${won(goods())}원</span></div>
-      ${coupon() ? `<div><span>첫 구매 15% 쿠폰</span><span class="num">-${won(discount())}원</span></div>` : ''}
-      <div><span>배송비</span><span class="num">${n ? (shipFee() === 0 ? '무료' : won(shipFee()) + '원') : '-'}</span></div>
+      <div><span>상품 금액</span><span class="num">${won(g)}원</span></div>
+      ${dc ? `<div><span>첫 구매 15% 쿠폰</span><span class="num">-${won(dc)}원</span></div>` : ''}
+      <div><span>배송비</span><span class="num">${n ? (sh === 0 ? '무료' : won(sh) + '원') : '-'}</span></div>
       <div class="tot"><span>결제 예정 금액</span><span class="num">${won(total())}원</span></div>
       <button type="button" id="cbtn" class="cbtn">${coupon() ? '쿠폰 적용됨 · 해제하기' : '첫 구매 15% 쿠폰 적용'}</button>`;
     const cb = $('#cbtn');
     if (cb) cb.addEventListener('click', () => {
       if (localStorage.getItem('ph_coupon') === '1') localStorage.removeItem('ph_coupon');
       else localStorage.setItem('ph_coupon', '1');
+      stale();
       drawSum();
     });
     $('#pay').disabled = n === 0 || !widgets || !addrReady();
@@ -293,6 +302,22 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
       });
       const order = await res.json();
       if (!res.ok) throw new Error(order.error || '주문 생성 실패');
+
+      // ★서버가 정한 금액이 화면과 다르면 결제창을 띄우지 않는다.
+      //   전에는 쿠폰이 거절돼도 화면 합계가 그대로여서, 손님이 20,000원을 보고 23,000원 결제창을 봤다.
+      //   화면을 서버값으로 다시 그리고, 손님이 보고 다시 눌러야 넘어간다.
+      if (order.amount !== total()) {
+        const lost = coupon() && !order.discount;
+        if (lost) localStorage.removeItem('ph_coupon');
+        srv = order;
+        drawSum();
+        $('#note').textContent = lost
+          ? `첫 구매 쿠폰은 이미 쓰신 이력이 있어 적용되지 않았습니다. 결제 금액은 ${won(order.amount)}원입니다. 확인하시고 다시 눌러 주세요.`
+          : `결제 금액이 ${won(order.amount)}원으로 정해졌습니다. 확인하시고 다시 눌러 주세요.`;
+        $('#pay').disabled = false;
+        return;
+      }
+
       if (window.PHARMACIAN_TRACK) window.PHARMACIAN_TRACK.beginCheckout({ value: order.amount, orderId: order.orderId });
       // ★여기서 장바구니를 비우지 않는다. 결제창을 닫고 돌아오면 담아둔 게 통째로 사라진다.
       //   비우는 자리는 승인이 끝난 pay-done.html 이다.
