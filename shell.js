@@ -93,7 +93,13 @@
       });
     }
     sb.auth.getSession().then(function (r) { put(r.data.session && r.data.session.user); });
-    sb.auth.onAuthStateChange(function (_e, s) { put(s && s.user); });
+    sb.auth.onAuthStateChange(function (e, s) {
+      // ★로그아웃하면 담아둔 것도 지운다(2026-08-23 루비 지시).
+      //   공용 PC에서 다음 사람에게 앞사람 장바구니가 남으면 안 된다.
+      //   SIGNED_OUT 은 실제로 로그아웃할 때만 온다 — 비로그인 손님이 담아둔 것은 건드리지 않는다.
+      if (e === 'SIGNED_OUT' && w.PH_CART) PH_CART.clear();
+      put(s && s.user);
+    });
   }
 
   // 홈으로 돌아왔을 때 ?f= 가 있으면 그 분류를 켠다
