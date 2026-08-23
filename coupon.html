@@ -86,7 +86,9 @@ a:focus-visible{outline:2px solid var(--sh-pt);outline-offset:2px}
   function put(u){
     var st = [].slice.call(document.querySelectorAll('[data-state]'));
     st.forEach(function(e){
-      e.textContent = u ? '사용 가능' : '로그인 후 사용';
+      // ★첫 구매인지는 서버만 안다(결제 때 판정). 화면이 "사용 가능"이라 단정하면
+      //   이미 구매한 분께 거짓말이 된다.
+      e.textContent = u ? '첫 구매 시 사용' : '로그인 후 사용';
       e.classList.toggle('on', !!u);
     });
     var go = document.getElementById('go');

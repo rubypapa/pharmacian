@@ -83,7 +83,7 @@ dt{color:var(--ink-3)} dd{font-weight:700;font-variant-numeric:tabular-nums;word
     .then(async r => ({ ok: r.ok, body: await r.json() }))
     .then(({ ok, body }) => {
       if (ok && body.ok) {
-        show('ok', '결제가 완료되었습니다', '주문 내역은 등록하신 연락처로 안내드립니다.',
+        show('ok', '결제가 완료되었습니다', '주문번호를 남겨 두었습니다. 배송이 시작되면 등록하신 연락처로 안내드립니다.',
           [['주문번호', body.orderId], ['결제 금액', won(body.amount) + '원']]);
         // ★전환 보고. 서버(ph-pay-confirm)도 같은 주문번호를 event_id로 메타에 보내므로
         //   광고차단·추적거부로 이 줄이 안 돌아도 전환은 잡힌다(중복은 메타가 걷어낸다).

@@ -4,6 +4,10 @@
 (function (w) {
   var KEY = 'ph_cart_v1';
   var VALID = ['p7', 'p12', 'nmn', 'mel', 'set1', 'set2'];   // set = 꿀조합SET(20% 적용가 상품)
+  // ★상한은 서버(ph-order-create 의 qty 1~20)와 같은 값이어야 한다.
+  //   전에는 여기만 훨씬 커서, 담을 땐 되고 결제에서 막혔다
+  //   (+를 누르면 수량이 도리어 20으로 줄어드는 일도 있었다).
+  var MAX = 20;
 
   function read() {
     try {
@@ -11,7 +15,7 @@
       var out = {};
       VALID.forEach(function (k) {
         var n = parseInt(o[k], 10);
-        if (n > 0) out[k] = Math.min(n, 99);       // 상한을 둬야 이상한 값이 결제로 안 넘어간다
+        if (n > 0) out[k] = Math.min(n, MAX);       // 상한을 둬야 이상한 값이 결제로 안 넘어간다
       });
       return out;
     } catch (e) { return {}; }
@@ -26,12 +30,12 @@
   function add(key, qty) {
     if (VALID.indexOf(key) < 0) return;
     var o = read();
-    o[key] = Math.min((o[key] || 0) + (qty || 1), 99);
+    o[key] = Math.min((o[key] || 0) + (qty || 1), MAX);
     write(o);
   }
   function set(key, qty) {
     var o = read();
-    if (qty > 0) o[key] = Math.min(qty, 99); else delete o[key];
+    if (qty > 0) o[key] = Math.min(qty, MAX); else delete o[key];
     write(o);
   }
   function clear() { write({}); }

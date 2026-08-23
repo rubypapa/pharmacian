@@ -9,8 +9,6 @@
 <link rel="stylesheet" href="shell.css">
 <style>
 /* 색은 shell.css 가 정한다 — 여기서 따로 두면 다른 사이트로 보인다 */
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --paper:#141311;--surface:#1c1a18;--ink:#f2efe6;--muted:#9a948a;--rule:#2c2a26;--pt:#d08b78}}
 :root[data-theme="dark"]{--paper:#141311;--surface:#1c1a18;--ink:#f2efe6;--muted:#9a948a;--rule:#2c2a26;--pt:#d08b78}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);}
@@ -194,6 +192,13 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pt);outline-offset:
   }
   draw();
 })();
+  // ★다른 탭에서 담거나 비우면 이 화면도 따라간다.
+  //   전에는 머리의 숫자만 바뀌고 본문은 옛 내용 그대로였다("1"인데 "없습니다").
+  window.addEventListener('storage', function (e) {
+    if (e.key === (window.PH_CART && PH_CART.KEY)) location.reload();
+  });
+  window.addEventListener('ph:cart', function () { if (typeof draw === 'function') draw(); });
+
 </script>
 <script src="shell.js"></script>
 </body></html>
