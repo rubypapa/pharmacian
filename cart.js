@@ -30,6 +30,12 @@
 
   function add(key, qty) {
     if (VALID.indexOf(key) < 0) return;
+    // ★로그인부터 받는다. 담아 놓고 결제에서 막는 것보다 낫다.
+    if (!signedIn()) {
+      var up = location.pathname.indexOf('/detail/') >= 0 ? '../' : '';
+      location.href = up + 'join.html?back=index';
+      return;
+    }
     var o = read();
     o[key] = Math.min((o[key] || 0) + (qty || 1), MAX);
     write(o);
@@ -80,11 +86,27 @@
     return false;
   }
 
-  // 화면을 열 때마다 주인을 맞춰 본다. 주인이 있는데 로그인 상태가 아니면 비운다.
+  // 화면을 열 때마다 본다. ★로그인 상태가 아니면 장바구니는 비어 있다.
+  //   비회원은 구매를 못 하므로 담아 두는 것 자체가 의미가 없고,
+  //   로그인 안 한 화면에 숫자만 남아 있으면 손님이 헷갈린다.
   function ownerGate() {
+    if (!signedIn()) { clear(); return; }
     var owner = null;
     try { owner = localStorage.getItem(OWNER); } catch (e) {}
-    if (owner && !signedIn()) clear();
+    if (owner && owner !== currentUserId()) clear();   // 다른 사람이 쓰던 것
+  }
+
+  // 세션 안에 들어 있는 계정 id. 라이브러리 없이 localStorage 에서 직접 읽는다.
+  function currentUserId() {
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (!k || k.indexOf('sb-') !== 0 || k.indexOf('-auth-token') < 0) continue;
+        var v = JSON.parse(localStorage.getItem(k) || 'null');
+        if (v && v.user && v.user.id) return v.user.id;
+      }
+    } catch (e) {}
+    return null;
   }
 
   // 다른 탭에서 담아도 이 탭 숫자가 따라간다
