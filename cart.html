@@ -55,6 +55,10 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pt);outline-offset:
 </head><body>
 
 <div data-shell></div>
+<div id="rsvbar" hidden style="background:#FFF3E0;color:#8A4B08;text-align:center;
+  font-size:12.5px;font-weight:700;padding:9px 14px;line-height:1.5">
+  지금은 <b style="color:#B45309">예약</b>만 받습니다 · 결제되는 금액은 없습니다</div>
+
 
 <div class="wrap">
   <h1>장바구니</h1>
@@ -80,6 +84,11 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pt);outline-offset:
 </div>
 
 <script src="config.js"></script>
+<script>
+  // 판매 방식은 config.js 한 곳에서 정한다(★이 스크립트는 config.js 뒤에 있어야 한다).
+  (function(){ var C = window.PHARMACIAN || {};
+    if ((C.SALE_MODE || 'live') === 'reserve') { var b = document.getElementById('rsvbar'); if (b) b.hidden = false; } })();
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="cart.js"></script>
 <script>

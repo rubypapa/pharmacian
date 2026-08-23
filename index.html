@@ -34,6 +34,9 @@ body{font-family:'Pretendard Variable',Pretendard,-apple-system,'Malgun Gothic',
 
 .top{background:var(--sale);color:#fff;text-align:center;font-size:12.5px;font-weight:700;padding:10px}
 .strip2{background:#191919;color:#fff;text-align:center;font-size:12px;padding:8px}
+/* ★결제가 아직 안 열렸다는 말을 맨 앞에 둔다. 마지막 화면에서 알게 하면 안 된다. */
+.rsvbar{background:#FFF3E0;color:#8A4B08;text-align:center;font-size:12.5px;font-weight:700;padding:9px 14px;line-height:1.5}
+.rsvbar b{color:#B45309}
 header{border-bottom:1px solid var(--rule);position:sticky;top:0;background:#fff;z-index:9}
 .hd{max-width:1140px;margin:0 auto;padding:13px 20px;display:flex;align-items:center;gap:18px}
 .logo{font-size:19px;font-weight:800;letter-spacing:.16em}
@@ -305,6 +308,7 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
 
 <div class="top">🔥 첫 구매 15% 쿠폰 🔥</div>
 <div class="strip2">30,000원 이상 무료배송 · 첫 구매 15% 쿠폰</div>
+<div class="rsvbar" id="rsvbar" hidden>지금은 <b>예약</b>만 받습니다 · 결제되는 금액은 없고, 결제가 열리면 순서대로 안내드립니다</div>
 <header><div class="hd">
   <div class="logo">PHARMACIAN</div>
   <nav class="gnb"><a class="hot" href="#sec-all" data-f="오픈특가">오픈특가💥</a><a href="#sec-all" data-f="전체">전 제품</a><a href="#sec-all" data-f="PDRN">PDRN</a><a href="#sec-all" data-f="NMN">NMN</a><a href="#sec-all" data-f="미백">미백</a><a href="#sec-set">이벤트</a></nav>
@@ -352,8 +356,9 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
       <div class="pr"><span class="off">29,000원</span><span class="was">쿠폰 적용 시 24,650원</span></div>
       <p class="rv">첫 구매 1회 한정 · 장바구니에서 쿠폰 적용</p></a><button type="button" class="addcart" data-add="mel"><span>장바구니 담기</span></button><details class="legal"><summary>상품정보 제공고시 · 전성분</summary><table><tr class="h2"><th>제품명</th><td>브이씨엑소 파머시안 멜라리스 10만 크림<br>(VCXO PHARMACIAN MELALESS 100,000 CREAM)</td></tr><tr class="h1"><th>용량</th><td>30g</td></tr><tr class="h1"><th>피부타입</th><td>모든 피부</td></tr><tr class="h2"><th>효능효과</th><td>피부의 미백에 도움을 준다. 피부의 주름개선에 도움을 준다.</td></tr><tr class="h2"><th>용법용량</th><td>본품 적당량을 취해 피부에 골고루 펴 바른다.</td></tr><tr class="h3"><th>전성분</th><td>정제수, 카프릴릭/카프릭트라이글리세라이드, 나이아신아마이드, 카프릴릴메티콘, 다이프로필렌그라이콜, 부틸렌그라이콜, 시트릭애씨드, 트라넥사믹애씨드, 세테아릴알코올, 3-O-에틸아스코빅애씨드, 글리세린, 1,2-헥산다이올, 베타인, 세틸알코올, 글리세릴스테아레이트, 판테놀, 시어버터, 세테아릴올리베이트, 베헤닐알코올, 폴리아크릴레이트크로스폴리머-6, 솔비탄올리베이트, 세테아릴글루코사이드, 페룰릭애씨드, 스테아릴알코올, 알란토인, 팔미틱애씨드, 스테아릭애씨드, 알라닌, 푸코실락토오스, 폴리글리세릴-10라우레이트, 흰목이버섯폴리사카라이드, 미리스틸알코올, 아시아티코사이드, 마데카식애씨드, 에틸헥실글리세린, 다이소듐이디티에이, 글리세레스-26, 소듐하이알루로네이트, 토코페릴아세테이트, 아데노신, 아시아틱애씨드, 라우릴알코올, t-부틸알코올, 펜타에리스리틸테트라-다이-t-부틸하이드록시하이드로신나메이트, 아미노부티릭애씨드, 미리스틱애씨드, 글라이신, 아라키딕애씨드, 소듐팔미토일사코시네이트, 글루타믹애씨드, 알지닌, 올레익애씨드, 아스파틱애씨드, 라이신, 세린, 트레오닌, 시스테인, 히스티딘, 타이로신, 토코페롤</td></tr><tr class="h2"><th>화장품제조업자</th><td>(주)위노바 / 경기도 평택시 청북읍 청북산단로 178</td></tr><tr class="h2"><th>화장품책임판매업자</th><td>(주)와이엘트레이딩 / 경기도 안양시 동안구 시민대로 401, 2001호(관양동, 대륭테크노타운 15차)</td></tr><tr class="h1"><th>사용기한</th><td>별도표기</td></tr><tr class="h1"><th>소비자상담실</th><td>02-6342-9496</td></tr><tr class="h3"><th>주의사항</th><td>화장품 사용 시 또는 사용 직후 직사광선에 의하여 사용부위가 붉은 반점, 부어오름 또는 가려움증 등의 이상 증상이나 부작용이 있는 경우에는 전문의 등과 상담해주세요.<br>상처가 있는 부위 등에는 사용을 자제해주세요.<br>어린이의 손이 닿지 않는 곳에 보관해주세요.<br>직사광선을 피해서 보관해주세요.</td></tr><tr class="h1"><th>제품의 pH</th><td>4.1 (기능성화장품 보고서 기재값)</td></tr></table></details></article>
   </div>
-  <p class="note">★신규 브랜드라 종전 판매 가격이 없습니다. 그래서 정가·취소선 표기를 하지 않고,
-    실제로 드리는 혜택(첫 구매 15% 쿠폰)의 적용가만 적습니다.</p>
+  <p class="note">★신규 브랜드라 종전 판매 가격이 없습니다. 그래서 낱개 상품에는 정가·취소선 표기를 하지 않고,
+    실제로 드리는 혜택(첫 구매 15% 쿠폰)의 적용가만 적습니다.
+    세트의 취소선은 <b>구성품을 낱개로 살 때의 합계</b>이며, 지어낸 정가가 아닙니다.</p>
 </section>
 
 <section id="sec-set" style="padding-top:0"><h2>#꿀조합SET</h2>
@@ -509,6 +514,11 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
+<script>
+  // 판매 방식은 config.js 한 곳에서 정한다. 예약 중이면 맨 위에 그렇게 적는다.
+  (function(){ var C = window.PHARMACIAN || {};
+    if ((C.SALE_MODE || 'live') === 'reserve') { var b = document.getElementById('rsvbar'); if (b) b.hidden = false; } })();
+</script>
 <script src="cart.js"></script>
 <script>
 /* 카드의 담기 버튼과 헤더 로그인 상태. 장바구니는 브라우저에만 담고 금액은 서버가 정한다. */

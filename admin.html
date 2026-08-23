@@ -111,8 +111,17 @@ td.num{font-variant-numeric:tabular-nums}
         body: '{}',
       });
     } catch (e) { say('불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'); return; }
-    // ★관리자가 아니면 서버가 404를 준다. 여기서도 "권한 없음"이라 알리지 않는다.
-    if (!res.ok) { say('이 계정으로는 볼 수 없는 화면입니다.'); return; }
+    // ★관리자가 아니면 서버가 404를 준다(있다는 것도 안 알린다).
+    //   ★다만 500(명단을 못 불러옴)까지 같은 말로 뭉뚱그리면, 권한 설정이 빠진 건데
+    //     "너는 관리자가 아니다"로 읽힌다 — 실제로 그렇게 헷갈린 적이 있다. 원인을 갈라서 말한다.
+    if (res.status === 404) { say('이 계정으로는 볼 수 없는 화면입니다.'); return; }
+    if (!res.ok) {
+      let why = '';
+      try { why = (await res.json()).error || ''; } catch (e) {}
+      say('명단을 불러오지 못했습니다.' + (why ? '<br>' + why : '') +
+          '<br><span style="font-size:12.5px">(' + res.status + ')</span>');
+      return;
+    }
     const body = await res.json();
     rows = (body && body.rows) || [];
     $('#bar').hidden = false;
