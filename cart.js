@@ -3,6 +3,7 @@
 // 담는 것은 "무엇을 몇 개"까지다.
 (function (w) {
   var KEY = 'ph_cart_v1';
+  var OWNER = 'ph_cart_owner';   // 이 장바구니가 누구 것인가(로그인 계정 id)
   var VALID = ['p7', 'p12', 'nmn', 'mel', 'set1', 'set2'];   // set = 꿀조합SET(20% 적용가 상품)
   // ★상한은 서버(ph-order-create 의 qty 1~20)와 같은 값이어야 한다.
   //   전에는 여기만 훨씬 커서, 담을 땐 되고 결제에서 막혔다
@@ -38,7 +39,21 @@
     if (qty > 0) o[key] = Math.min(qty, MAX); else delete o[key];
     write(o);
   }
-  function clear() { write({}); }
+  function clear() { try { localStorage.removeItem(OWNER); } catch (e) {} write({}); }
+
+  // ★로그인한 사람이 담으면 그 사람 것이 된다. 비로그인으로 담은 것은 주인이 없다.
+  //   주인이 있던 장바구니인데 지금 그 사람이 아니면(로그아웃·계정 바뀜) 비운다.
+  //   ★이벤트가 아니라 상태를 대조하므로, 다른 탭에서 로그아웃해도·세션이 만료돼도 정리된다.
+  function syncOwner(userId) {
+    var owner = null;
+    try { owner = localStorage.getItem(OWNER); } catch (e) {}
+    if (userId) {
+      if (owner && owner !== userId) { clear(); }          // 다른 사람이 쓰던 것
+      try { localStorage.setItem(OWNER, userId); } catch (e) {}
+      return;
+    }
+    if (owner) { clear(); }                                 // 주인이 있었는데 지금 로그아웃 상태다
+  }
 
   // 헤더의 장바구니 개수를 칠한다
   function paint() {
@@ -53,5 +68,6 @@
   w.addEventListener('storage', function (e) { if (e.key === KEY) paint(); });
   document.addEventListener('DOMContentLoaded', paint);
 
-  w.PH_CART = { read: read, add: add, set: set, clear: clear, count: count, paint: paint, KEY: KEY };
+  w.PH_CART = { read: read, add: add, set: set, clear: clear, count: count, paint: paint,
+                syncOwner: syncOwner, KEY: KEY, OWNER: OWNER };
 })(window);
