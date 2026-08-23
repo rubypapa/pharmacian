@@ -64,10 +64,34 @@
     });
   }
 
+  // ★로그인했는지를 여기서 직접 본다.
+  //   전에는 shell.js 가 supabase 라이브러리로 판정했는데, ★상세페이지에는 그 둘이 아예 없어서
+  //   상세에서 새로고침하면 대조가 안 돌았다(로그아웃했는데 숫자가 남아 있던 이유).
+  //   세션은 localStorage 의 sb-<프로젝트>-auth-token 에 있으니 라이브러리 없이도 확인된다.
+  function signedIn() {
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (!k || k.indexOf('sb-') !== 0 || k.indexOf('-auth-token') < 0) continue;
+        var v = JSON.parse(localStorage.getItem(k) || 'null');
+        if (v && v.access_token) return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+
+  // 화면을 열 때마다 주인을 맞춰 본다. 주인이 있는데 로그인 상태가 아니면 비운다.
+  function ownerGate() {
+    var owner = null;
+    try { owner = localStorage.getItem(OWNER); } catch (e) {}
+    if (owner && !signedIn()) clear();
+  }
+
   // 다른 탭에서 담아도 이 탭 숫자가 따라간다
   w.addEventListener('storage', function (e) { if (e.key === KEY) paint(); });
-  document.addEventListener('DOMContentLoaded', paint);
+  document.addEventListener('DOMContentLoaded', function () { ownerGate(); paint(); });
 
   w.PH_CART = { read: read, add: add, set: set, clear: clear, count: count, paint: paint,
-                syncOwner: syncOwner, KEY: KEY, OWNER: OWNER };
+                syncOwner: syncOwner, ownerGate: ownerGate, signedIn: signedIn,
+                KEY: KEY, OWNER: OWNER };
 })(window);
