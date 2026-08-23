@@ -4,7 +4,7 @@
 (function (w) {
   var KEY = 'ph_cart_v1';
   var OWNER = 'ph_cart_owner';   // 이 장바구니가 누구 것인가(로그인 계정 id)
-  var VALID = ['p7', 'p12', 'nmn', 'mel', 'set1', 'set2'];   // set = 꿀조합SET(20% 적용가 상품)
+  var VALID = ['p7', 'p12', 'nmn', 'mel', 'set1', 'set2', 'p7x10'];   // p7x10 = 현대홈쇼핑 10개 구성   // set = 꿀조합SET(20% 적용가 상품)
   // ★상한은 서버(ph-order-create 의 qty 1~20)와 같은 값이어야 한다.
   //   전에는 여기만 훨씬 커서, 담을 땐 되고 결제에서 막혔다
   //   (+를 누르면 수량이 도리어 20으로 줄어드는 일도 있었다).
