@@ -1,0 +1,150 @@
+<!-- 배송 명단 화면(관리자 전용).
+     ★이 화면에는 만능키가 없다. 로그인 토큰만 들고 ph-admin-orders 를 부르고,
+       "관리자인가"는 서버가 ph_admin 표를 보고 정한다.
+       그래서 이 파일을 통째로 뜯어봐도 남의 명단을 볼 방법이 없다.
+     ★검색에서도 막는다(robots.txt + noindex). -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>배송 명단 · PHARMACIAN</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="shell.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--sh-bg);color:var(--sh-ink)}
+.wrap{max-width:1200px;margin:0 auto;padding:32px 20px 80px}
+h1{font-size:24px;font-weight:800;letter-spacing:-.04em}
+.sub{margin-top:6px;font-size:13.5px;color:var(--sh-muted)}
+.bar{display:flex;gap:8px;align-items:center;margin-top:18px;flex-wrap:wrap}
+.bar button{height:38px;padding:0 15px;border:1px solid var(--sh-rule);border-radius:9px;
+  background:var(--surface);color:var(--sh-ink);font:700 13.5px/1 inherit;cursor:pointer}
+.bar button:hover{border-color:var(--sh-muted)}
+.bar .on{background:var(--sh-ink);color:var(--sh-bg);border-color:var(--sh-ink)}
+.bar .grow{margin-left:auto;font-size:13px;color:var(--sh-muted)}
+.box{margin-top:16px;background:var(--surface);border:1px solid var(--sh-rule);border-radius:14px;overflow:hidden}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px;white-space:nowrap}
+th,td{padding:11px 13px;text-align:left;border-bottom:1px solid var(--sh-rule)}
+th{background:rgba(0,0,0,.02);font-weight:800;font-size:12.5px;color:var(--sh-muted)}
+tr:last-child td{border-bottom:0}
+td.addr{white-space:normal;min-width:260px;line-height:1.55}
+td.num{font-variant-numeric:tabular-nums}
+.st{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:800}
+.st-reserved{background:#FFF3E0;color:#B45309}
+.st-paid{background:#E7F6EC;color:#0E7C4A}
+.st-pending{background:#F1F1F1;color:#666}
+.st-canceled,.st-failed{background:#FDECEA;color:#B3261E}
+.msg{padding:44px 22px;text-align:center;font-size:14.5px;color:var(--sh-muted);line-height:1.7}
+.msg a{color:var(--sh-pt);font-weight:700}
+.copy{height:30px;padding:0 10px;border:1px solid var(--sh-rule);border-radius:7px;
+  background:var(--surface);font:600 12px/1 inherit;cursor:pointer;color:var(--sh-ink)}
+@media(max-width:640px){.wrap{padding:22px 14px 60px}h1{font-size:20px}th,td{padding:9px 10px}}
+</style>
+</head>
+<body>
+<div data-shell></div>
+<div class="wrap">
+  <h1>배송 명단</h1>
+  <p class="sub">예약·주문을 받은 순서로 보여줍니다. 이 화면은 관리자에게만 열립니다.</p>
+
+  <div class="bar" id="bar" hidden>
+    <button type="button" data-f="all" class="on">전체</button>
+    <button type="button" data-f="reserved">예약</button>
+    <button type="button" data-f="paid">결제완료</button>
+    <button type="button" id="reload">새로고침</button>
+    <button type="button" id="csv">CSV로 내려받기</button>
+    <span class="grow" id="count"></span>
+  </div>
+
+  <div class="box"><div class="scroll" id="out">
+    <p class="msg">불러오는 중입니다…</p>
+  </div></div>
+</div>
+
+<script src="config.js"></script>
+<script src="cart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" onerror="window.__nosb=1"></script>
+<script>
+(function () {
+  const $ = s => document.querySelector(s);
+  const C = window.PHARMACIAN || {};
+  const out = $('#out');
+  const say = h => { out.innerHTML = '<p class="msg">' + h + '</p>'; };
+  if (window.__nosb || !window.supabase) { say('연결 준비 중입니다.'); return; }
+  const sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON);
+
+  const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const COLS = ['접수','상태','주문번호','품목','금액','받는분','연락처','주소','배송메모'];
+  let rows = [], filter = 'all';
+
+  const view = () => filter === 'all' ? rows : rows.filter(r => r['상태'] === filter);
+
+  function draw() {
+    const v = view();
+    $('#count').textContent = `전체 ${rows.length}건 · 보이는 것 ${v.length}건`;
+    if (!v.length) { say('아직 들어온 주문이 없습니다.'); return; }
+    out.innerHTML =
+      '<table><thead><tr>' + COLS.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>' +
+      v.map(r => '<tr>' + COLS.map(c => {
+        if (c === '상태') return `<td><span class="st st-${esc(r[c])}">${esc(r[c])}</span></td>`;
+        if (c === '금액') return `<td class="num">${Number(r[c] || 0).toLocaleString('ko-KR')}원</td>`;
+        if (c === '주소') return `<td class="addr">${esc(r[c])} <button class="copy" data-copy="${esc(r[c])}">복사</button></td>`;
+        return `<td${c === '접수' ? ' class="num"' : ''}>${esc(r[c])}</td>`;
+      }).join('') + '</tr>').join('') + '</tbody></table>';
+    out.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => {
+      navigator.clipboard.writeText(b.dataset.copy).then(() => { b.textContent = '복사됨'; setTimeout(() => b.textContent = '복사', 1200); });
+    }));
+  }
+
+  async function load() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { say('관리자 계정으로 로그인해 주세요.<br><a href="join.html?back=admin">로그인하러 가기</a>'); return; }
+    say('불러오는 중입니다…');
+    let res;
+    try {
+      res = await fetch(`${C.SUPABASE_URL}/functions/v1/ph-admin-orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        body: '{}',
+      });
+    } catch (e) { say('불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'); return; }
+    // ★관리자가 아니면 서버가 404를 준다. 여기서도 "권한 없음"이라 알리지 않는다.
+    if (!res.ok) { say('이 계정으로는 볼 수 없는 화면입니다.'); return; }
+    const body = await res.json();
+    rows = (body && body.rows) || [];
+    $('#bar').hidden = false;
+    draw();
+  }
+
+  $('#bar').addEventListener('click', e => {
+    const b = e.target.closest('[data-f]');
+    if (!b) return;
+    filter = b.dataset.f;
+    [...$('#bar').querySelectorAll('[data-f]')].forEach(x => x.classList.toggle('on', x === b));
+    draw();
+  });
+  $('#reload').addEventListener('click', load);
+  $('#csv').addEventListener('click', () => {
+    const v = view();
+    if (!v.length) return;
+    // 엑셀이 한글을 깨뜨리지 않게 BOM을 앞에 붙인다
+    const csv = '﻿' + [COLS.join(',')].concat(
+      v.map(r => COLS.map(c => `"${String(r[c] == null ? '' : r[c]).replace(/"/g, '""')}"`).join(','))
+    ).join('\r\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = 'pharmacian_배송명단.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  sb.auth.onAuthStateChange(() => load());
+  load();
+})();
+</script>
+<script src="shell.js"></script>
+</body>
+</html>

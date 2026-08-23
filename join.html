@@ -231,7 +231,8 @@ $('#back').addEventListener('click', () => go(1));
     myId = data.user.id;
     // ★결제하다 로그인하러 온 사람은 결제 화면으로 돌려보낸다. 전에는 무조건 홈이었다.
     const back = new URLSearchParams(location.search).get('back');
-    location.replace(back === 'checkout' ? 'checkout.html' : 'index.html');
+    const BACK = { checkout: 'checkout.html', admin: 'admin.html' };
+    location.replace(BACK[back] || 'index.html');
   }
 })();
 

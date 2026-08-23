@@ -7,5 +7,6 @@ Disallow: /pay-done.html
 Disallow: /join.html
 Disallow: /cart.html
 Disallow: /안.html
+Disallow: /admin.html
 
 Sitemap: https://pharmacian.kr/sitemap.xml
