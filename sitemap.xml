@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 검색엔진에게 "이 페이지들이 있다"고 알려주는 표지판.
+     ★robots.txt 로 막아 둔 화면(결제·가입·장바구니·쿠폰·결과)은 여기 넣지 않는다 —
+     막아 놓고 알려주면 서로 어긋난 신호가 된다. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://pharmacian.kr/</loc><lastmod>2026-08-23</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://pharmacian.kr/detail/p7.html</loc><lastmod>2026-08-23</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://pharmacian.kr/detail/p12.html</loc><lastmod>2026-08-23</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://pharmacian.kr/detail/nmn.html</loc><lastmod>2026-08-23</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://pharmacian.kr/detail/mel.html</loc><lastmod>2026-08-23</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://pharmacian.kr/terms.html</loc><lastmod>2026-08-23</lastmod><changefreq>weekly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://pharmacian.kr/privacy.html</loc><lastmod>2026-08-23</lastmod><changefreq>weekly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://pharmacian.kr/refund.html</loc><lastmod>2026-08-23</lastmod><changefreq>weekly</changefreq><priority>0.3</priority></url>
+</urlset>
