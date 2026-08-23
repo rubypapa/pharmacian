@@ -341,20 +341,23 @@
   /* ★판매 방식은 config.js 한 곳에서 정한다(SALE_MODE). 상세는 그 값을 읽어 말만 바꾼다.
      토스 승인이 나서 'live'가 되면 이 화면들은 손댈 것 없이 그대로 결제로 이어진다. */
   var reserve = ((window.PHARMACIAN||{}).SALE_MODE || 'live') === 'reserve';
-  var b = document.querySelector("[data-buy]");
+  var bs = [].slice.call(document.querySelectorAll("[data-buy]"));   // ★가격 옆 + 하단 고정바, 둘 다
   var note = document.querySelector("[data-salenote]");
   var faq = document.querySelector("[data-faqbuy]");
   if (reserve) {
-    if (b) b.textContent = '예약 신청하기';
+    bs.forEach(function (b) { b.textContent = '예약 신청하기'; });
     if (note) note.textContent = '결제는 아직 열리지 않았습니다. 지금은 예약만 받고, 결제되는 금액은 없습니다.';
     if (faq) faq.textContent = '지금은 예약을 받고 있습니다. 결제가 열리면 남겨 주신 연락처로 순서대로 안내드립니다.';
   } else if (note) {
     note.textContent = '30,000원 이상 무료배송 · 첫 구매 15% 쿠폰은 장바구니에서 적용하십니다.';
   }
-  if (!b) return;
-  b.addEventListener("click", function(e){ e.preventDefault();
-    if (window.PH_CART) PH_CART.add(b.getAttribute("data-buy"), 1);
-    location.href = b.getAttribute("href"); });
+  bs.forEach(function (b) {
+    b.addEventListener("click", function (e) {
+      e.preventDefault();
+      if (window.PH_CART) PH_CART.add(b.getAttribute("data-buy"), 1);
+      location.href = b.getAttribute("href");
+    });
+  });
 })();
 </script>
 </body></html>
