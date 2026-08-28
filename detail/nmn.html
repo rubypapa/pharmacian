@@ -102,6 +102,20 @@
 <style>
 .origstack{max-width:860px;margin:0 auto;font-size:0;line-height:0;background:#fff}
 .origstack img{display:block;width:100%;height:auto;margin:0;padding:0;border:0;vertical-align:bottom}
+.origstack figure{position:relative;margin:0;padding:0;container-type:inline-size}
+.origstack figure>span{position:absolute;display:flex;align-items:center;justify-content:center;
+  text-align:center;font-weight:var(--fw,400);color:var(--c);line-height:var(--lh,1.5);
+  letter-spacing:-.02em;white-space:nowrap;
+  left:calc(var(--x)*1px);top:calc(var(--y)*1px);width:calc(var(--w)*1px);height:calc(var(--h)*1px);font-size:calc(var(--fs)*1px);
+  left:calc(var(--x)*.116279cqw);top:calc(var(--y)*.116279cqw);
+  width:calc(var(--w)*.116279cqw);height:calc(var(--h)*.116279cqw);font-size:calc(var(--fs)*.116279cqw)}
+.origstack figure>span>em{font-style:normal;display:block}
+.origstack figure>span.l{justify-content:flex-start;text-align:left}
+.origstack figure>span.rot>em{transform:rotate(90deg);transform-origin:center;white-space:nowrap}
+.origstack figure>span i{font-style:normal;color:var(--accent,#f2907e)}
+.origstack figure>span b{font-weight:800}
+.origstack figure>span small{display:block;font-size:.68em;font-weight:400;margin-top:.35em;line-height:1.5}
+
 .nmnn-hold-note{color:rgba(255,255,255,.92)}
 .nmnn-buy{padding:16px 40px;border-radius:12px;background:#111;color:#fff;font-size:17px;font-weight:800;display:inline-block;margin-top:24px;text-decoration:none}
 </style>
