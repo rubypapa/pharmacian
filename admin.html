@@ -24,6 +24,7 @@ h1{font-size:24px;font-weight:800;letter-spacing:-.04em}
 .bar button:hover{border-color:var(--sh-muted)}
 .bar .on{background:var(--sh-ink);color:var(--sh-bg);border-color:var(--sh-ink)}
 .bar .grow{margin-left:auto;font-size:13px;color:var(--sh-muted)}
+.bar[hidden]{display:none}   /* display:flex 가 hidden 속성을 이기므로 명시한다 */
 .box{margin-top:16px;background:var(--surface);border:1px solid var(--sh-rule);border-radius:14px;overflow:hidden}
 .scroll{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:13.5px;white-space:nowrap}
@@ -41,6 +42,21 @@ td.num{font-variant-numeric:tabular-nums}
 .msg a{color:var(--sh-pt);font-weight:700}
 .copy{height:30px;padding:0 10px;border:1px solid var(--sh-rule);border-radius:7px;
   background:var(--surface);font:600 12px/1 inherit;cursor:pointer;color:var(--sh-ink)}
+/* 발주서 화면 — 스카이물류 YL 통합 발주서 양식 그대로 */
+#po{display:none}
+#po table{font-size:12.5px}
+#po th{white-space:nowrap}
+#po td{padding:0;vertical-align:middle}
+#po td.ro{padding:8px 10px;background:rgba(0,0,0,.015);color:var(--sh-ink)}
+#po input{width:100%;min-width:92px;height:34px;padding:0 9px;border:0;background:transparent;
+  color:var(--sh-ink);font:inherit;font-size:12.5px}
+#po input:focus{outline:2px solid var(--sh-pt);outline-offset:-2px;border-radius:5px;background:var(--surface)}
+#po td.w-addr input{min-width:300px}
+#po td.w-prod{min-width:250px}
+#po tr.off{opacity:.38}
+#po .pick{width:34px;text-align:center}
+#po .pick input{width:16px;height:16px;accent-color:var(--sh-ink)}
+.hint{margin-top:10px;font-size:12.5px;color:var(--sh-muted);line-height:1.65}
 @media(max-width:640px){.wrap{padding:22px 14px 60px}h1{font-size:20px}th,td{padding:9px 10px}}
 </style>
 </head>
@@ -56,17 +72,36 @@ td.num{font-variant-numeric:tabular-nums}
     <button type="button" data-f="paid">결제완료</button>
     <button type="button" id="reload">새로고침</button>
     <button type="button" id="csv">CSV로 내려받기</button>
+    <button type="button" id="poBtn">발주서 만들기</button>
     <span class="grow" id="count"></span>
   </div>
 
   <div class="box"><div class="scroll" id="out">
     <p class="msg">불러오는 중입니다…</p>
   </div></div>
+
+  <div id="po">
+    <div class="bar">
+      <button type="button" id="poBack">← 명단으로</button>
+      <button type="button" id="poAll">전체 선택</button>
+      <button type="button" id="poNone">전체 해제</button>
+      <button type="button" id="poDown" class="on">엑셀로 내려받기</button>
+      <span class="grow" id="poCount"></span>
+    </div>
+    <div class="box"><div class="scroll" id="poOut"></div></div>
+    <p class="hint">
+      스카이물류 <b>YL 통합 발주서</b> 양식입니다. 회색 칸은 주문에서 자동으로 채웠고,
+      <b>흰 칸은 직접 적으실 수 있습니다</b>(보내는분·연락처2·배송사·운송장번호·비고).<br>
+      세트와 10개 구성은 <b>품목별로 줄을 나눠</b> 폈습니다 — 물류사가 낱개 수량으로 받기 때문입니다.
+    </p>
+  </div>
 </div>
 
 <script src="config.js"></script>
 <script src="cart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" onerror="window.__nosb=1"></script>
+<!-- 발주서를 엑셀(.xlsx)로 내보내기. 못 불러오면 CSV로 떨어진다 -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
 (function () {
   const $ = s => document.querySelector(s);
@@ -148,6 +183,136 @@ td.num{font-variant-numeric:tabular-nums}
     a.download = 'pharmacian_배송명단.csv';
     a.click();
     URL.revokeObjectURL(a.href);
+  });
+
+  // ───────── 발주서 (스카이물류 YL 통합 발주서 양식) ─────────
+  // ★양식 출처 = 카카오톡으로 받은 'YL_통합 발주서_스카이물류_2026.08.28 (택배).xlsx'
+  //   14열 순서와 헤더 문구를 원본 그대로 맞췄다. 물류사가 열 위치로 읽기 때문에 바꾸면 안 된다.
+  const PO_COLS = ['발주일','순번','상품명','수량(낱개)','보내는분','받는분','받는분 연락처1',
+                   '받는분 연락처2','우편번호','주소','배송시요청사항','배송사','운송장번호','비고'];
+  const PO_W = [9.875,4.625,31.25,11,17.875,15,15.25,13.75,7.5,41.875,19.125,11.5,13.125,12.875];
+  // ★SheetJS 는 wch 에 패딩 0.832 를 더해 엑셀 열너비로 쓴다. 원본과 같은 너비가 되게 미리 뺀다(실측).
+  const PO_WCH = PO_W.map(w => w - 0.832);
+  const PO_NUM = new Set(['발주일','순번','수량(낱개)']);   // 원본이 숫자로 들고 있는 칸
+  // 자동으로 채우는 칸(회색·수정 불가). 나머지는 직접 적는 칸이다.
+  const PO_RO = new Set(['순번','상품명','수량(낱개)','받는분','받는분 연락처1','우편번호','주소','배송시요청사항']);
+
+  // 우리 상품키 → 물류사 보유품목 정식 상품명. 세트·10개 구성은 낱개로 편다.
+  const SKU = {
+    'PDRN 7000'    : [['VCXO 파머시안 피디알엔 7000 크림 30g', 1]],
+    'PDRN 12000'   : [['VCXO 파머시안 피디알엔 12000 크림 30g', 1]],
+    'NMN 30000'    : [['VCXO 파머시안 엔엠엔 30000 크림 30g', 1]],
+    '멜라리스'      : [['VCXO 파머시안 멜라리스 100000 크림 30g', 1]],
+    '세트 PDRN 2종' : [['VCXO 파머시안 피디알엔 7000 크림 30g', 1],
+                      ['VCXO 파머시안 피디알엔 12000 크림 30g', 1]],
+    '세트 아침밤 2종': [['VCXO 파머시안 멜라리스 100000 크림 30g', 1],
+                      ['VCXO 파머시안 엔엠엔 30000 크림 30g', 1]],
+    'p7x10'        : [['VCXO 파머시안 피디알엔 7000 크림 30g', 10]],
+  };
+
+  const today = () => { const d = new Date();
+    return String(d.getFullYear()) + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0'); };
+
+  // 뷰가 '(우편번호) 주소1 주소2'로 합쳐 주니 발주서 양식에 맞게 다시 가른다
+  function splitAddr(v) {
+    const m = /^\s*\(([^)]*)\)\s*(.*)$/.exec(String(v || ''));
+    return m ? { zip: m[1].trim(), addr: m[2].trim() } : { zip: '', addr: String(v || '').trim() };
+  }
+  // '품목' 문자열('PDRN 7000 2개 + 멜라리스 1개')을 낱개 줄로 편다
+  function explode(품목) {
+    const out = [];
+    String(품목 || '').split(' + ').forEach(part => {
+      const m = /^(.*?)\s+(\d+)개$/.exec(part.trim());
+      if (!m) { if (part.trim()) out.push([part.trim(), 1]); return; }
+      const [nm, qty] = [m[1].trim(), Number(m[2])];
+      (SKU[nm] || [[nm, 1]]).forEach(([정식명, 배수]) => out.push([정식명, 배수 * qty]));
+    });
+    return out;
+  }
+
+  let po = [];   // 발주서 행. 화면에서 고친 값이 그대로 남는다
+
+  function buildPO() {
+    const day = today();
+    po = [];
+    view().forEach(r => {
+      const { zip, addr } = splitAddr(r['주소']);
+      explode(r['품목']).forEach(([상품명, 수량]) => {
+        po.push({ 쓸것: true, 주문번호: r['주문번호'],
+          '발주일': day, '순번': 0, '상품명': 상품명, '수량(낱개)': 수량,
+          '보내는분': '', '받는분': r['받는분'] || '', '받는분 연락처1': r['받는분 연락처1'] || '',
+          '받는분 연락처2': '', '우편번호': zip, '주소': addr,
+          '배송시요청사항': r['배송메모'] || '', '배송사': '', '운송장번호': '', '비고': '자사몰' });
+      });
+    });
+    drawPO();
+  }
+
+  function renumber() { let n = 0; po.forEach(x => { x['순번'] = x.쓸것 ? ++n : ''; }); }
+
+  function drawPO() {
+    renumber();
+    const on = po.filter(x => x.쓸것).length;
+    $('#poCount').textContent = `발주서 ${po.length}줄 · 내보낼 것 ${on}줄`;
+    if (!po.length) { $('#poOut').innerHTML = '<p class="msg">내보낼 주문이 없습니다.</p>'; return; }
+    $('#poOut').innerHTML =
+      '<table><thead><tr><th class="pick"></th>' + PO_COLS.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>' +
+      po.map((x, i) => '<tr class="' + (x.쓸것 ? '' : 'off') + '">' +
+        `<td class="pick"><input type="checkbox" data-pick="${i}"${x.쓸것 ? ' checked' : ''}></td>` +
+        PO_COLS.map(c => {
+          const cls = c === '주소' ? ' w-addr' : (c === '상품명' ? ' w-prod' : '');
+          if (PO_RO.has(c)) return `<td class="ro${cls}">${esc(x[c])}</td>`;
+          return `<td class="${cls.trim()}"><input data-i="${i}" data-c="${esc(c)}" value="${esc(x[c])}"></td>`;
+        }).join('') + '</tr>').join('') + '</tbody></table>';
+
+    $('#poOut').querySelectorAll('[data-pick]').forEach(b => b.addEventListener('change', () => {
+      po[+b.dataset.pick].쓸것 = b.checked; drawPO();
+    }));
+    // ★다시 그리지 않는다 — 입력 중에 표를 새로 그리면 커서가 튄다
+    $('#poOut').querySelectorAll('input[data-c]').forEach(inp => inp.addEventListener('input', () => {
+      po[+inp.dataset.i][inp.dataset.c] = inp.value;
+    }));
+  }
+
+  function poRows() {
+    renumber();
+    // ★숫자 칸은 숫자로 넣는다 — 원본이 그렇고, 문자열이면 엑셀에서 정렬·집계가 어긋난다
+    return po.filter(x => x.쓸것).map(x => PO_COLS.map(c => {
+      const v = x[c];
+      if (PO_NUM.has(c) && v !== '' && v != null && !isNaN(Number(v))) return Number(v);
+      return v;
+    }));
+  }
+
+  $('#poBtn').addEventListener('click', () => {
+    buildPO(); $('#po').style.display = 'block';
+    document.querySelector('.box').style.display = 'none'; $('#bar').hidden = true;
+  });
+  $('#poBack').addEventListener('click', () => {
+    $('#po').style.display = 'none';
+    document.querySelector('.box').style.display = ''; $('#bar').hidden = false;
+  });
+  $('#poAll').addEventListener('click', () => { po.forEach(x => x.쓸것 = true); drawPO(); });
+  $('#poNone').addEventListener('click', () => { po.forEach(x => x.쓸것 = false); drawPO(); });
+
+  $('#poDown').addEventListener('click', () => {
+    const rows = poRows();
+    if (!rows.length) { alert('내보낼 줄을 하나 이상 선택해 주세요.'); return; }
+    const name = 'YL_통합 발주서_스카이물류_' + today().replace(/(\d{4})(\d{2})(\d{2})/, '$1.$2.$3') + ' (택배).';
+    if (window.XLSX) {
+      const ws = window.XLSX.utils.aoa_to_sheet([PO_COLS].concat(rows));
+      ws['!cols'] = PO_WCH.map(w => ({ wch: w }));    // 원본 열 너비 그대로(패딩 보정)
+      const wb = window.XLSX.utils.book_new();
+      window.XLSX.utils.book_append_sheet(wb, ws, '발주서');
+      window.XLSX.writeFile(wb, name + 'xlsx');
+      return;
+    }
+    // ★엑셀 라이브러리를 못 불러온 경우에도 손이 멈추지 않게 CSV로 내보낸다(한글 BOM)
+    const csv = '﻿' + [PO_COLS].concat(rows)
+      .map(r => r.map(v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"').join(',')).join(String.fromCharCode(13, 10));
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = name + 'csv'; a.click(); URL.revokeObjectURL(a.href);
   });
 
   sb.auth.onAuthStateChange(() => load());
