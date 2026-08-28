@@ -44,6 +44,20 @@ td.num{font-variant-numeric:tabular-nums}
   background:var(--surface);font:600 12px/1 inherit;cursor:pointer;color:var(--sh-ink)}
 /* 발주서 화면 — 스카이물류 YL 통합 발주서 양식 그대로 */
 #po{display:none}
+body.po-on .wrap{max-width:none}                 /* 발주서일 때는 화면 폭을 다 쓴다 */
+#po .pick input{min-width:0}                      /* 체크 열이 입력칸 최소폭을 물려받아 넓어지던 것 */
+#po td.w-prod,#po td.w-addr{white-space:normal}
+#po td.w-prod{min-width:170px;max-width:200px}
+#po td.w-addr{min-width:190px;max-width:230px}
+#po td.w-prod input,#po td.w-addr input{min-width:0}
+#po .fill{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin:14px 0 4px;
+  padding:14px;background:var(--surface);border:1px solid var(--sh-rule);border-radius:12px}
+#po .fill label{display:flex;flex-direction:column;gap:5px;font:700 12px/1 inherit;color:var(--sh-muted)}
+#po .fill input{height:36px;padding:0 10px;border:1px solid var(--sh-rule);border-radius:8px;
+  background:var(--sh-bg);color:var(--sh-ink);font:inherit;font-size:13.5px;min-width:150px}
+#po .fill button{height:36px;padding:0 16px;border-radius:8px;border:1px solid var(--sh-ink);
+  background:var(--sh-ink);color:var(--sh-bg);font:800 13px/1 inherit;cursor:pointer}
+#po .scrollhint{margin:6px 0 0;font-size:12.5px;color:var(--sh-muted)}
 #po table{font-size:12.5px}
 #po th{white-space:nowrap}
 #po td{padding:0;vertical-align:middle}
@@ -54,7 +68,8 @@ td.num{font-variant-numeric:tabular-nums}
 #po td.w-addr input{min-width:300px}
 #po td.w-prod{min-width:250px}
 #po tr.off{opacity:.38}
-#po .pick{width:34px;text-align:center}
+#po .pick,.box .pick{width:34px;text-align:center}
+.box .pick input{width:16px;height:16px;accent-color:var(--sh-ink)}
 #po .pick input{width:16px;height:16px;accent-color:var(--sh-ink)}
 .hint{margin-top:10px;font-size:12.5px;color:var(--sh-muted);line-height:1.65}
 @media(max-width:640px){.wrap{padding:22px 14px 60px}h1{font-size:20px}th,td{padding:9px 10px}}
@@ -73,6 +88,8 @@ td.num{font-variant-numeric:tabular-nums}
     <button type="button" id="reload">새로고침</button>
     <button type="button" id="csv">CSV로 내려받기</button>
     <button type="button" id="poBtn">발주서 만들기</button>
+    <button type="button" id="listPaid">체크한 것 결제완료로</button>
+    <button type="button" id="listUndo">되돌리기</button>
     <span class="grow" id="count"></span>
   </div>
 
@@ -90,6 +107,13 @@ td.num{font-variant-numeric:tabular-nums}
       <button type="button" id="poUndo">되돌리기</button>
       <span class="grow" id="poCount"></span>
     </div>
+    <div class="fill">
+      <label>보내는분<input id="fSend" placeholder="예: 와이엘트레이딩"></label>
+      <label>배송사<input id="fShip" placeholder="예: 한진택배"></label>
+      <label>비고<input id="fNote" value="자사몰"></label>
+      <button type="button" id="fApply">체크한 줄에 한꺼번에 넣기</button>
+    </div>
+    <p class="scrollhint">칸이 많아 표는 좌우로 밀어서 봅니다. 위 세 칸은 자주 같은 값이라 한꺼번에 넣을 수 있게 뒀습니다.</p>
     <p id="poWarn" style="margin:8px 0 0;font-size:13px;color:#B3261E;font-weight:700;line-height:1.6"></p>
     <div class="box"><div class="scroll" id="poOut"></div></div>
     <p class="hint">
@@ -130,8 +154,10 @@ td.num{font-variant-numeric:tabular-nums}
     $('#count').textContent = `전체 ${rows.length}건 · 보이는 것 ${v.length}건`;
     if (!v.length) { say('아직 들어온 주문이 없습니다.'); return; }
     out.innerHTML =
-      '<table><thead><tr>' + COLS.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>' +
-      v.map(r => '<tr>' + COLS.map(c => {
+      '<table><thead><tr><th class="pick"></th>' + COLS.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>' +
+      v.map(r => '<tr>' +
+        `<td class="pick"><input type="checkbox" data-oid="${esc(r['주문번호'])}"></td>` +
+        COLS.map(c => {
         if (c === '상태') return `<td><span class="st st-${esc(r[c])}">${esc(r[c])}</span></td>`;
         if (c === '금액') return `<td class="num">${Number(r[c] || 0).toLocaleString('ko-KR')}원</td>`;
         if (c === '주소') return `<td class="addr">${esc(r[c])} <button class="copy" data-copy="${esc(r[c])}">복사</button></td>`;
@@ -317,11 +343,21 @@ td.num{font-variant-numeric:tabular-nums}
   $('#poBtn').addEventListener('click', () => {
     // ★이미 만들어 둔 발주서가 있으면 손으로 친 값을 살린다(명단 갔다 오면 날아가던 것)
     buildPO(po.length > 0); $('#po').style.display = 'block';
+    document.body.classList.add('po-on');
     document.querySelector('.box').style.display = 'none'; $('#bar').hidden = true;
   });
   $('#poBack').addEventListener('click', () => {
     $('#po').style.display = 'none';
+    document.body.classList.remove('po-on');
     document.querySelector('.box').style.display = ''; $('#bar').hidden = false;
+  });
+  $('#fApply').addEventListener('click', () => {
+    const v = { '보내는분': $('#fSend').value, '배송사': $('#fShip').value, '비고': $('#fNote').value };
+    let n = 0;
+    po.forEach(x => { if (!x.쓸것) return; n++;
+      Object.keys(v).forEach(k => { if (v[k] !== '') x[k] = v[k]; }); });
+    drawPO();
+    alert(n + '줄에 넣었습니다.');
   });
   $('#poAll').addEventListener('click', () => { po.forEach(x => x.쓸것 = true); drawPO(); });
   $('#poNone').addEventListener('click', () => { po.forEach(x => x.쓸것 = false); drawPO(); });
@@ -348,6 +384,11 @@ td.num{font-variant-numeric:tabular-nums}
     a.download = name + 'csv'; a.click(); URL.revokeObjectURL(a.href);
   });
 
+  // 명단에서 체크한 주문번호
+  function listPicked() {
+    return [...out.querySelectorAll('[data-oid]')].filter(b => b.checked).map(b => b.dataset.oid);
+  }
+
   // 발주서에서 체크한 줄들의 주문번호(중복 제거). 세트는 한 주문이 여러 줄이라 묶어야 한다.
   function pickedOrders() {
     return [...new Set(po.filter(x => x.쓸것).map(x => x.주문번호))];
@@ -372,8 +413,8 @@ td.num{font-variant-numeric:tabular-nums}
     return res.json();
   }
 
-  async function markPaid(undo) {
-    const ids = pickedOrders();
+  async function markPaid(undo, ids) {
+    ids = ids || pickedOrders();
     if (!ids.length) { alert('체크된 줄이 없습니다.'); return; }
     const 말 = undo ? '되돌리' : '결제완료로 넘기';
     // ★결제 원장을 사람이 바꾸는 자리다. 몇 건인지 보여주고 한 번 묻는다.
@@ -388,11 +429,13 @@ td.num{font-variant-numeric:tabular-nums}
     }
     alert(msg);
     await load();          // 명단을 다시 불러 상태를 최신으로
-    buildPO(true);         // 발주서도 다시 만든다(기입값은 살린다)
+    if (po.length) buildPO(true);   // 발주서를 만들어 뒀으면 그것도 갱신(기입값은 살린다)
   }
 
   $('#poPaid').addEventListener('click', () => markPaid(false));
   $('#poUndo').addEventListener('click', () => markPaid(true));
+  $('#listPaid').addEventListener('click', () => markPaid(false, listPicked()));
+  $('#listUndo').addEventListener('click', () => markPaid(true, listPicked()));
 
   sb.auth.onAuthStateChange(() => load());
   load();
