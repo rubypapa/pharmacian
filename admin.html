@@ -86,13 +86,21 @@ td.num{font-variant-numeric:tabular-nums}
       <button type="button" id="poAll">전체 선택</button>
       <button type="button" id="poNone">전체 해제</button>
       <button type="button" id="poDown" class="on">엑셀로 내려받기</button>
+      <button type="button" id="poPaid">결제완료로 넘기기</button>
+      <button type="button" id="poUndo">되돌리기</button>
       <span class="grow" id="poCount"></span>
     </div>
+    <p id="poWarn" style="margin:8px 0 0;font-size:13px;color:#B3261E;font-weight:700;line-height:1.6"></p>
     <div class="box"><div class="scroll" id="poOut"></div></div>
     <p class="hint">
       스카이물류 <b>YL 통합 발주서</b> 양식입니다. 회색 칸은 주문에서 자동으로 채웠고,
       <b>흰 칸은 직접 적으실 수 있습니다</b>(보내는분·연락처2·배송사·운송장번호·비고).<br>
-      세트와 10개 구성은 <b>품목별로 줄을 나눠</b> 폈습니다 — 물류사가 낱개 수량으로 받기 때문입니다.
+      세트와 10개 구성은 <b>품목별로 줄을 나눠</b> 폈습니다 — 물류사가 낱개 수량으로 받기 때문입니다.<br>
+      발주서를 넘기고 나서 <b>결제완료로 넘기기</b>를 누르면 체크한 주문의 상태가 <b>결제완료</b>가 됩니다.
+      ★취소·실패 건은 넘어가지 않고, 잘못 눌렀으면 <b>되돌리기</b>로 원래 상태로 돌아갑니다.
+      사람이 넘긴 건은 명단의 <b>수동확인</b> 칸에 표시돼 결제기가 찍은 것과 구분됩니다.<br>
+      ★<b>미결제·취소·실패 건은 체크가 꺼진 채로 나옵니다</b> — 돈을 안 받은 건에 물건이 나가지 않게 합니다.
+      상태 칸은 화면에만 있고 엑셀에는 안 들어갑니다(물류사 양식이 14열 고정입니다).
     </p>
   </div>
 </div>
@@ -231,20 +239,37 @@ td.num{font-variant-numeric:tabular-nums}
   }
 
   let po = [];   // 발주서 행. 화면에서 고친 값이 그대로 남는다
+  // ★발주 대상 상태 — pending(결제창에서 이탈)·canceled·failed 는 기본으로 체크를 끈다.
+  //   돈을 안 받은 건에 물건이 나가면 그대로 손실이다(2026-08-28 적대검증에서 잡힘).
+  const PO_OK = new Set(['paid', 'reserved']);
+  const 상태말 = { paid: '결제완료', reserved: '예약', pending: '미결제', canceled: '취소', failed: '실패' };
 
-  function buildPO() {
+  function buildPO(keep) {
+    // ★keep 이면 이미 손으로 친 값을 살린다. 30줄 쳐 놓고 명단 갔다 오면 날아가던 것(적대검증 지적).
+    const prev = new Map();
+    if (keep) po.forEach(x => prev.set(x.주문번호 + '|' + x.상품명, x));
     const day = today();
+    const 누락 = [];
     po = [];
     view().forEach(r => {
       const { zip, addr } = splitAddr(r['주소']);
-      explode(r['품목']).forEach(([상품명, 수량]) => {
-        po.push({ 쓸것: true, 주문번호: r['주문번호'],
+      const 발주가능 = PO_OK.has(r['상태']);
+      const 줄 = explode(r['품목']);
+      // ★품목이 비면 그 주문은 발주서에 한 줄도 안 생긴다 — 조용히 빠지지 않게 세어 둔다
+      if (!줄.length) 누락.push(r['주문번호'] + ' (' + (r['품목'] || '품목 없음') + ')');
+      줄.forEach(([상품명, 수량]) => {
+        po.push({ 쓸것: 발주가능, 상태: r['상태'], 주문번호: r['주문번호'],
           '발주일': day, '순번': 0, '상품명': 상품명, '수량(낱개)': 수량,
-          '보내는분': '', '받는분': r['받는분'] || '', '받는분 연락처1': r['받는분 연락처1'] || '',
+          '보내는분': '', '받는분': r['받는분'] || '', '받는분 연락처1': r['연락처'] || '',      // ★뷰의 열 이름은 '연락처'다(2026-08-28 적대검증에서 잡힘)
           '받는분 연락처2': '', '우편번호': zip, '주소': addr,
           '배송시요청사항': r['배송메모'] || '', '배송사': '', '운송장번호': '', '비고': '자사몰' });
+        const old = prev.get(r['주문번호'] + '|' + 상품명);
+        if (old) { const n = po[po.length - 1];
+          ['보내는분','받는분 연락처2','배송사','운송장번호','비고','발주일'].forEach(c => { n[c] = old[c]; });
+          n.쓸것 = old.쓸것; }
       });
     });
+    po.__누락 = 누락;
     drawPO();
   }
 
@@ -253,12 +278,17 @@ td.num{font-variant-numeric:tabular-nums}
   function drawPO() {
     renumber();
     const on = po.filter(x => x.쓸것).length;
+    const 경고 = [];
+    if (rows.length >= 200) 경고.push('★명단이 200건에서 잘렸습니다 — 오래된 주문이 안 보일 수 있습니다');
+    if (po.__누락 && po.__누락.length) 경고.push('★품목이 비어 발주서에 안 들어간 주문 ' + po.__누락.length + '건: ' + po.__누락.join(', '));
     $('#poCount').textContent = `발주서 ${po.length}줄 · 내보낼 것 ${on}줄`;
+    $('#poWarn').innerHTML = 경고.length ? 경고.map(w => esc(w)).join('<br>') : '';
     if (!po.length) { $('#poOut').innerHTML = '<p class="msg">내보낼 주문이 없습니다.</p>'; return; }
     $('#poOut').innerHTML =
-      '<table><thead><tr><th class="pick"></th>' + PO_COLS.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>' +
+      '<table><thead><tr><th class="pick"></th><th>상태</th>' + PO_COLS.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>' +
       po.map((x, i) => '<tr class="' + (x.쓸것 ? '' : 'off') + '">' +
         `<td class="pick"><input type="checkbox" data-pick="${i}"${x.쓸것 ? ' checked' : ''}></td>` +
+        `<td class="ro"><span class="st st-${esc(x.상태)}">${esc(상태말[x.상태] || x.상태)}</span></td>` +
         PO_COLS.map(c => {
           const cls = c === '주소' ? ' w-addr' : (c === '상품명' ? ' w-prod' : '');
           if (PO_RO.has(c)) return `<td class="ro${cls}">${esc(x[c])}</td>`;
@@ -285,7 +315,8 @@ td.num{font-variant-numeric:tabular-nums}
   }
 
   $('#poBtn').addEventListener('click', () => {
-    buildPO(); $('#po').style.display = 'block';
+    // ★이미 만들어 둔 발주서가 있으면 손으로 친 값을 살린다(명단 갔다 오면 날아가던 것)
+    buildPO(po.length > 0); $('#po').style.display = 'block';
     document.querySelector('.box').style.display = 'none'; $('#bar').hidden = true;
   });
   $('#poBack').addEventListener('click', () => {
@@ -309,11 +340,59 @@ td.num{font-variant-numeric:tabular-nums}
     }
     // ★엑셀 라이브러리를 못 불러온 경우에도 손이 멈추지 않게 CSV로 내보낸다(한글 BOM)
     const csv = '﻿' + [PO_COLS].concat(rows)
-      .map(r => r.map(v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"').join(',')).join(String.fromCharCode(13, 10));
+      // ★엑셀은 따옴표로 감싼 "06236" 도 숫자로 읽어 6236 으로 만든다. ="..." 로 줘야 문자로 남는다
+      .map(r => r.map(v => { const t = String(v == null ? '' : v).replace(/"/g, '""');
+        return /^0\d+$/.test(t) ? '="' + t + '"' : '"' + t + '"'; }).join(',')).join(String.fromCharCode(13, 10));
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
     a.download = name + 'csv'; a.click(); URL.revokeObjectURL(a.href);
   });
+
+  // 발주서에서 체크한 줄들의 주문번호(중복 제거). 세트는 한 주문이 여러 줄이라 묶어야 한다.
+  function pickedOrders() {
+    return [...new Set(po.filter(x => x.쓸것).map(x => x.주문번호))];
+  }
+
+  const NL = String.fromCharCode(10);   // 문자열 안에 개행을 직접 쓰지 않는다
+
+  async function callAdmin(payload) {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { alert('로그인이 풀렸습니다. 새로고침 후 다시 시도해 주세요.'); return null; }
+    const res = await fetch(`${C.SUPABASE_URL}/functions/v1/ph-admin-orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+      body: JSON.stringify(payload),
+    });
+    if (res.status === 404) { alert('이 계정으로는 할 수 없는 일입니다.'); return null; }
+    if (!res.ok) {
+      let why = ''; try { why = (await res.json()).error || ''; } catch (e) {}
+      alert('처리하지 못했습니다.' + (why ? NL + why : '') + NL + '(' + res.status + ')');
+      return null;
+    }
+    return res.json();
+  }
+
+  async function markPaid(undo) {
+    const ids = pickedOrders();
+    if (!ids.length) { alert('체크된 줄이 없습니다.'); return; }
+    const 말 = undo ? '되돌리' : '결제완료로 넘기';
+    // ★결제 원장을 사람이 바꾸는 자리다. 몇 건인지 보여주고 한 번 묻는다.
+    if (!confirm('주문 ' + ids.length + '건을 ' + 말 + '겠습니까?' + NL + NL + ids.join(NL))) return;
+    const r = await callAdmin({ action: undo ? 'unmarkPaid' : 'markPaid', orderIds: ids });
+    if (!r) return;
+    // ★서버(함수·DB)가 아직 이 기능을 모르면 명단이 그대로 돌아온다. 그때 '성공'처럼 보이면 안 된다.
+    if (typeof r.done !== 'number') { alert('서버에 이 기능이 아직 올라가지 않았습니다.' + NL + '관리자에게 알려 주세요.'); return; }
+    let msg = r.done + '건 ' + 말 + '었습니다.';
+    if (r.skipped && r.skipped.length) {
+      msg += NL + NL + '넘어가지 않은 건:' + NL + r.skipped.map(s => '· ' + s.id + ' — ' + s.why).join(NL);
+    }
+    alert(msg);
+    await load();          // 명단을 다시 불러 상태를 최신으로
+    buildPO(true);         // 발주서도 다시 만든다(기입값은 살린다)
+  }
+
+  $('#poPaid').addEventListener('click', () => markPaid(false));
+  $('#poUndo').addEventListener('click', () => markPaid(true));
 
   sb.auth.onAuthStateChange(() => load());
   load();
