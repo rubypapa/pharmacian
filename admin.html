@@ -144,7 +144,8 @@ body.po-on .wrap{max-width:none}                 /* 발주서일 때는 화면 �
   const sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON);
 
   const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  const COLS = ['접수','상태','주문번호','품목','금액','받는분','연락처','주소','배송메모'];
+  // ★'수동확인' = 사람이 손으로 결제완료로 넘긴 건. 결제기가 찍은 paid 와 눈으로 갈린다
+  const COLS = ['접수','상태','수동확인','주문번호','품목','금액','받는분','연락처','주소','배송메모'];
   let rows = [], filter = 'all';
 
   const view = () => filter === 'all' ? rows : rows.filter(r => r['상태'] === filter);
@@ -159,6 +160,7 @@ body.po-on .wrap{max-width:none}                 /* 발주서일 때는 화면 �
         `<td class="pick"><input type="checkbox" data-oid="${esc(r['주문번호'])}"></td>` +
         COLS.map(c => {
         if (c === '상태') return `<td><span class="st st-${esc(r[c])}">${esc(r[c])}</span></td>`;
+        if (c === '수동확인') return `<td>${r[c] ? '<span class="st st-reserved">' + esc(r[c]) + '</span>' : ''}</td>`;
         if (c === '금액') return `<td class="num">${Number(r[c] || 0).toLocaleString('ko-KR')}원</td>`;
         if (c === '주소') return `<td class="addr">${esc(r[c])} <button class="copy" data-copy="${esc(r[c])}">복사</button></td>`;
         return `<td${c === '접수' ? ' class="num"' : ''}>${esc(r[c])}</td>`;
