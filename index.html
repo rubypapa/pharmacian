@@ -548,6 +548,8 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
   if(window.supabase && C.SUPABASE_URL){
     var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON);
     var paint = function(u){
+        // ★내 주문은 로그인한 사람에게만. 비로그인에게 보여주면 눌러도 로그인 화면만 나온다.
+        [].slice.call(document.querySelectorAll('.u-orders')).forEach(function(a){ a.hidden = !u; });
       [].slice.call(document.querySelectorAll('.u-auth')).forEach(function(a){
         var login = a.textContent.trim().toUpperCase()==='LOGIN' || a.textContent.trim()==='로그인';
         a.textContent = u ? (login||a.dataset.en ? (a.dataset.en?'LOGOUT':'로그아웃') : '로그아웃') : (a.dataset.en?'LOGIN':'로그인');
