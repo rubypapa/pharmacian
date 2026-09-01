@@ -126,7 +126,7 @@ button[disabled]{opacity:.45;cursor:default}
     if (!confirm('주문을 취소하시겠습니까?' + NL + NL + orderId + NL + NL + '취소하면 되돌릴 수 없습니다.')) return;
     btn.disabled = true; btn.textContent = '취소하는 중…';
     try {
-      const { data: { session } } = await sb.auth.getSession();
+      const session = 세션;
       if (!session) { location.href = 'join.html'; return; }
       const res = await fetch(`${C.SUPABASE_URL}/functions/v1/ph-order-cancel`, {
         method: 'POST',
@@ -148,10 +148,11 @@ button[disabled]{opacity:.45;cursor:default}
     }
   }
 
+  let 세션 = null;   // ★현재 세션. 콜백이 채운다 — getSession() 을 다시 부르지 않는다.
+
   async function load() {
     $('#err').hidden = true;
-    const { data: { session } } = await sb.auth.getSession();
-    if (!session) {
+    if (!세션) {
       $('#out').className = 'msg';
       $('#out').innerHTML = '주문을 보시려면 <a href="join.html">로그인</a>해 주세요.';
       return;
@@ -168,8 +169,11 @@ button[disabled]{opacity:.45;cursor:default}
     draw(data || []);
   }
 
-  sb.auth.onAuthStateChange(() => load());
-  load();
+  // ★onAuthStateChange 콜백은 인증 락을 ★쥔 채로 돈다. 그 안에서 getSession() 을 부르면
+  //   자기가 쥔 락을 자기가 기다려 ★영영 안 끝난다(2026-09-01 라이브 실측 — 8.9초 무응답,
+  //   navigator.locks 에 lock:sb-...-auth-token 이 held 로 남아 있었다).
+  //   ★세션은 콜백이 인자로 준다. 받아서 쓴다.
+  sb.auth.onAuthStateChange((_e, s) => { 세션 = s; setTimeout(load, 0); });
 })();
 </script>
 </body>
