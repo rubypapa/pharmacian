@@ -73,7 +73,9 @@ button[disabled]{opacity:.45;cursor:default}
     $('#out').textContent = '설정이 아직 준비되지 않았습니다.';
     return;
   }
-  const sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON);
+  // ★shell.js 가 만든 것을 돌려쓴다. 페이지마다 새로 만들면 같은 storage key 를 두 인스턴스가 잡고
+  //   getSession() 이 영영 안 끝난다(2026-09-01 실측).
+  const sb = (window.PH_SB && window.PH_SB()) || window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON);
 
   const 상태말 = { reserved: '예약', paid: '결제완료', pending: '미결제', canceled: '취소됨', failed: '실패' };
   // ★취소 버튼을 보여줄 상태. 결제완료(paid)는 여기 없다 — 서버도 막지만 화면에서도 안 보여준다.

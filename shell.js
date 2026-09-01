@@ -1,3 +1,19 @@
+// ★Supabase 클라이언트는 한 페이지에 ★하나만 만든다.
+//   페이지마다 createClient 를 부르면 같은 storage key 를 여러 인스턴스가 잡고,
+//   그 상태에서 getSession() 이 ★영영 안 끝난다(2026-09-01 실측: orders.html 이 "불러오는 중…"에서 멈췄고
+//   getSession 이 6초 넘게 응답하지 않았다. 콘솔 경고 "Multiple GoTrueClient instances detected").
+//   ★어느 페이지든 PH_SB() 로 받아 쓴다.
+(function (w) {
+  var _sb = null;
+  w.PH_SB = function () {
+    if (_sb) return _sb;
+    var C = w.PHARMACIAN || {};
+    if (!(w.supabase && C.SUPABASE_URL && C.SUPABASE_ANON)) return null;
+    _sb = w.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON);
+    return _sb;
+  };
+})(window);
+
 // 몰 공용 껍데기. 어느 화면에서도 같은 머리·같은 색이 나오게 한다.
 //
 // 왜 만들었나: 장바구니나 가입을 누르면 상단 메뉴가 통째로 사라지고 색까지 바뀌었다.
@@ -84,7 +100,7 @@
   function auth() {
     var C = w.PHARMACIAN || {};
     if (!(w.supabase && C.SUPABASE_URL)) return;
-    var sb = w.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON);
+    var sb = PH_SB();
     function put(u) {
       // ★화면을 열 때마다 장바구니 주인을 맞춰 본다. 로그아웃 이벤트를 놓쳐도 여기서 정리된다.
       if (w.PH_CART && PH_CART.syncOwner) PH_CART.syncOwner(u ? u.id : null);
