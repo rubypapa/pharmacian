@@ -35,6 +35,8 @@ td.addr{white-space:normal;min-width:260px;line-height:1.55}
 td.num{font-variant-numeric:tabular-nums}
 .st{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:800}
 .st-reserved{background:#FFF3E0;color:#B45309}
+.bar button.danger{border-color:#DC2626;color:#DC2626}
+.bar button.danger:hover{background:#FEF2F2}
 .st-paid{background:#E7F6EC;color:#0E7C4A}
 .st-pending{background:#F1F1F1;color:#666}
 .st-canceled,.st-failed{background:#FDECEA;color:#B3261E}
@@ -90,6 +92,8 @@ body.po-on .wrap{max-width:none}                 /* 발주서일 때는 화면 �
     <button type="button" id="poBtn">발주서 만들기</button>
     <button type="button" id="listPaid">체크한 것 결제완료로</button>
     <button type="button" id="listUndo">되돌리기</button>
+      <button type="button" id="listCancel" class="danger">체크한 것 예약취소</button>
+      <button type="button" id="listUncancel">취소 되돌리기</button>
     <span class="grow" id="count"></span>
   </div>
 
@@ -121,7 +125,8 @@ body.po-on .wrap{max-width:none}                 /* 발주서일 때는 화면 �
       <b>흰 칸은 직접 적으실 수 있습니다</b>(보내는분·연락처2·배송사·운송장번호·비고).<br>
       세트와 10개 구성은 <b>품목별로 줄을 나눠</b> 폈습니다 — 물류사가 낱개 수량으로 받기 때문입니다.<br>
       발주서를 넘기고 나서 <b>결제완료로 넘기기</b>를 누르면 체크한 주문의 상태가 <b>결제완료</b>가 됩니다.
-      ★취소·실패 건은 넘어가지 않고, 잘못 눌렀으면 <b>되돌리기</b>로 원래 상태로 돌아갑니다.
+      ★취소·실패 건은 넘어가지 않고, 잘못 눌렀으면 <b>되돌리기</b>로 원래 상태로 돌아갑니다.<br>
+      ★<b>예약취소</b>는 결제 전 건(예약·미결제)만 됩니다. 결제완료 건은 환불 절차로 처리하세요.
       사람이 넘긴 건은 명단의 <b>수동확인</b> 칸에 표시돼 결제기가 찍은 것과 구분됩니다.<br>
       ★<b>미결제·취소·실패 건은 체크가 꺼진 채로 나옵니다</b> — 돈을 안 받은 건에 물건이 나가지 않게 합니다.
       상태 칸은 화면에만 있고 엑셀에는 안 들어갑니다(물류사 양식이 14열 고정입니다).
@@ -433,6 +438,29 @@ body.po-on .wrap{max-width:none}                 /* 발주서일 때는 화면 �
     await load();          // 명단을 다시 불러 상태를 최신으로
     if (po.length) buildPO(true);   // 발주서를 만들어 뒀으면 그것도 갱신(기입값은 살린다)
   }
+
+    // ★예약 취소 — 결제 전 건(예약·미결제)만 취소한다.
+    //   결제완료 건은 서버가 막는다(환불은 결제사 절차가 따로 있다).
+    async function cancelOrders(undo, ids) {
+      ids = ids || listPicked();
+      if (!ids.length) { alert('체크된 줄이 없습니다.'); return; }
+      const 말 = undo ? '취소를 되돌리' : '취소하';
+      if (!confirm('주문 ' + ids.length + '건을 ' + 말 + '겠습니까?' + NL +
+                   (undo ? '' : '★결제완료 건은 취소되지 않습니다.' + NL) + NL + ids.join(NL))) return;
+      const r = await callAdmin({ action: undo ? 'uncancelOrder' : 'cancelOrder', orderIds: ids });
+      if (!r) return;
+      if (typeof r.done !== 'number') { alert('서버에 이 기능이 아직 올라가지 않았습니다.' + NL + '관리자에게 알려 주세요.'); return; }
+      let msg = r.done + '건 ' + 말 + '었습니다.';
+      if (r.skipped && r.skipped.length) {
+        msg += NL + NL + '넘어가지 않은 건:' + NL + r.skipped.map(s => '· ' + s.id + ' — ' + s.why).join(NL);
+      }
+      alert(msg);
+      await load();
+      if (po.length) buildPO(true);
+    }
+
+    $('#listCancel').addEventListener('click', () => cancelOrders(false));
+    $('#listUncancel').addEventListener('click', () => cancelOrders(true));
 
   $('#poPaid').addEventListener('click', () => markPaid(false));
   $('#poUndo').addEventListener('click', () => markPaid(true));

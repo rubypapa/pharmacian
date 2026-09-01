@@ -275,12 +275,8 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
 </div></header>
 
 <div class="hero"><video class="herobg" src="video/hero.mp4" poster="video/hero-poster.jpg" autoplay muted loop playsinline></video>
-  <div class="txt"><span class="badge">OPEN SALE</span>
-    <h1>첫 구매 15% 쿠폰</h1><p>첫 구매 1회 한정</p>
-    <div class="btns"><button class="b1" id="goSale" type="button">특가 보러가기</button><button class="b2" id="getCoupon" type="button">쿠폰 받기</button></div></div></div>
+  </div>
 
-<div class="timer" id="saleTimer">오픈 특가 마감까지 <span id="tleft">계산 중…</span>
-  <small>마감 일시 2026. 8. 24. 23:59 · 연장·리셋 없음</small></div>
 
 <section id="sec-all"><h2>지금 <em>먼저 여는</em> 것</h2>
   <div class="tabs" role="tablist"><button class="on" data-f="오픈특가">#오픈특가</button><button data-f="전체">#전 제품</button><button data-f="PDRN">#PDRN</button><button data-f="NMN">#NMN</button><button data-f="미백">#미백</button><a class="tabgo" href="#sec-set">#꿀조합SET</a></div>
@@ -450,21 +446,6 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
     sb.auth.getSession().then(function(r){ paint(r.data.session && r.data.session.user); });
     sb.auth.onAuthStateChange(function(_e,s){ paint(s && s.user); });
   }
-})();
-</script>
-<script>
-// 오픈 특가 실시간 카운트다운. 마감 = 2026-08-24 23:59(KST). 지나면 특가 표시를 접는다.
-(function(){
-  var el=document.getElementById('tleft'), box=document.getElementById('saleTimer');
-  if(!el) return;
-  var end=new Date('2026-08-24T23:59:00+09:00').getTime(), iv;
-  function p(n){return (n<10?'0':'')+n;}
-  function tick(){
-    var d=end-Date.now();
-    if(d<=0){ if(box) box.innerHTML='오픈 특가가 마감되었습니다.'; if(iv) clearInterval(iv); return; }
-    el.textContent=p(Math.floor(d/86400000))+'일 '+p(Math.floor(d%86400000/3600000))+':'+p(Math.floor(d%3600000/60000))+':'+p(Math.floor(d%60000/1000));
-  }
-  tick(); iv=setInterval(tick,1000);
 })();
 </script>
 <script src="shell.js"></script>

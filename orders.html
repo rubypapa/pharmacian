@@ -1,0 +1,174 @@
+<!-- 내 주문 목록. 고객이 자기 예약을 보고 스스로 취소하는 자리.
+     ★취소는 브라우저가 하지 않는다 — ph-order-cancel(Edge Function)이 "정말 이 사람 주문인가"를
+       DB로 확인한 뒤에만 상태를 바꾼다. 브라우저에는 만능키가 없다.
+     ★결제완료 건은 여기서 못 취소한다. 환불은 결제사 절차가 따로 있다. -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>내 주문 · PHARMACIAN</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="shell.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--sh-bg);color:var(--sh-ink);min-height:100dvh}
+.wrap{max-width:820px;margin:0 auto;padding:26px 18px 60px}
+h1{font-size:22px;font-weight:800;letter-spacing:-.03em}
+.sub{margin-top:8px;font-size:14px;color:var(--ink-2);line-height:1.6}
+.msg{margin-top:26px;padding:18px;border:1px solid var(--line);border-radius:12px;
+  background:var(--surface);font-size:14.5px;color:var(--ink-2);text-align:center}
+.msg a{color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.list{margin-top:20px;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.row1{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.st{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px}
+.st-reserved{background:#FFF3E0;color:#B45309}
+.st-paid{background:#E8F5E9;color:#1B5E20}
+.st-pending{background:#F3F4F6;color:#4B5563}
+.st-canceled{background:#FEE2E2;color:#991B1B}
+.st-failed{background:#FEE2E2;color:#991B1B}
+.oid{font-size:12.5px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.when{margin-left:auto;font-size:12.5px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.items{margin-top:10px;font-size:15px;font-weight:700;line-height:1.5}
+.amt{margin-top:4px;font-size:14px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.act{margin-top:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+button{font:inherit;cursor:pointer;border-radius:9px;padding:9px 14px;font-size:13.5px;font-weight:700;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+button:hover{background:var(--page)}
+button.cancel{border-color:#DC2626;color:#DC2626}
+button.cancel:hover{background:#FEF2F2}
+button[disabled]{opacity:.45;cursor:default}
+.note{font-size:12.5px;color:var(--ink-3);line-height:1.6}
+.err{margin-top:14px;font-size:13.5px;color:#991B1B;line-height:1.6}
+@media(max-width:520px){ .when{margin-left:0;width:100%} }
+</style>
+</head>
+<body>
+<div data-shell></div>
+
+<div class="wrap">
+  <h1>내 주문</h1>
+  <p class="sub">예약하신 주문을 보시고, 결제 전이라면 직접 취소하실 수 있습니다.<br>
+    결제가 끝난 주문은 이 화면에서 취소되지 않습니다 — 환불은 고객센터로 알려 주세요.</p>
+
+  <div id="out" class="msg">불러오는 중…</div>
+  <div id="err" class="err" hidden></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="shell.js"></script>
+<script>
+(function () {
+  const C = window.PHARMACIAN || {};
+  const $ = (s) => document.querySelector(s);
+  const NL = '\n';
+  const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  if (!C.SUPABASE_URL || !C.SUPABASE_ANON || !window.supabase) {
+    $('#out').textContent = '설정이 아직 준비되지 않았습니다.';
+    return;
+  }
+  const sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON);
+
+  const 상태말 = { reserved: '예약', paid: '결제완료', pending: '미결제', canceled: '취소됨', failed: '실패' };
+  // ★취소 버튼을 보여줄 상태. 결제완료(paid)는 여기 없다 — 서버도 막지만 화면에서도 안 보여준다.
+  const 취소가능 = new Set(['reserved', 'pending']);
+
+  function fmtWhen(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    const p = (n) => (n < 10 ? '0' : '') + n;
+    return `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+  }
+  const fmtAmt = (n) => (Number(n) || 0).toLocaleString('ko-KR') + '원';
+
+  function draw(rows) {
+    if (!rows.length) {
+      $('#out').className = 'msg';
+      $('#out').innerHTML = '아직 주문이 없습니다. <a href="index.html">상품 보러 가기</a>';
+      return;
+    }
+    $('#out').className = 'list';
+    $('#out').innerHTML = rows.map((r) => {
+      const st = r.status || '';
+      const can = 취소가능.has(st);
+      return `<div class="card" data-oid="${esc(r.order_id)}">
+        <div class="row1">
+          <span class="st st-${esc(st)}">${esc(상태말[st] || st)}</span>
+          <span class="oid">${esc(r.order_id)}</span>
+          <span class="when">${esc(fmtWhen(r.created_at))}</span>
+        </div>
+        <p class="items">${esc(r.items_label || '')}</p>
+        <p class="amt">${esc(fmtAmt(r.amount))}</p>
+        <div class="act">
+          ${can ? `<button type="button" class="cancel" data-cancel="${esc(r.order_id)}">주문 취소</button>` : ''}
+          <span class="note">${
+            st === 'paid' ? '결제가 끝난 주문입니다. 환불은 고객센터로 알려 주세요.'
+            : st === 'canceled' ? '취소된 주문입니다.'
+            : can ? '결제 전이라 직접 취소하실 수 있습니다.' : ''
+          }</span>
+        </div>
+      </div>`;
+    }).join('');
+
+    $('#out').querySelectorAll('[data-cancel]').forEach((b) =>
+      b.addEventListener('click', () => cancel(b.dataset.cancel, b)));
+  }
+
+  async function cancel(orderId, btn) {
+    if (!confirm('주문을 취소하시겠습니까?' + NL + NL + orderId + NL + NL + '취소하면 되돌릴 수 없습니다.')) return;
+    btn.disabled = true; btn.textContent = '취소하는 중…';
+    try {
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) { location.href = 'join.html'; return; }
+      const res = await fetch(`${C.SUPABASE_URL}/functions/v1/ph-order-cancel`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ orderId }),
+      });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok || !j.ok) {
+        // ★서버가 막은 이유를 그대로 보여준다(결제완료·이미취소 등)
+        alert(j.error || '취소하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+        btn.disabled = false; btn.textContent = '주문 취소';
+        return;
+      }
+      alert('취소되었습니다.');
+      await load();
+    } catch (e) {
+      alert('통신에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+      btn.disabled = false; btn.textContent = '주문 취소';
+    }
+  }
+
+  async function load() {
+    $('#err').hidden = true;
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) {
+      $('#out').className = 'msg';
+      $('#out').innerHTML = '주문을 보시려면 <a href="join.html">로그인</a>해 주세요.';
+      return;
+    }
+    // ★본인 것만 보이는 뷰. RLS 가 행을 본인 것으로 좁힌다(security_invoker).
+    const { data, error } = await sb.from('ph_my_orders').select('*').order('created_at', { ascending: false }).limit(50);
+    if (error) {
+      $('#out').className = 'msg';
+      $('#out').textContent = '주문을 불러오지 못했습니다.';
+      $('#err').hidden = false;
+      $('#err').textContent = '★서버에 이 화면이 아직 올라가지 않았을 수 있습니다. 잠시 후 다시 시도해 주세요.';
+      return;
+    }
+    draw(data || []);
+  }
+
+  sb.auth.onAuthStateChange(() => load());
+  load();
+})();
+</script>
+</body>
+</html>

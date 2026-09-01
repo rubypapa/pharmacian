@@ -67,6 +67,9 @@
         '<a class="sh-logo" href="' + h + '">PHARMACIAN</a>' +
         '<nav class="sh-nav">' + items + '</nav>' +
         '<div class="sh-util">' +
+          // ★로그인한 사람에게만 보인다. auth() 가 hidden 을 푼다.
+          '<a class="u-orders" href="orders.html" hidden' + (here === 'orders.html' ? ' aria-current="page"' : '') + '>' +
+            ((s === 'a') ? 'MY ORDERS' : '내 주문') + '</a>' +
           '<a class="u-auth" data-login="' + loginLabel + '" href="join.html">' + loginLabel + '</a>' +
           '<a href="cart.html"' + (here === 'cart.html' ? ' aria-current="page"' : '') + '>' +
             cartLabel + ' <b data-cart-count hidden></b></a>' +
@@ -88,6 +91,8 @@
       // 이미 로그인한 사람에게 "1초 가입"을 보여줄 이유가 없다
       var cta = d.getElementById('joincta');
       if (cta) cta.hidden = !!u;
+        // ★내 주문은 로그인한 사람에게만. 비로그인에게 보여주면 눌러도 로그인 화면만 나온다.
+        [].slice.call(d.querySelectorAll('.u-orders')).forEach(function (a) { a.hidden = !u; });
       [].slice.call(d.querySelectorAll('.u-auth')).forEach(function (a) {
         var en = (a.getAttribute('data-login') || '로그인') === 'LOGIN';
         a.textContent = u ? (en ? 'LOGOUT' : '로그아웃') : (en ? 'LOGIN' : '로그인');
