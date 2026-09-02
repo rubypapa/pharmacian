@@ -152,7 +152,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--pt);outline-offset:
     }
     var goods = 0;
     priceRows.forEach(function(r){ if(cart[r.key]) goods += r.price * cart[r.key]; });
-    var FREE = (window.PHARMACIAN && window.PHARMACIAN.FREE_SHIP_OVER) || 30000;
+    var FREE = (window.PHARMACIAN && window.PHARMACIAN.FREE_SHIP_OVER) || 50000;
     var ship = (goods && goods < FREE) ? priceRows[0].ship : 0;
     var coupon = (goods>0 && localStorage.getItem('ph_coupon')==='1');
     var disc = coupon ? Math.round(goods*0.15) : 0;

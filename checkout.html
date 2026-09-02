@@ -144,7 +144,7 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
 
   const goods = () => rows.reduce((s, r) => s + r.price * (qty[r.key] || 0), 0);
   const count = () => rows.reduce((s, r) => s + (qty[r.key] || 0), 0);
-  const FREE = (window.PHARMACIAN && window.PHARMACIAN.FREE_SHIP_OVER) || 30000;
+  const FREE = (window.PHARMACIAN && window.PHARMACIAN.FREE_SHIP_OVER) || 50000;
   const shipFee = () => (count() && goods() < FREE) ? ship : 0;
   // 첫 구매 15% 쿠폰. 장바구니에서 적용하면 localStorage에 남고 여기로 이어진다. ★실제 적용은 서버가 최종 판정한다.
   const coupon = () => (count() > 0 && localStorage.getItem('ph_coupon') === '1');

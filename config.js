@@ -8,7 +8,7 @@ window.PHARMACIAN = {
 
   // ★무료배송 문턱(원). 상품합계가 이 값 이상이면 배송비 0.
   //   서버(ph-order-create)의 FREE_SHIP_OVER와 반드시 같아야 화면·결제 금액이 일치한다.
-  FREE_SHIP_OVER: 30000,
+  FREE_SHIP_OVER: 50000,
 
   // Supabase (리전 = Northeast Asia / Seoul, ap-northeast-2) — ODEAL과 같은 프로젝트를 쓴다.
   // 표·함수만 ph_ 접두어로 분리했다(ph_product_price · ph_orders · ph-order-create · ph-pay-confirm).
