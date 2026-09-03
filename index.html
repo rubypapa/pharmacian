@@ -1,7 +1,8 @@
 <!-- B안 · 판매형. 대표가 고른 12벌 중 11번(토리든형)을 그대로 두고 홈 한 장으로 완성한 것.
      ★루비 지시(2026-08-19): "11번 세일 문법은 그대로 가져온다."
      그래서 타이머·할인율·증정 표기·해시태그 탭을 줄이지 않았다. 대신 없던 것을 채웠다 —
-     성분 근거(후기 0건 대응) · 배송/반품 · 세트 구성.
+     ★2026-09-03 루비 지시로 홈에서 뺀 것 : 맨 위 쿠폰 띠 · 꿀조합SET · 표기값 블록 · 만든 곳과 보내는 법.
+     배송·교환·반품 안내는 refund.html 과 각 상품의 상품정보 제공고시 표에 그대로 있다.
      제품 사실·가격·법정 문구는 tools/build.py와 같은 원천을 따른다.
      ★취소선 정가는 쓰지 않는다. 신규 브랜드라 종전 거래가격이 없어 표시광고법상 기만 표시가 된다. -->
 <!doctype html>
@@ -36,11 +37,7 @@ button{font:inherit;cursor:pointer;border:0}
 body{font-family:'Pretendard Variable',Pretendard,-apple-system,'Malgun Gothic',sans-serif;
   line-height:1.6;word-break:keep-all;-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--ink)}
 
-.top{background:var(--sale);color:#fff;text-align:center;font-size:12.5px;font-weight:700;padding:10px}
-.strip2{background:#191919;color:#fff;text-align:center;font-size:12px;padding:8px}
 /* ★결제가 아직 안 열렸다는 말을 맨 앞에 둔다. 마지막 화면에서 알게 하면 안 된다. */
-.rsvbar{background:#FFF3E0;color:#8A4B08;text-align:center;font-size:12.5px;font-weight:700;padding:9px 14px;line-height:1.5}
-.rsvbar b{color:#B45309}
 header{border-bottom:1px solid var(--rule);position:sticky;top:0;background:#fff;z-index:9}
 .hd{max-width:1140px;margin:0 auto;padding:13px 20px;display:flex;align-items:center;gap:18px}
 .logo{font-size:19px;font-weight:800;letter-spacing:.16em}
@@ -77,8 +74,15 @@ h2 em{font-style:normal;color:var(--sale)}
 .tabs span.on{background:#191919;color:#fff;border-color:#191919}
 /* ★minmax(0,1fr) - 그냥 1fr이면 긴 전성분 글자가 칸의 최소폭을 밀어올려
      앞 칸들이 안 줄고 마지막 칸만 찌그러진다(실측 330/330/330/272). */
-.grid{margin-top:20px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
-@media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* 전 제품은 가로 슬라이드로 본다. 격자가 아니라 옆으로 미는 줄이다.
+   숨긴 카드는 article[hidden]{display:none} 이 처리하므로 flex 에서도 자리를 안 먹는다. */
+.grid{margin-top:20px;display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x proximity;
+      -webkit-overflow-scrolling:touch;padding-bottom:12px;scrollbar-width:thin}
+.grid::-webkit-scrollbar{height:6px}
+.grid::-webkit-scrollbar-thumb{background:#d8d4d0;border-radius:999px}
+.grid>.card{flex:0 0 calc((100% - 48px)/4);min-width:0;scroll-snap-align:start}
+@media(max-width:900px){.grid>.card{flex-basis:calc((100% - 16px)/2)}}
+@media(max-width:560px){.grid>.card{flex-basis:76%}}
 .card .th{position:relative;background:#f6f4f2;aspect-ratio:1/1.35;overflow:hidden;border-radius:3px}
 .card .th img{width:100%;height:100%;object-fit:cover}
 .card .gift{position:absolute;left:7px;top:7px;background:var(--pt);color:#fff;font-size:11px;font-weight:800;padding:4px 8px;border-radius:3px}
@@ -94,35 +98,9 @@ h2 em{font-style:normal;color:var(--sale)}
 .card .addcart{margin-top:auto}
 .note{margin-top:16px;font-size:12px;color:var(--muted);line-height:1.8}
 
-/* 세트 */
-.sets{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
-@media(max-width:900px){.sets{grid-template-columns:1fr}}
-.set{border:1px solid var(--rule);border-radius:4px;padding:18px;display:flex;gap:16px;align-items:center}
-.set img{width:92px;height:124px;object-fit:cover;border-radius:3px;flex:0 0 auto}
-.set b{font-size:15px;font-weight:800;letter-spacing:-.02em}
-.set p{margin-top:5px;font-size:12.5px;color:var(--muted)}
-.set .pr{margin-top:9px;font-size:17px;font-weight:800}
-.set .pr small{font-size:12px;font-weight:600;color:var(--muted);margin-left:5px}
 .hero video.herobg{width:100%;height:min(64vh,560px);object-fit:cover;object-position:center;display:block;transform:scale(0.7);border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.45)}
-.set .setbadge{display:inline-block;background:var(--sale);color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px;margin-right:8px;vertical-align:middle}
-.set .pr s{color:var(--muted);font-weight:600;font-size:12px}
 
-/* ★후기 0건 대응 — 숫자로 대신한다 */
-.proof{background:var(--soft);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
-@media(max-width:900px){.pgrid{grid-template-columns:1fr}}
-.pgrid div{background:#fff;border:1px solid var(--rule);border-radius:4px;padding:18px}
-.pgrid b{display:block;font-size:24px;font-weight:800;letter-spacing:-.04em;color:var(--pt);font-variant-numeric:tabular-nums}
-.pgrid strong{display:block;margin-top:7px;font-size:14.5px}
-.pgrid p{margin-top:5px;font-size:13px;color:var(--muted)}
 
-/* 배송·반품 */
-.policy{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--rule);border-radius:4px;margin-top:20px}
-@media(max-width:900px){.policy{grid-template-columns:1fr}}
-.policy div{padding:20px;border-right:1px solid var(--rule)}
-.policy div:last-child{border-right:0}
-.policy b{font-size:14px;font-weight:800}
-.policy p{margin-top:6px;font-size:13px;color:var(--muted);line-height:1.7}
 
 .welcome{background:#f6f8ff;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
 .win{max-width:1140px;margin:0 auto;padding:34px 20px;display:flex;align-items:center;gap:22px;flex-wrap:wrap}
@@ -160,7 +138,7 @@ article[hidden]{display:none}
 .emptymsg{grid-column:1/-1;padding:34px 0;color:var(--muted);font-size:14.5px}
 html{scroll-behavior:smooth}
 :target{scroll-margin-top:120px}
-#sec-all,#sec-set,#sec-spec,#sec-made{scroll-margin-top:96px}
+#sec-all{scroll-margin-top:96px}
 
 /* 헤더 로그인·장바구니 — 전에는 글자만 있고 안 눌렸다 */
 .util a{color:inherit;text-decoration:none;cursor:pointer}
@@ -314,12 +292,9 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
 <body>
 
 
-<div class="top">🔥 첫 구매 15% 쿠폰 🔥</div>
-<div class="strip2">50,000원 이상 무료배송 · 첫 구매 15% 쿠폰</div>
-<div class="rsvbar" id="rsvbar" hidden>지금은 <b>예약</b>만 받습니다 · 결제되는 금액은 없고, 결제가 열리면 순서대로 안내드립니다</div>
 <header><div class="hd">
   <div class="logo">PHARMACIAN</div>
-  <nav class="gnb"><a class="hot" href="#sec-all" data-f="오픈특가">오픈특가💥</a><a class="hot" href="#sec-all" data-f="홈쇼핑특가">10개 특가</a><a href="#sec-all" data-f="전체">전 제품</a><a href="#sec-all" data-f="PDRN">PDRN</a><a href="#sec-all" data-f="NMN">NMN</a><a href="#sec-all" data-f="미백">미백</a><a href="#sec-set">이벤트</a></nav>
+  <nav class="gnb"><a class="hot" href="#sec-all" data-f="전체">오픈특가💥</a><a href="#sec-all" data-f="PDRN">PDRN</a><a href="#sec-all" data-f="NMN">NMN</a><a href="#sec-all" data-f="미백">미백</a></nav>
   <div class="util"><a class="u-orders" href="orders.html" hidden>내 주문</a><a class="u-auth" href="join.html">로그인</a><a href="cart.html">장바구니 <b data-cart-count hidden></b></a></div>
 </div></header>
 
@@ -338,7 +313,7 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
 </section>
 
 <section id="sec-all"><h2>지금 <em>먼저 여는</em> 것</h2>
-  <div class="tabs" role="tablist"><button class="on" data-f="오픈특가">#오픈특가</button><button data-f="홈쇼핑특가">#현대홈쇼핑 10개 특가</button><button data-f="전체">#전 제품</button><button data-f="PDRN">#PDRN</button><button data-f="NMN">#NMN</button><button data-f="미백">#미백</button><a class="tabgo" href="#sec-set">#꿀조합SET</a></div>
+  <div class="tabs" role="tablist"><button class="on" data-f="전체">#전 제품</button><button data-f="PDRN">#PDRN</button><button data-f="NMN">#NMN</button><button data-f="미백">#미백</button></div>
   <div class="grid">
     <article data-k="p7" data-tag="PDRN 오픈특가 전체" class="card"><a class="godetail" href="detail/p7.html"><div class="th"><img src="img/prod-p7.jpg" alt="파머시안 PDRN 7000 크림 30g. 약국 화장품 코너에서 판매되던 PDRN 탄력크림. 소듐디엔에이(연어 유래 PDRN) 7,000ppm 표시.">
         <span class="pct">쿠폰 15%</span></div>
@@ -367,49 +342,12 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
       <p class="rv">첫 구매 1회 한정 · 장바구니에서 쿠폰 적용</p></a><button type="button" class="addcart" data-add="mel"><span>장바구니 담기</span></button><details class="legal"><summary>상품정보 제공고시 · 전성분</summary><table><tr class="h2"><th>제품명</th><td>브이씨엑소 파머시안 멜라리스 10만 크림<br>(VCXO PHARMACIAN MELALESS 100,000 CREAM)</td></tr><tr class="h1"><th>용량</th><td>30g</td></tr><tr class="h1"><th>피부타입</th><td>모든 피부</td></tr><tr class="h2"><th>효능효과</th><td>피부의 미백에 도움을 준다. 피부의 주름개선에 도움을 준다.</td></tr><tr class="h2"><th>용법용량</th><td>본품 적당량을 취해 피부에 골고루 펴 바른다.</td></tr><tr class="h3"><th>전성분</th><td>정제수, 카프릴릭/카프릭트라이글리세라이드, 나이아신아마이드, 카프릴릴메티콘, 다이프로필렌그라이콜, 부틸렌그라이콜, 시트릭애씨드, 트라넥사믹애씨드, 세테아릴알코올, 3-O-에틸아스코빅애씨드, 글리세린, 1,2-헥산다이올, 베타인, 세틸알코올, 글리세릴스테아레이트, 판테놀, 시어버터, 세테아릴올리베이트, 베헤닐알코올, 폴리아크릴레이트크로스폴리머-6, 솔비탄올리베이트, 세테아릴글루코사이드, 페룰릭애씨드, 스테아릴알코올, 알란토인, 팔미틱애씨드, 스테아릭애씨드, 알라닌, 푸코실락토오스, 폴리글리세릴-10라우레이트, 흰목이버섯폴리사카라이드, 미리스틸알코올, 아시아티코사이드, 마데카식애씨드, 에틸헥실글리세린, 다이소듐이디티에이, 글리세레스-26, 소듐하이알루로네이트, 토코페릴아세테이트, 아데노신, 아시아틱애씨드, 라우릴알코올, t-부틸알코올, 펜타에리스리틸테트라-다이-t-부틸하이드록시하이드로신나메이트, 아미노부티릭애씨드, 미리스틱애씨드, 글라이신, 아라키딕애씨드, 소듐팔미토일사코시네이트, 글루타믹애씨드, 알지닌, 올레익애씨드, 아스파틱애씨드, 라이신, 세린, 트레오닌, 시스테인, 히스티딘, 타이로신, 토코페롤</td></tr><tr class="h2"><th>화장품제조업자</th><td>(주)위노바 / 경기도 평택시 청북읍 청북산단로 178</td></tr><tr class="h2"><th>화장품책임판매업자</th><td>(주)와이엘트레이딩 / 경기도 안양시 동안구 시민대로 401, 2001호(관양동, 대륭테크노타운15차)</td></tr><tr class="h1"><th>사용기한</th><td>별도표기</td></tr><tr class="h1"><th>소비자상담실</th><td>02-6342-9496</td></tr><tr class="h3"><th>주의사항</th><td>화장품 사용 시 또는 사용 직후 직사광선에 의하여 사용부위가 붉은 반점, 부어오름 또는 가려움증 등의 이상 증상이나 부작용이 있는 경우에는 전문의 등과 상담해주세요.<br>상처가 있는 부위 등에는 사용을 자제해주세요.<br>어린이의 손이 닿지 않는 곳에 보관해주세요.<br>직사광선을 피해서 보관해주세요.</td></tr><tr class="h1"><th>제품의 pH</th><td>4.1 (기능성화장품 보고서 기재값)</td></tr></table></details></article>
   </div>
   <p class="note">★신규 브랜드라 종전 판매 가격이 없습니다. 그래서 낱개 상품에는 정가·취소선 표기를 하지 않고,
-    실제로 드리는 혜택(첫 구매 15% 쿠폰)의 적용가만 적습니다.
-    세트의 취소선은 <b>구성품을 낱개로 살 때의 합계</b>이며, 지어낸 정가가 아닙니다.<br>
+    실제로 드리는 혜택(첫 구매 15% 쿠폰)의 적용가만 적습니다.<br>
     <b>화장품은 개봉·사용하시면 위생상 교환·반품이 어렵습니다.</b> 받으신 뒤 7일 이내, 미개봉 상태에서 반품하실 수 있습니다.</p>
 </section>
 
-<section id="sec-set" style="padding-top:0"><h2>#꿀조합SET</h2>
-  <p class="sub">두 개 라인을 세트로 <b>20% 할인</b>.</p>
-  <div class="sets">
-    <div class="set"><img src="img/prod-p7.jpg" alt="꿀조합SET PDRN 라인 2종. 파머시안 PDRN 7000 + PDRN 12000 각 30g.">
-      <div><b>PDRN 라인 2종</b><p>PDRN 7000 + PDRN 12000 · 각 30g</p>
-        <p class="pr"><span class="setbadge">20% 할인중</span>47,200원 <small><s>59,000원</s></small></p>
-        <button type="button" class="addcart" data-add="set1"><span>장바구니 담기</span></button></div></div>
-    <div class="set"><img src="img/prod-mel.jpg" alt="꿀조합SET 아침밤 2종. 파머시안 멜라리스 100,000 + NMN 30,000 각 30g.">
-      <div><b>아침·밤 2종</b><p>멜라리스 100,000 + NMN 30,000 · 각 30g</p>
-        <p class="pr"><span class="setbadge">20% 할인중</span>54,400원 <small><s>68,000원</s></small></p>
-        <button type="button" class="addcart" data-add="set2"><span>장바구니 담기</span></button></div></div>
-  </div>
-</section>
 
-<div class="proof"><section id="sec-spec">
-  <h2><em>표기값</em>으로 말합니다.</h2>
-  <p class="sub">이제 막 문을 연 브랜드라 후기가 쌓이지 않았습니다. 광고 문구 대신 전성분표에 적힌 숫자를 그대로 옮깁니다.</p>
-  <div class="pgrid">
-    <div><b>7,000 / 12,000</b><strong>소듐디엔에이 (연어 PDRN)</strong>
-      <p>ppm · 전성분표 표기값. 12000에는 펩타이드 17종이 더 들어갑니다.</p></div>
-    <div><b>30,000</b><strong>모노-뉴클레오타이드 (NMN)</strong>
-      <p>ppm · 리포좀 공법으로 안정화했습니다.</p></div>
-    <div><b>5,580 / 3,000</b><strong>세포외소포 · 알란토인</strong>
-      <p>ppm · 우유 유래 엑소좀 600ppm도 함께 들어 있습니다.</p></div>
-  </div>
-  <p class="note">나이아신아마이드(미백)·아데노신(주름개선)은 기능성 고시성분입니다.
-    본품이 말할 수 있는 효능은 기능성 보고 범위인 미백과 주름개선까지입니다.
-    화장품은 질병의 예방·치료를 위한 의약품이 아닙니다.</p>
-</section></div>
 
-<section id="sec-made">
-  <h2>만든 곳과 보내는 법</h2>
-  <div class="policy">
-    <div><b>만든 곳</b><p>린제이앤코스(PDRN 7000) · 주식회사 위노바(그 외)<br>책임판매 (주)와이엘트레이딩</p></div>
-    <div><b>배송</b><p>배송비 3,000원 · 50,000원 이상 무료<br>한진택배 · 영업일 기준 1~3일 이내 출고</p></div>
-    <div><b>교환·반품</b><p>수령 후 7일 이내<br>단순 변심은 반송비 3,000원을 부담하십니다</p></div>
-  </div>
-</section>
 
 
 <section class="faq" id="sec-faq">
@@ -492,7 +430,7 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
     }
     tabs.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-f')===f); });
     gnb.forEach(function(a){ a.classList.toggle('act', a.getAttribute('data-f')===f); });
-    /* ★처음 그릴 때는 주소를 건드리지 않는다. 안 그러면 #sec-set 같은 링크로 들어와도
+    /* ★처음 그릴 때는 주소를 건드리지 않는다. 안 그러면 다른 섹션 링크로 들어와도
        주소가 #sec-all 로 덮여서 그 자리로 못 간다. 사용자가 실제로 누를 때만 바꾼다. */
     if(booted) { try{ history.replaceState(null,'','#sec-all'); }catch(e){} }
   }
@@ -517,20 +455,15 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
   tabs.forEach(function(b){ b.addEventListener('click',function(){ apply(b.getAttribute('data-f')); }); });
   gnb.forEach(function(a){ a.addEventListener('click',function(e){
     e.preventDefault(); apply(a.getAttribute('data-f')); goto('#sec-all'); }); });
-  /* 해시로만 가는 항목(이벤트·꿀조합SET)도 같은 방식으로 */
+  /* data-f 없이 해시로만 가는 항목이 생기면 같은 방식으로 스크롤시킨다 */
   [].slice.call(document.querySelectorAll('.gnb a[href^="#"]:not([data-f]), .tabs a.tabgo'))
    .forEach(function(a){ a.addEventListener('click',function(e){ e.preventDefault(); goto(a.getAttribute('href')); }); });
-  apply('오픈특가');
+  apply('전체');
   booted=true;   /* 여기부터는 사용자의 클릭이다 */
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
-<script>
-  // 판매 방식은 config.js 한 곳에서 정한다. 예약 중이면 맨 위에 그렇게 적는다.
-  (function(){ var C = window.PHARMACIAN || {};
-    if ((C.SALE_MODE || 'live') === 'reserve') { var b = document.getElementById('rsvbar'); if (b) b.hidden = false; } })();
-</script>
 <script src="cart.js"></script>
 <script>
 /* 카드의 담기 버튼과 헤더 로그인 상태. 장바구니는 브라우저에만 담고 금액은 서버가 정한다. */
