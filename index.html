@@ -505,7 +505,13 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
   /* data-f 없이 해시로만 가는 항목이 생기면 같은 방식으로 스크롤시킨다 */
   [].slice.call(document.querySelectorAll('.gnb a[href^="#"]:not([data-f]), .tabs a.tabgo'))
    .forEach(function(a){ a.addEventListener('click',function(e){ e.preventDefault(); goto(a.getAttribute('href')); }); });
-  apply('전체');
+  /* ★서브페이지 메뉴는 홈으로 돌아오며 ?f= 로 분류를 넘긴다(shell.js MENU_B).
+     전에는 홈이 그 값을 안 읽어서 무엇을 눌러도 전체가 떴다 — 죽은 파라미터였다. */
+  var 넘어온분류 = null;
+  try { 넘어온분류 = new URLSearchParams(location.search).get('f'); } catch(e) {}
+  var 쓸수있나 = 넘어온분류 && (넘어온분류 === '전체' ||
+      cards.some(function(c){ return (' '+c.getAttribute('data-tag')+' ').indexOf(' '+넘어온분류+' ') > -1; }));
+  apply(쓸수있나 ? 넘어온분류 : '전체');
   booted=true;   /* 여기부터는 사용자의 클릭이다 */
 })();
 

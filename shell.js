@@ -46,14 +46,13 @@
   }
 
   // 판매형 메뉴는 분류 필터다. 홈으로 돌아가면서 그 분류를 켜야 하므로 ?f= 로 넘긴다.
+  // ★홈(index.html)의 메뉴와 ★같아야 한다. 2026-09-03 루비 지시로 홈에서 「10개 특가」·「이벤트」를 뺐고
+  //   「미백」을 제품 영문명 MELALESS 로 바꿨다. 여기만 옛 메뉴로 남아 있으면 서브페이지에서 딴 메뉴가 뜬다.
   var MENU_B = [
-    { t: '오픈특가', f: '오픈특가', hot: true },
-    { t: '10개 특가', f: '홈쇼핑특가', hot: true },
-    { t: '전 제품', f: '전체' },
+    { t: '오픈특가💥', f: '전체', hot: true },
     { t: 'PDRN', f: 'PDRN' },
     { t: 'NMN', f: 'NMN' },
-    { t: '미백', f: '미백' },
-    { t: '이벤트', hash: '#sec-set' }
+    { t: 'MELALESS', f: '미백' }        // ★필터 키는 카드의 data-tag 와 짝이라 '미백' 그대로다
   ];
   var MENU_A = [
     { t: 'COLLECTION', hash: '#collection' },
@@ -71,8 +70,8 @@
       return '<a href="' + href + '"' + (m.hot ? ' class="hot"' : '') + '>' + m.t + '</a>';
     }).join('');
 
-    var band = (s === 'b')
-      ? '<div class="sh-band">50,000원 이상 무료배송 · 첫 구매 15% 쿠폰</div>' : '';
+    // ★맨 위 띠는 2026-09-03 루비 지시로 홈에서 걷어냈다. 서브페이지에만 남으면 화면마다 달라 보인다.
+    var band = '';
     var here = file();
     var loginLabel = (s === 'a') ? 'LOGIN' : '로그인';
     var cartLabel = (s === 'a') ? 'CART' : '장바구니';
