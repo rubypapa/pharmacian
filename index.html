@@ -93,6 +93,25 @@ h2 em{font-style:normal;color:var(--sale)}
 .sarrow[hidden]{display:none}                    /* display:flex 가 기본 hidden 을 이기므로 못박는다 */
 @media(max-width:560px){.sarrow{width:34px;height:34px;font-size:20px}
   .sarrow.prev{left:-2px} .sarrow.next{right:-2px}}
+
+/* 상품을 누르면 다른 페이지로 보내지 않고 ★바로 아래에 상세를 펼친다.
+   상세는 iframe 이다 — 상세 페이지의 CSS·이미지 경로를 그대로 쓰므로 옮겨 붙이다 깨질 일이 없다.
+   높이는 부모가 iframe 안 문서의 높이를 읽어 맞춘다(같은 출처). 처음엔 접어 두고 「상세 더 보기」로 편다. */
+.dtlpane{margin-top:26px;border-top:1px solid var(--rule);padding-top:20px}
+.dtlhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.dtlhead b{font-size:16px;font-weight:800;letter-spacing:-.02em}
+.dtlhead a{font-size:12.5px;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--rule)}
+.dtlhead a:hover{color:var(--ink);border-color:var(--ink)}
+.dtlbox{position:relative;margin-top:14px;overflow:hidden;max-height:1500px;transition:max-height .25s}
+.dtlbox.open{max-height:none}
+.dtlbox::after{content:"";position:absolute;left:0;right:0;bottom:0;height:150px;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(255,255,255,0),#fff)}
+.dtlbox.open::after{display:none}
+.dtlframe{display:block;width:100%;border:0;min-height:600px;background:#faf6f0}
+.dtlmore{display:block;margin:14px auto 0;font:inherit;font-size:14px;font-weight:700;cursor:pointer;
+  padding:13px 30px;border:1px solid var(--rule);border-radius:999px;background:#fff;color:var(--ink)}
+.dtlmore:hover{border-color:var(--ink)}
+.card .godetail{cursor:pointer}
 .grid>.card{flex:0 0 calc((100% - 48px)/4);min-width:0;scroll-snap-align:start}
 @media(max-width:900px){.grid>.card{flex-basis:calc((100% - 16px)/2)}}
 @media(max-width:560px){.grid>.card{flex-basis:76%}}
@@ -361,6 +380,15 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
   <p class="note">★신규 브랜드라 종전 판매 가격이 없습니다. 그래서 낱개 상품에는 정가·취소선 표기를 하지 않고,
     실제로 드리는 혜택(첫 구매 15% 쿠폰)의 적용가만 적습니다.<br>
     <b>화장품은 개봉·사용하시면 위생상 교환·반품이 어렵습니다.</b> 받으신 뒤 7일 이내, 미개봉 상태에서 반품하실 수 있습니다.</p>
+
+  <div class="dtlpane" id="dtlpane">
+    <div class="dtlhead"><b id="dtlname">파머시안 PDRN 7000 크림 30g</b>
+      <a id="dtlfull" href="detail/p7.html" target="_blank" rel="noopener">상세만 따로 보기 ↗</a></div>
+    <div class="dtlbox" id="dtlbox">
+      <iframe class="dtlframe" id="dtlframe" title="상품 상세" src="detail/p7.html" scrolling="no"></iframe>
+    </div>
+    <button type="button" class="dtlmore" id="dtlmore">상세 더 보기 ▾</button>
+  </div>
 </section>
 
 
@@ -523,6 +551,71 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
   window.PH_SLIDER={sync:sync, reset:function(){ grid.scrollLeft=0; sync(); }};
   sync();
   if(document.readyState!=='complete') window.addEventListener('load', sync);
+})();
+
+/* 상품을 누르면 ★다른 페이지로 가지 않고 바로 아래 패널에 상세를 띄운다. 처음 값은 ★PDRN 7000 이다.
+   같은 출처라 iframe 안 문서를 만질 수 있다 — 상세 페이지의 「몰로 돌아가기」와 하단 고정 구매바는
+   여기서는 군더더기라 숨기고, 안쪽 링크는 ★맨 위 창으로 보낸다(iframe 안에서 결제로 가면 갇힌다). */
+(function(){
+  var box=document.getElementById('dtlbox'), fr=document.getElementById('dtlframe');
+  var nm=document.getElementById('dtlname'), full=document.getElementById('dtlfull');
+  var more=document.getElementById('dtlmore'), pane=document.getElementById('dtlpane');
+  if(!fr||!box) return;
+
+  var 이름={p7:'파머시안 PDRN 7000 크림 30g', p7x10:'파머시안 PDRN 7000 크림 30g × 10개',
+            p12:'파머시안 PDRN 12000 크림 30g', nmn:'파머시안 NMN 30,000 크림 30g',
+            mel:'파머시안 멜라리스 100,000 크림 30g'};
+  var 상세={p7:'p7', p7x10:'p7', p12:'p12', nmn:'nmn', mel:'mel'};   /* 10개 구성은 같은 제품 상세를 쓴다 */
+
+  function 높이맞춤(){
+    try{ var d=fr.contentDocument; if(!d||!d.body) return;
+         fr.style.height = Math.max(600, d.documentElement.scrollHeight) + 'px'; }catch(e){}
+  }
+  function 안쪽정리(){
+    try{
+      var d=fr.contentDocument; if(!d||!d.body) return;
+      var s=d.getElementById('_embed_css');
+      if(!s){ s=d.createElement('style'); s.id='_embed_css';
+              s.textContent='.backbar,.buybar{display:none!important}body{overflow-x:hidden}';
+              d.head.appendChild(s); }
+      d.addEventListener('click', function(e){
+        var a=e.target.closest && e.target.closest('a[href]'); if(!a) return;
+        var href=a.getAttribute('href'); if(!href||href.charAt(0)==='#') return;
+        e.preventDefault(); window.top.location.href=a.href;      /* 절대 URL 로 바깥 창을 옮긴다 */
+      }, true);
+      /* 상세 안 이미지가 늦게 들어오면 높이가 늘어난다 — 그때마다 다시 잰다 */
+      if(window.ResizeObserver){ new ResizeObserver(높이맞춤).observe(d.body); }
+      [].slice.call(d.images).forEach(function(im){ if(!im.complete) im.addEventListener('load', 높이맞춤); });
+    }catch(e){}
+    높이맞춤();
+  }
+  fr.addEventListener('load', 안쪽정리);
+  window.addEventListener('resize', 높이맞춤);
+
+  more.addEventListener('click', function(){
+    var 폈나 = box.classList.toggle('open');
+    more.textContent = 폈나 ? '상세 접기 ▴' : '상세 더 보기 ▾';
+    if(!폈나) pane.scrollIntoView({behavior:'smooth', block:'start'});
+    높이맞춤();
+  });
+
+  function 연다(k){
+    var s=상세[k]; if(!s) return;
+    if(fr.getAttribute('src')!=='detail/'+s+'.html'){ fr.style.height='600px'; fr.setAttribute('src','detail/'+s+'.html'); }
+    nm.textContent = 이름[k] || '';
+    full.setAttribute('href','detail/'+s+'.html');
+    box.classList.remove('open'); more.textContent='상세 더 보기 ▾';
+    pane.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  document.addEventListener('click', function(e){
+    if(!e.target.closest) return;
+    if(e.target.closest('.addcart')) return;                 /* 담기 버튼은 담기 그대로 */
+    var card=e.target.closest('.grid > article[data-k]'); if(!card) return;
+    if(!e.target.closest('.godetail')) return;               /* 사진·이름·가격을 눌렀을 때만 */
+    e.preventDefault();
+    연다(card.getAttribute('data-k'));
+  }, true);
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
