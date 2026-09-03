@@ -76,10 +76,23 @@ h2 em{font-style:normal;color:var(--sale)}
      앞 칸들이 안 줄고 마지막 칸만 찌그러진다(실측 330/330/330/272). */
 /* 전 제품은 가로 슬라이드로 본다. 격자가 아니라 옆으로 미는 줄이다.
    숨긴 카드는 article[hidden]{display:none} 이 처리하므로 flex 에서도 자리를 안 먹는다. */
+.slider{position:relative}
 .grid{margin-top:20px;display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x proximity;
-      -webkit-overflow-scrolling:touch;padding-bottom:12px;scrollbar-width:thin}
-.grid::-webkit-scrollbar{height:6px}
-.grid::-webkit-scrollbar-thumb{background:#d8d4d0;border-radius:999px}
+      -webkit-overflow-scrolling:touch;padding-bottom:4px;
+      scrollbar-width:none;-ms-overflow-style:none}
+.grid::-webkit-scrollbar{display:none}          /* 밑에 바를 두지 않는다 — 화살표와 휠로 민다 */
+/* 좌·우 화살표. 세로 위치는 JS가 첫 카드 사진의 중앙으로 맞춘다(--arrowTop). */
+.sarrow{position:absolute;top:var(--arrowTop,38%);transform:translateY(-50%);z-index:3;
+  width:40px;height:40px;border-radius:999px;border:1px solid var(--rule);background:rgba(255,255,255,.94);
+  color:var(--ink);font:400 24px/1 system-ui,sans-serif;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;padding:0 0 3px;
+  box-shadow:0 2px 10px rgba(0,0,0,.14)}
+.sarrow:hover{border-color:var(--ink)}
+.sarrow.prev{left:-8px}
+.sarrow.next{right:-8px}
+.sarrow[hidden]{display:none}                    /* display:flex 가 기본 hidden 을 이기므로 못박는다 */
+@media(max-width:560px){.sarrow{width:34px;height:34px;font-size:20px}
+  .sarrow.prev{left:-2px} .sarrow.next{right:-2px}}
 .grid>.card{flex:0 0 calc((100% - 48px)/4);min-width:0;scroll-snap-align:start}
 @media(max-width:900px){.grid>.card{flex-basis:calc((100% - 16px)/2)}}
 @media(max-width:560px){.grid>.card{flex-basis:76%}}
@@ -314,6 +327,7 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
 
 <section id="sec-all"><h2>지금 <em>먼저 여는</em> 것</h2>
   <div class="tabs" role="tablist"><button class="on" data-f="전체">#전 제품</button><button data-f="PDRN">#PDRN</button><button data-f="NMN">#NMN</button><button data-f="미백">#미백</button></div>
+  <div class="slider">
   <div class="grid">
     <article data-k="p7" data-tag="PDRN 오픈특가 전체" class="card"><a class="godetail" href="detail/p7.html"><div class="th"><img src="img/prod-p7.jpg" alt="파머시안 PDRN 7000 크림 30g. 약국 화장품 코너에서 판매되던 PDRN 탄력크림. 소듐디엔에이(연어 유래 PDRN) 7,000ppm 표시.">
         <span class="pct">쿠폰 15%</span></div>
@@ -340,6 +354,9 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
       <h3>파머시안 멜라리스 100,000 크림 30g</h3>
       <div class="pr"><span class="off">29,000원</span><span class="was">쿠폰 적용 시 24,650원</span></div>
       <p class="rv">첫 구매 1회 한정 · 장바구니에서 쿠폰 적용</p></a><button type="button" class="addcart" data-add="mel"><span>장바구니 담기</span></button><details class="legal"><summary>상품정보 제공고시 · 전성분</summary><table><tr class="h2"><th>제품명</th><td>브이씨엑소 파머시안 멜라리스 10만 크림<br>(VCXO PHARMACIAN MELALESS 100,000 CREAM)</td></tr><tr class="h1"><th>용량</th><td>30g</td></tr><tr class="h1"><th>피부타입</th><td>모든 피부</td></tr><tr class="h2"><th>효능효과</th><td>피부의 미백에 도움을 준다. 피부의 주름개선에 도움을 준다.</td></tr><tr class="h2"><th>용법용량</th><td>본품 적당량을 취해 피부에 골고루 펴 바른다.</td></tr><tr class="h3"><th>전성분</th><td>정제수, 카프릴릭/카프릭트라이글리세라이드, 나이아신아마이드, 카프릴릴메티콘, 다이프로필렌그라이콜, 부틸렌그라이콜, 시트릭애씨드, 트라넥사믹애씨드, 세테아릴알코올, 3-O-에틸아스코빅애씨드, 글리세린, 1,2-헥산다이올, 베타인, 세틸알코올, 글리세릴스테아레이트, 판테놀, 시어버터, 세테아릴올리베이트, 베헤닐알코올, 폴리아크릴레이트크로스폴리머-6, 솔비탄올리베이트, 세테아릴글루코사이드, 페룰릭애씨드, 스테아릴알코올, 알란토인, 팔미틱애씨드, 스테아릭애씨드, 알라닌, 푸코실락토오스, 폴리글리세릴-10라우레이트, 흰목이버섯폴리사카라이드, 미리스틸알코올, 아시아티코사이드, 마데카식애씨드, 에틸헥실글리세린, 다이소듐이디티에이, 글리세레스-26, 소듐하이알루로네이트, 토코페릴아세테이트, 아데노신, 아시아틱애씨드, 라우릴알코올, t-부틸알코올, 펜타에리스리틸테트라-다이-t-부틸하이드록시하이드로신나메이트, 아미노부티릭애씨드, 미리스틱애씨드, 글라이신, 아라키딕애씨드, 소듐팔미토일사코시네이트, 글루타믹애씨드, 알지닌, 올레익애씨드, 아스파틱애씨드, 라이신, 세린, 트레오닌, 시스테인, 히스티딘, 타이로신, 토코페롤</td></tr><tr class="h2"><th>화장품제조업자</th><td>(주)위노바 / 경기도 평택시 청북읍 청북산단로 178</td></tr><tr class="h2"><th>화장품책임판매업자</th><td>(주)와이엘트레이딩 / 경기도 안양시 동안구 시민대로 401, 2001호(관양동, 대륭테크노타운15차)</td></tr><tr class="h1"><th>사용기한</th><td>별도표기</td></tr><tr class="h1"><th>소비자상담실</th><td>02-6342-9496</td></tr><tr class="h3"><th>주의사항</th><td>화장품 사용 시 또는 사용 직후 직사광선에 의하여 사용부위가 붉은 반점, 부어오름 또는 가려움증 등의 이상 증상이나 부작용이 있는 경우에는 전문의 등과 상담해주세요.<br>상처가 있는 부위 등에는 사용을 자제해주세요.<br>어린이의 손이 닿지 않는 곳에 보관해주세요.<br>직사광선을 피해서 보관해주세요.</td></tr><tr class="h1"><th>제품의 pH</th><td>4.1 (기능성화장품 보고서 기재값)</td></tr></table></details></article>
+  </div>
+    <button class="sarrow prev" type="button" aria-label="이전 상품 보기">‹</button>
+    <button class="sarrow next" type="button" aria-label="다음 상품 보기">›</button>
   </div>
   <p class="note">★신규 브랜드라 종전 판매 가격이 없습니다. 그래서 낱개 상품에는 정가·취소선 표기를 하지 않고,
     실제로 드리는 혜택(첫 구매 15% 쿠폰)의 적용가만 적습니다.<br>
@@ -430,6 +447,7 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
     }
     tabs.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-f')===f); });
     gnb.forEach(function(a){ a.classList.toggle('act', a.getAttribute('data-f')===f); });
+    if(window.PH_SLIDER) window.PH_SLIDER.reset();  /* 분류를 바꾸면 맨 앞으로 되돌리고 화살표를 다시 판단한다 */
     /* ★처음 그릴 때는 주소를 건드리지 않는다. 안 그러면 다른 섹션 링크로 들어와도
        주소가 #sec-all 로 덮여서 그 자리로 못 간다. 사용자가 실제로 누를 때만 바꾼다. */
     if(booted) { try{ history.replaceState(null,'','#sec-all'); }catch(e){} }
@@ -460,6 +478,51 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
    .forEach(function(a){ a.addEventListener('click',function(e){ e.preventDefault(); goto(a.getAttribute('href')); }); });
   apply('전체');
   booted=true;   /* 여기부터는 사용자의 클릭이다 */
+})();
+
+/* 전 제품 가로 슬라이더 — 밑에 스크롤바를 두지 않고 ★좌·우 화살표와 ★마우스 휠로 민다.
+   화살표는 한 번에 카드 한 장(+간격)만큼 옮기고, 끝에 닿으면 그 쪽 화살표를 숨긴다.
+   휠은 ★밀 자리가 남아 있을 때만 가로로 돌린다 — 끝에서는 막지 않고 페이지가 그대로 스크롤된다. */
+(function(){
+  var slider=document.querySelector('.slider'), grid=document.querySelector('.grid');
+  if(!slider||!grid) return;
+  var prev=slider.querySelector('.sarrow.prev'), next=slider.querySelector('.sarrow.next');
+  var GAP=16;
+
+  function 보이는카드(){ return slider.querySelector('.grid > article:not([hidden])'); }
+  function 한칸(){ var c=보이는카드(); return c ? c.getBoundingClientRect().width+GAP : 260; }
+  function 남은오른쪽(){ return grid.scrollWidth - grid.clientWidth - grid.scrollLeft; }
+
+  function sync(){
+    var c=보이는카드();
+    if(c){ var th=c.querySelector('.th');
+      if(th){ var r=th.getBoundingClientRect(), g=grid.getBoundingClientRect();
+              slider.style.setProperty('--arrowTop', Math.round(r.top-g.top+r.height/2)+'px'); } }
+    var 밀자리 = grid.scrollWidth - grid.clientWidth;
+    if(밀자리 <= 2){ prev.hidden=true; next.hidden=true; return; }
+    prev.hidden = grid.scrollLeft <= 2;
+    next.hidden = 남은오른쪽() <= 2;
+  }
+  function 민다(방향){ grid.scrollBy({left: 방향*한칸(), behavior:'smooth'}); }
+
+  prev.addEventListener('click', function(){ 민다(-1); });
+  next.addEventListener('click', function(){ 민다(1); });
+  grid.addEventListener('scroll', sync, {passive:true});
+  window.addEventListener('resize', sync);
+
+  grid.addEventListener('wheel', function(e){
+    var 세로 = Math.abs(e.deltaY) > Math.abs(e.deltaX);
+    var d = 세로 ? e.deltaY : e.deltaX;
+    if(!d) return;
+    var 갈수있나 = d>0 ? 남은오른쪽()>1 : grid.scrollLeft>1;
+    if(!갈수있나) return;                 /* 끝이면 페이지 스크롤을 막지 않는다 */
+    if(세로) e.preventDefault();
+    grid.scrollLeft += d;
+  }, {passive:false});
+
+  window.PH_SLIDER={sync:sync, reset:function(){ grid.scrollLeft=0; sync(); }};
+  sync();
+  if(document.readyState!=='complete') window.addEventListener('load', sync);
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
