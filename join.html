@@ -37,6 +37,14 @@ h1{font-size:24px;font-weight:800;letter-spacing:-.04em;line-height:1.32}
 .btn-lg{height:56px;font-size:16.5px}
 .btn-kakao{background:var(--kakao);color:#181600}
 .btn-google{background:var(--surface);border:1px solid var(--line-2)}
+.emailgate{margin-top:18px;border-top:1px solid var(--line-2);padding-top:14px}
+.emailgate>summary{cursor:pointer;font-size:14px;color:#6b6b6b;list-style:none}
+.emailgate>summary::-webkit-details-marker{display:none}
+.emailgate>summary::after{content:' ▾'}
+.emailgate[open]>summary::after{content:' ▴'}
+.emailgate .ef{margin-top:12px;display:flex;flex-direction:column;gap:9px}
+.emailgate .row2{display:flex;gap:9px}
+.emailgate .row2 .btn{flex:1}
 .btn-primary{background:var(--accent);color:#fff}
 .btn-primary:disabled{background:var(--line-2);color:#fff}
 .gate{margin-top:22px;display:flex;flex-direction:column;gap:10px}
@@ -98,7 +106,23 @@ h1{font-size:24px;font-weight:800;letter-spacing:-.04em;line-height:1.32}
         <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45 24.5c0-1.6-.1-2.8-.4-4H24v7.5h12c-.2 2-1.6 5-4.5 7l6.9 5.3C42.4 36.4 45 31 45 24.5Z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-2 14.4-5.3l-6.9-5.3c-1.9 1.3-4.4 2.2-7.5 2.2-5.7 0-10.6-3.8-12.3-9.1l-7.1 5.5C8.2 41.1 15.5 46 24 46Z"/><path fill="#FBBC05" d="M11.7 28.5c-.5-1.3-.7-2.7-.7-4.5s.3-3.2.7-4.5l-7.1-5.5C3.6 16.9 3 20.3 3 24s.6 7.1 1.6 10l7.1-5.5Z"/><path fill="#EA4335" d="M24 10.6c3.2 0 6 1.1 8.2 3.2l6.1-6.1C34.9 4.3 29.9 2 24 2 15.5 2 8.2 6.9 4.6 14l7.1 5.5c1.7-5.3 6.6-8.9 12.3-8.9Z"/></svg>
         구글로 계속하기</button>
     </div>
-    <p class="legal">비밀번호는 카카오·구글에 입력하며 PHARMACIAN은 그 값을 보지 않습니다.</p>
+    <p class="legal">카카오·구글로 로그인하시면 비밀번호는 그쪽에 입력하며 PHARMACIAN은 그 값을 보지 않습니다.</p>
+
+    <!-- ★이메일 로그인. 소셜만 두면 전자결제 심사에서 테스트 계정을 낼 수 없다
+         (토스 가이드 : "소셜 로그인 테스트 계정 사용 불가"). 비밀번호는 Supabase 인증이 해시로 보관하며
+         우리 서버·이 코드에는 남지 않는다. -->
+    <details class="emailgate" id="emailgate">
+      <summary>이메일로 로그인</summary>
+      <div class="ef">
+        <input class="in" id="em" type="email" autocomplete="email" placeholder="이메일" spellcheck="false">
+        <input class="in" id="pw" type="password" autocomplete="current-password" placeholder="비밀번호 (6자 이상)">
+        <div class="row2">
+          <button class="btn btn-lg" id="emlogin" type="button">로그인</button>
+          <button class="btn" id="emjoin" type="button">계정 만들기</button>
+        </div>
+        <p class="err" id="e-em" style="display:none"></p>
+      </div>
+    </details>
   </section>
 
   <section class="card hide" id="s2">
@@ -180,6 +204,40 @@ if (C.SUPABASE_URL && C.SUPABASE_ANON && !window.__nosb && window.supabase) {
 }
 $('#kakao').disabled = !sb;                       // 카카오는 토큰 교환에 서버가 필요하다
 $('#google').disabled = !sb;                      // 구글도 Supabase OAuth 로 돈다
+$('#emlogin').disabled = !sb; $('#emjoin').disabled = !sb;
+
+/* ★이메일 로그인. 전자결제 심사가 ★소셜이 아닌 테스트 계정을 요구해서 열었다.
+   비밀번호는 Supabase 인증으로 바로 가고 우리 서버·이 코드에는 남지 않는다. */
+function 이메일오류(m){ const e = $('#e-em'); e.textContent = m; e.style.display = m ? 'block' : 'none'; }
+function 이메일값(){
+  const em = $('#em').value.trim(), pw = $('#pw').value;
+  if (!em || em.indexOf('@') < 0) { 이메일오류('이메일을 정확히 입력해 주세요.'); return null; }
+  if (pw.length < 6) { 이메일오류('비밀번호는 6자 이상입니다.'); return null; }
+  이메일오류(''); return { email: em, password: pw };
+}
+function 로그인끝(){
+  const back = new URLSearchParams(location.search).get('back');
+  const BACK = { checkout: 'checkout.html', admin: 'admin.html' };
+  location.replace(BACK[back] || 'index.html');
+}
+$('#emlogin').addEventListener('click', async () => {
+  const v = 이메일값(); if (!v || !sb) return;
+  $('#emlogin').disabled = true;
+  const { data, error } = await sb.auth.signInWithPassword(v);
+  $('#emlogin').disabled = false;
+  if (error) { 이메일오류('로그인 실패: ' + error.message); return; }
+  if (data && data.user) 로그인끝();
+});
+$('#emjoin').addEventListener('click', async () => {
+  const v = 이메일값(); if (!v || !sb) return;
+  $('#emjoin').disabled = true;
+  const { data, error } = await sb.auth.signUp({ email: v.email, password: v.password });
+  $('#emjoin').disabled = false;
+  if (error) { 이메일오류('계정 만들기 실패: ' + error.message); return; }
+  /* 확인 메일을 요구하는 설정이면 session 이 없다. 그때는 메일을 열어야 한다고 알린다. */
+  if (data && data.session) 로그인끝();
+  else 이메일오류('가입 확인 메일을 보냈습니다. 메일의 링크를 누른 뒤 다시 로그인해 주세요.');
+});
 $('#savenote').textContent = sb
   ? "등록하면 서울 리전 데이터베이스에 저장되며, 로그인하신 본인 계정에 묶입니다."
   : "지금은 저장소가 연결되지 않아 이 브라우저에서만 확인됩니다.";
