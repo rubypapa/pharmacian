@@ -259,6 +259,31 @@
       location.href = b.getAttribute("href");
     });
   });
+
+  /* ★현대홈쇼핑 10개 구성(p7x10)은 ★같은 상세를 쓰고 ★가격만 바꿔 적는다(루비 2026-09-03).
+     값 근거 = supabase/migrations/20260823_ph_hs10.sql — 189,000원(방송 선택1 기준가) · 1통당 18,900원.
+     50,000원을 넘으므로 배송비는 무료다. ★첫 구매 쿠폰은 이 구성에 안 붙는다(같은 파일에 근거).
+     주소로 정하므로 ★홈의 iframe 에서도, 상세를 따로 열어도 똑같이 나온다. */
+  var sku = new URLSearchParams(location.search).get('sku');
+  if (sku === 'p7x10') {
+    var set = function (sel, txt) { var e = document.querySelector(sel); if (e) e.textContent = txt; };
+    set('.p7n-offer-name', 'PHARMACIAN PDRN 7000 CREAM 30g × 10개');
+    var pr = document.querySelector('.p7n-offer-price');
+    if (pr) pr.innerHTML = '189,000<small>원</small>';
+    set('.p7n-offer-line', '현대홈쇼핑 방송과 같은 10개 구성. 1통당 18,900원.');
+    var rows = document.querySelectorAll('.p7n-offer-box .p7n-offer-row');
+    if (rows.length >= 3) {
+      rows[0].lastElementChild.textContent = '189,000원';
+      rows[1].lastElementChild.textContent = '무료 (50,000원 이상)';
+      rows[2].lastElementChild.textContent = '189,000원';
+    }
+    var vol = [].slice.call(document.querySelectorAll('.p7n-info th'))
+                .filter(function (th) { return th.textContent.trim() === '내용량'; })[0];
+    if (vol && vol.nextElementSibling) vol.nextElementSibling.textContent = '30g (1.05oz.) × 10개';
+    bs.forEach(function (b) { b.setAttribute('data-buy', 'p7x10'); });
+    if (note && !reserve) note.textContent = '10개 구성은 무료배송입니다. 이미 통당 값을 낮춘 구성이라 첫 구매 15% 쿠폰은 함께 쓰지 않습니다.';
+    document.title = '파머시안 PDRN 7000 크림 30g × 10개 — 현대홈쇼핑 10개 구성';
+  }
 })();
 </script>
 <style>

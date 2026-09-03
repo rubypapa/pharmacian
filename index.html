@@ -565,7 +565,8 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
   var 이름={p7:'파머시안 PDRN 7000 크림 30g', p7x10:'파머시안 PDRN 7000 크림 30g × 10개',
             p12:'파머시안 PDRN 12000 크림 30g', nmn:'파머시안 NMN 30,000 크림 30g',
             mel:'파머시안 멜라리스 100,000 크림 30g'};
-  var 상세={p7:'p7', p7x10:'p7', p12:'p12', nmn:'nmn', mel:'mel'};   /* 10개 구성은 같은 제품 상세를 쓴다 */
+  /* 10개 구성은 ★같은 상세를 쓰고 ?sku=p7x10 로 ★가격만 바꿔 적는다(치환은 detail/p7.html 안에서 한다) */
+  var 상세={p7:'p7.html', p7x10:'p7.html?sku=p7x10', p12:'p12.html', nmn:'nmn.html', mel:'mel.html'};
 
   function 높이맞춤(){
     try{ var d=fr.contentDocument; if(!d||!d.body) return;
@@ -601,9 +602,9 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
 
   function 연다(k){
     var s=상세[k]; if(!s) return;
-    if(fr.getAttribute('src')!=='detail/'+s+'.html'){ fr.style.height='600px'; fr.setAttribute('src','detail/'+s+'.html'); }
+    if(fr.getAttribute('src')!=='detail/'+s){ fr.style.height='600px'; fr.setAttribute('src','detail/'+s); }
     nm.textContent = 이름[k] || '';
-    full.setAttribute('href','detail/'+s+'.html');
+    full.setAttribute('href','detail/'+s);
     box.classList.remove('open'); more.textContent='상세 더 보기 ▾';
     pane.scrollIntoView({behavior:'smooth', block:'start'});
   }
