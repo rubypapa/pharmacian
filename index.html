@@ -185,6 +185,13 @@ html{scroll-behavior:smooth}
 .addcart:hover span{mix-blend-mode:difference}
 .addcart.done{border-color:transparent;background:#2f7d4f;color:#fff}
 /* ★결제가 열려서(SALE_MODE live) 담기 옆에 바로 구매를 붙였다. 동작은 상세와 같다 — 담고 결제로. */
+/* ★구성 고르기. 카드에서 바로 고른다 — 상세 맨 아래까지 내려가야 보이면 아무도 못 본다(루비 2026-09-22). */
+.copt{display:flex;gap:6px;margin-top:10px}
+.copt-b{flex:1 1 50%;padding:7px 3px;border-radius:4px;cursor:pointer;font:600 12px/1.35 inherit;
+  border:1px solid rgba(0,0,0,.2);background:#fff;color:var(--ink);text-align:center}
+.copt-b b{font-weight:800}
+.copt-b.on{border-color:var(--ink);background:rgba(0,0,0,.065)}
+.copt + .cbtns{margin-top:6px}
 .cbtns{display:flex;gap:6px;margin-top:10px}
 .cbtns .addcart{margin-top:0;flex:1 1 50%}
 .buynow{flex:1 1 50%;display:flex;align-items:center;justify-content:center;
@@ -326,10 +333,10 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
 @media(max-width:640px){.faq{padding:8px 16px 36px}}
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "OnlineStore", "name": "PHARMACIAN 파머시안", "alternateName": ["파머시안", "PHARMACIAN", "브이씨엑소 파머시안"], "url": "https://pharmacian.kr", "logo": "https://pharmacian.kr/favicon.svg", "email": "dmlgus985400@gmail.com", "telephone": "+82-2-6177-7350", "address": {"@type": "PostalAddress", "streetAddress": "시민대로 401, 2001호", "addressLocality": "안양시 동안구", "addressRegion": "경기도", "addressCountry": "KR"}, "parentOrganization": {"@type": "Organization", "name": "주식회사 와이엘트레이딩"}}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Product", "name": "파머시안 PDRN 7000 크림 30g", "image": "https://pharmacian.kr/img/prod-p7.jpg", "sku": "p7", "brand": {"@type": "Brand", "name": "PHARMACIAN"}, "description": "미백·주름개선 이중 기능성화장품", "offers": {"@type": "Offer", "url": "https://pharmacian.kr/detail/p7.html", "priceCurrency": "KRW", "price": "29000", "availability": "https://schema.org/InStock", "seller": {"@type": "Organization", "name": "주식회사 와이엘트레이딩"}, "hasMerchantReturnPolicy": {"@type": "MerchantReturnPolicy", "applicableCountry": "KR", "returnPolicyCountry": "KR", "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow", "merchantReturnDays": 7, "returnMethod": "https://schema.org/ReturnByMail", "returnFees": "https://schema.org/ReturnShippingFees", "returnShippingFeesAmount": {"@type": "MonetaryAmount", "value": "3000", "currency": "KRW"}}, "shippingDetails": {"@type": "OfferShippingDetails", "shippingRate": {"@type": "MonetaryAmount", "value": "3000", "currency": "KRW"}, "shippingDestination": {"@type": "DefinedRegion", "addressCountry": "KR"}, "deliveryTime": {"@type": "ShippingDeliveryTime", "handlingTime": {"@type": "QuantitativeValue", "minValue": 1, "maxValue": 3, "unitCode": "DAY"}, "transitTime": {"@type": "QuantitativeValue", "minValue": 1, "maxValue": 3, "unitCode": "DAY"}}}}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Product", "name": "파머시안 PDRN 7000 크림 30g", "image": "https://pharmacian.kr/img/prod-p7.jpg", "sku": "p7", "brand": {"@type": "Brand", "name": "PHARMACIAN"}, "description": "미백·주름개선 이중 기능성화장품", "offers": {"@type": "Offer", "url": "https://pharmacian.kr/detail/p7.html", "priceCurrency": "KRW", "price": "22000", "availability": "https://schema.org/InStock", "seller": {"@type": "Organization", "name": "주식회사 와이엘트레이딩"}, "hasMerchantReturnPolicy": {"@type": "MerchantReturnPolicy", "applicableCountry": "KR", "returnPolicyCountry": "KR", "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow", "merchantReturnDays": 7, "returnMethod": "https://schema.org/ReturnByMail", "returnFees": "https://schema.org/ReturnShippingFees", "returnShippingFeesAmount": {"@type": "MonetaryAmount", "value": "3000", "currency": "KRW"}}, "shippingDetails": {"@type": "OfferShippingDetails", "shippingRate": {"@type": "MonetaryAmount", "value": "3000", "currency": "KRW"}, "shippingDestination": {"@type": "DefinedRegion", "addressCountry": "KR"}, "deliveryTime": {"@type": "ShippingDeliveryTime", "handlingTime": {"@type": "QuantitativeValue", "minValue": 1, "maxValue": 3, "unitCode": "DAY"}, "transitTime": {"@type": "QuantitativeValue", "minValue": 1, "maxValue": 3, "unitCode": "DAY"}}}}}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Product", "name": "파머시안 PDRN 12000 크림 30g", "image": "https://pharmacian.kr/img/prod-p12.jpg", "sku": "p12", "brand": {"@type": "Brand", "name": "PHARMACIAN"}, "description": "미백·주름개선 이중 기능성화장품", "offers": {"@type": "Offer", "url": "https://pharmacian.kr/detail/p12.html", "priceCurrency": "KRW", "price": "39000", "availability": "https://schema.org/InStock", "seller": {"@type": "Organization", "name": "주식회사 와이엘트레이딩"}, "hasMerchantReturnPolicy": {"@type": "MerchantReturnPolicy", "applicableCountry": "KR", "returnPolicyCountry": "KR", "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow", "merchantReturnDays": 7, "returnMethod": "https://schema.org/ReturnByMail", "returnFees": "https://schema.org/ReturnShippingFees", "returnShippingFeesAmount": {"@type": "MonetaryAmount", "value": "3000", "currency": "KRW"}}, "shippingDetails": {"@type": "OfferShippingDetails", "shippingRate": {"@type": "MonetaryAmount", "value": "3000", "currency": "KRW"}, "shippingDestination": {"@type": "DefinedRegion", "addressCountry": "KR"}, "deliveryTime": {"@type": "ShippingDeliveryTime", "handlingTime": {"@type": "QuantitativeValue", "minValue": 1, "maxValue": 3, "unitCode": "DAY"}, "transitTime": {"@type": "QuantitativeValue", "minValue": 1, "maxValue": 3, "unitCode": "DAY"}}}}}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Product", "name": "파머시안 NMN 30,000 크림 30g", "image": "https://pharmacian.kr/img/prod-nmn.jpg", "sku": "nmn", "brand": {"@type": "Brand", "name": "PHARMACIAN"}, "description": "미백·주름개선 이중 기능성화장품", "offers": {"@type": "Offer", "url": "https://pharmacian.kr/detail/nmn.html", "priceCurrency": "KRW", "price": "39000", "availability": "https://schema.org/InStock", "seller": {"@type": "Organization", "name": "주식회사 와이엘트레이딩"}, "hasMerchantReturnPolicy": {"@type": "MerchantReturnPolicy", "applicableCountry": "KR", "returnPolicyCountry": "KR", "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow", "merchantReturnDays": 7, "returnMethod": "https://schema.org/ReturnByMail", "returnFees": "https://schema.org/ReturnShippingFees", "returnShippingFeesAmount": {"@type": "MonetaryAmount", "value": "3000", "currency": "KRW"}}, "shippingDetails": {"@type": "OfferShippingDetails", "shippingRate": {"@type": "MonetaryAmount", "value": "3000", "currency": "KRW"}, "shippingDestination": {"@type": "DefinedRegion", "addressCountry": "KR"}, "deliveryTime": {"@type": "ShippingDeliveryTime", "handlingTime": {"@type": "QuantitativeValue", "minValue": 1, "maxValue": 3, "unitCode": "DAY"}, "transitTime": {"@type": "QuantitativeValue", "minValue": 1, "maxValue": 3, "unitCode": "DAY"}}}}}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Product", "name": "파머시안 멜라리스 100,000 크림 30g", "image": "https://pharmacian.kr/img/prod-mel.jpg", "sku": "mel", "brand": {"@type": "Brand", "name": "PHARMACIAN"}, "description": "미백·주름개선 이중 기능성화장품", "offers": {"@type": "Offer", "url": "https://pharmacian.kr/detail/mel.html", "priceCurrency": "KRW", "price": "29000", "availability": "https://schema.org/InStock", "seller": {"@type": "Organization", "name": "주식회사 와이엘트레이딩"}, "hasMerchantReturnPolicy": {"@type": "MerchantReturnPolicy", "applicableCountry": "KR", "returnPolicyCountry": "KR", "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow", "merchantReturnDays": 7, "returnMethod": "https://schema.org/ReturnByMail", "returnFees": "https://schema.org/ReturnShippingFees", "returnShippingFeesAmount": {"@type": "MonetaryAmount", "value": "3000", "currency": "KRW"}}, "shippingDetails": {"@type": "OfferShippingDetails", "shippingRate": {"@type": "MonetaryAmount", "value": "3000", "currency": "KRW"}, "shippingDestination": {"@type": "DefinedRegion", "addressCountry": "KR"}, "deliveryTime": {"@type": "ShippingDeliveryTime", "handlingTime": {"@type": "QuantitativeValue", "minValue": 1, "maxValue": 3, "unitCode": "DAY"}, "transitTime": {"@type": "QuantitativeValue", "minValue": 1, "maxValue": 3, "unitCode": "DAY"}}}}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Product", "name": "파머시안 멜라리스 100,000 크림 30g", "image": "https://pharmacian.kr/img/prod-mel.jpg", "sku": "mel", "brand": {"@type": "Brand", "name": "PHARMACIAN"}, "description": "미백·주름개선 이중 기능성화장품", "offers": {"@type": "Offer", "url": "https://pharmacian.kr/detail/mel.html", "priceCurrency": "KRW", "price": "22000", "availability": "https://schema.org/InStock", "seller": {"@type": "Organization", "name": "주식회사 와이엘트레이딩"}, "hasMerchantReturnPolicy": {"@type": "MerchantReturnPolicy", "applicableCountry": "KR", "returnPolicyCountry": "KR", "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow", "merchantReturnDays": 7, "returnMethod": "https://schema.org/ReturnByMail", "returnFees": "https://schema.org/ReturnShippingFees", "returnShippingFeesAmount": {"@type": "MonetaryAmount", "value": "3000", "currency": "KRW"}}, "shippingDetails": {"@type": "OfferShippingDetails", "shippingRate": {"@type": "MonetaryAmount", "value": "3000", "currency": "KRW"}, "shippingDestination": {"@type": "DefinedRegion", "addressCountry": "KR"}, "deliveryTime": {"@type": "ShippingDeliveryTime", "handlingTime": {"@type": "QuantitativeValue", "minValue": 1, "maxValue": 3, "unitCode": "DAY"}, "transitTime": {"@type": "QuantitativeValue", "minValue": 1, "maxValue": 3, "unitCode": "DAY"}}}}}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "약국에서 팔던 그 제품인가요?", "acceptedAnswer": {"@type": "Answer", "text": "네. 파머시안은 약국 화장품 코너에서 판매되고 있는 브랜드이고, 이 공식몰에서 파는 것도 같은 제품입니다."}}, {"@type": "Question", "name": "PDRN이 뭔가요?", "acceptedAnswer": {"@type": "Answer", "text": "연어의 정소에서 추출한 탄력에 도움을 주는 원료입니다. 파머시안에서 사용하는 PDRN은 특허를 출원한 순도 99.9%의 고순도 PDRN을 사용합니다."}}, {"@type": "Question", "name": "\"탄력크림\"이라고 부르던데요?", "acceptedAnswer": {"@type": "Answer", "text": "파머시안 PDRN 크림은 보습력과 피부장벽, 흡수도 테스트를 거쳤고 뛰어난 결과치를 가지고 있습니다. 피부탄력에 도움을 주는 테스트를 거친 제품입니다."}}, {"@type": "Question", "name": "엑소좀이 들어 있나요?", "acceptedAnswer": {"@type": "Answer", "text": "표시 함량 기준으로 우유엑소좀 600ppm, 락토바실러스세포외소포 5,580ppm, 효모세포외소포 5,580ppm이 적혀 있습니다(PDRN 7000 기준). 숫자는 전부 제품 표시사항에 적힌 값 그대로입니다."}}, {"@type": "Question", "name": "발랐을 때 겉돌지는 않나요?", "acceptedAnswer": {"@type": "Answer", "text": "파머시안 전 제품은 밀착력과 수분감, 흡수력에 중점을 두고 개발했습니다. 전 제품 모두 바로 메이크업이 가능하도록 끈적이지 않고 겉돌지 않게 만들었습니다."}}]}</script>
 </head>
 <body>
@@ -369,13 +376,8 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
     <article data-k="p7" data-tag="PDRN 오픈특가 전체" class="card"><a class="godetail" href="detail/p7.html"><div class="th"><img src="img/prod-p7.jpg" alt="파머시안 PDRN 7000 크림 30g. 약국 화장품 코너에서 판매되던 PDRN 탄력크림. 소듐디엔에이(연어 유래 PDRN) 7,000ppm 표시.">
         <span class="pct">쿠폰 15%</span></div>
       <h3>파머시안 PDRN 7000 크림 30g</h3>
-      <div class="pr"><span class="off">29,000원</span><span class="was">쿠폰 적용 시 24,650원</span></div>
+      <div class="pr"><span class="off">22,000원</span><span class="was">쿠폰 적용 시 18,700원</span></div>
       <p class="rv">첫 구매 1회 한정 · 장바구니에서 쿠폰 적용</p></a><div class="cbtns"><button type="button" class="addcart" data-add="p7"><span>장바구니</span></button><a class="buynow" href="checkout.html" data-buy="p7">구매하기</a></div><details class="legal"><summary>상품정보 제공고시 · 전성분</summary><table><tr class="h2"><th>제품명</th><td>파머시안 피디알엔 7000 크림<br>(PHARMACIAN PDRN 7000 CREAM)</td></tr><tr class="h1"><th>용량</th><td>30g(1.05oz.)</td></tr><tr class="h1"><th>피부타입</th><td>모든 피부</td></tr><tr class="h2"><th>효능효과</th><td>피부의 미백에 도움을 준다. 피부의 주름개선에 도움을 준다.</td></tr><tr class="h2"><th>용법용량</th><td>본품 적당량을 취해 피부에 골고루 펴 바른다.</td></tr><tr class="h3"><th>전성분</th><td>정제수, 다이프로필렌글라이콜, 글리세린, 부틸렌글라이콜, 카프릴릴메티콘, 1,2-헥산다이올, 나이아신아마이드, 베타인, 판테놀, 하이드로제네이티드폴리데센, 소듐디엔에이(7000ppm), 세테아릴올리베이트, C14-22알코올, 락토바실러스세포외소포(5580ppm), 효모세포외소포(5580ppm), 솔비탄올리베이트, 알란토인(3000ppm), 암모늄아크릴로일다이메틸타우레이트/브이피코폴리머, 유청여과물, 카보머, 카프릴릭/카프릭트라이글리세라이드, 트로메타민, C12-20알킬글루코사이드, 푸코실락토오스, 에틸헥실글리세린, 우유엑소좀(600ppm), 토코페릴아세테이트, 세라마이드엔피, 아데노신, 피토스테롤, 올레익애씨드, 하이드로제네이티드레시틴, 다이소듐이디티에이, 글리세릴스테아레이트, 레몬껍질오일, 베르가모트오일, 칸디다 봄비콜라/글루코오스/메틸레이프씨데이트발효물, 세테아릴알코올, 리씨열매오일, 스테아릭애씨드, 폴리글리세릴-3메틸글루코오스다이스테아레이트, 발삼아미리스껍질오일, 소두구씨오일, 연필향나무오일, 모란뿌리추출물, 쌀배아오일, 코코넛야자오일, 프로판다이올, 클레리오일, 사철쑥추출물, 타임꽃/잎오일, 올리브추출물</td></tr><tr class="h2"><th>화장품제조업자</th><td>린제이앤코스 주식회사 / 경기도 포천시 군내면 용정경제로1길 94-63 나동</td></tr><tr class="h2"><th>화장품책임판매업자</th><td>(주)와이엘트레이딩 / 경기도 안양시 동안구 시민대로 401, 2001호(관양동, 대륭테크노타운15차)</td></tr><tr class="h1"><th>사용기한</th><td>별도표기</td></tr><tr class="h1"><th>소비자상담실</th><td>02-6177-7350</td></tr><tr class="h3"><th>주의사항</th><td>화장품 사용 시 또는 사용 직후 직사광선에 의하여 사용부위가 붉은 반점, 부어오름 또는 가려움증 등의 이상 증상이나 부작용이 있는 경우에는 전문의 등과 상담해주세요.<br>상처가 있는 부위 등에는 사용을 자제해주세요.<br>어린이의 손이 닿지 않는 곳에 보관해주세요.<br>직사광선을 피해서 보관해주세요.</td></tr></table></details></article>
-    <article data-k="p7x10" data-tag="오픈특가 PDRN 전체" class="card"><div class="godetail"><div class="th"><img src="img/prod-p7.jpg" alt="파머시안 PDRN 7000 크림 30g. 약국 화장품 코너에서 판매되던 PDRN 탄력크림. 소듐디엔에이(연어 유래 PDRN) 7,000ppm 표시.">
-        <span class="pct">7개 구성</span></div>
-      <h3>파머시안 PDRN 7000 크림 30g × 7개</h3>
-      <div class="pr"><span class="off">189,000원</span><span class="was">1통당 27,000원</span></div>
-      <p class="rv">7개 구성 · 무료배송</p></div><div class="cbtns"><button type="button" class="addcart" data-add="p7x10"><span>장바구니</span></button><a class="buynow" href="checkout.html" data-buy="p7x10">구매하기</a></div><details class="legal"><summary>상품정보 제공고시 · 전성분</summary><table><tr class="h2"><th>제품명</th><td>파머시안 피디알엔 7000 크림<br>(PHARMACIAN PDRN 7000 CREAM)</td></tr><tr class="h1"><th>용량</th><td>30g(1.05oz.) × 7개</td></tr><tr class="h1"><th>피부타입</th><td>모든 피부</td></tr><tr class="h2"><th>효능효과</th><td>피부의 미백에 도움을 준다. 피부의 주름개선에 도움을 준다.</td></tr><tr class="h2"><th>용법용량</th><td>본품 적당량을 취해 피부에 골고루 펴 바른다.</td></tr><tr class="h3"><th>전성분</th><td>정제수, 다이프로필렌글라이콜, 글리세린, 부틸렌글라이콜, 카프릴릴메티콘, 1,2-헥산다이올, 나이아신아마이드, 베타인, 판테놀, 하이드로제네이티드폴리데센, 소듐디엔에이(7000ppm), 세테아릴올리베이트, C14-22알코올, 락토바실러스세포외소포(5580ppm), 효모세포외소포(5580ppm), 솔비탄올리베이트, 알란토인(3000ppm), 암모늄아크릴로일다이메틸타우레이트/브이피코폴리머, 유청여과물, 카보머, 카프릴릭/카프릭트라이글리세라이드, 트로메타민, C12-20알킬글루코사이드, 푸코실락토오스, 에틸헥실글리세린, 우유엑소좀(600ppm), 토코페릴아세테이트, 세라마이드엔피, 아데노신, 피토스테롤, 올레익애씨드, 하이드로제네이티드레시틴, 다이소듐이디티에이, 글리세릴스테아레이트, 레몬껍질오일, 베르가모트오일, 칸디다 봄비콜라/글루코오스/메틸레이프씨데이트발효물, 세테아릴알코올, 리씨열매오일, 스테아릭애씨드, 폴리글리세릴-3메틸글루코오스다이스테아레이트, 발삼아미리스껍질오일, 소두구씨오일, 연필향나무오일, 모란뿌리추출물, 쌀배아오일, 코코넛야자오일, 프로판다이올, 클레리오일, 사철쑥추출물, 타임꽃/잎오일, 올리브추출물</td></tr><tr class="h2"><th>화장품제조업자</th><td>린제이앤코스 주식회사 / 경기도 포천시 군내면 용정경제로1길 94-63 나동</td></tr><tr class="h2"><th>화장품책임판매업자</th><td>(주)와이엘트레이딩 / 경기도 안양시 동안구 시민대로 401, 2001호(관양동, 대륭테크노타운15차)</td></tr><tr class="h1"><th>사용기한</th><td>별도표기</td></tr><tr class="h1"><th>소비자상담실</th><td>02-6177-7350</td></tr><tr class="h3"><th>주의사항</th><td>화장품 사용 시 또는 사용 직후 직사광선에 의하여 사용부위가 붉은 반점, 부어오름 또는 가려움증 등의 이상 증상이나 부작용이 있는 경우에는 전문의 등과 상담해주세요.<br>상처가 있는 부위 등에는 사용을 자제해주세요.<br>어린이의 손이 닿지 않는 곳에 보관해주세요.<br>직사광선을 피해서 보관해주세요.</td></tr></table></details></article>
     <article data-k="p12" data-tag="PDRN 오픈특가 전체" class="card"><a class="godetail" href="detail/p12.html"><div class="th"><img src="img/prod-p12.jpg" alt="파머시안 PDRN 12000 크림 30g. PDRN 탄력크림. 소듐디엔에이 12,000ppm과 펩타이드 표시.">
         <span class="pct">쿠폰 15%</span></div>
       <h3>파머시안 PDRN 12000 크림 30g</h3>
@@ -389,7 +391,7 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
     <article data-k="mel" data-tag="미백 전체" class="card"><a class="godetail" href="detail/mel.html"><div class="th"><img src="img/prod-mel.jpg" alt="파머시안 멜라리스 100,000 크림 30g. 트라넥사믹애씨드와 3-O-에틸아스코빅애씨드 표시.">
         <span class="pct">쿠폰 15%</span></div>
       <h3>파머시안 멜라리스 100,000 크림 30g</h3>
-      <div class="pr"><span class="off">29,000원</span><span class="was">쿠폰 적용 시 24,650원</span></div>
+      <div class="pr"><span class="off">22,000원</span><span class="was">쿠폰 적용 시 18,700원</span></div>
       <p class="rv">첫 구매 1회 한정 · 장바구니에서 쿠폰 적용</p></a><div class="cbtns"><button type="button" class="addcart" data-add="mel"><span>장바구니</span></button><a class="buynow" href="checkout.html" data-buy="mel">구매하기</a></div><details class="legal"><summary>상품정보 제공고시 · 전성분</summary><table><tr class="h2"><th>제품명</th><td>브이씨엑소 파머시안 멜라리스 10만 크림<br>(VCXO PHARMACIAN MELALESS 100,000 CREAM)</td></tr><tr class="h1"><th>용량</th><td>30g</td></tr><tr class="h1"><th>피부타입</th><td>모든 피부</td></tr><tr class="h2"><th>효능효과</th><td>피부의 미백에 도움을 준다. 피부의 주름개선에 도움을 준다.</td></tr><tr class="h2"><th>용법용량</th><td>본품 적당량을 취해 피부에 골고루 펴 바른다.</td></tr><tr class="h3"><th>전성분</th><td>정제수, 카프릴릭/카프릭트라이글리세라이드, 나이아신아마이드, 카프릴릴메티콘, 다이프로필렌그라이콜, 부틸렌그라이콜, 시트릭애씨드, 트라넥사믹애씨드, 세테아릴알코올, 3-O-에틸아스코빅애씨드, 글리세린, 1,2-헥산다이올, 베타인, 세틸알코올, 글리세릴스테아레이트, 판테놀, 시어버터, 세테아릴올리베이트, 베헤닐알코올, 폴리아크릴레이트크로스폴리머-6, 솔비탄올리베이트, 세테아릴글루코사이드, 페룰릭애씨드, 스테아릴알코올, 알란토인, 팔미틱애씨드, 스테아릭애씨드, 알라닌, 푸코실락토오스, 폴리글리세릴-10라우레이트, 흰목이버섯폴리사카라이드, 미리스틸알코올, 아시아티코사이드, 마데카식애씨드, 에틸헥실글리세린, 다이소듐이디티에이, 글리세레스-26, 소듐하이알루로네이트, 토코페릴아세테이트, 아데노신, 아시아틱애씨드, 라우릴알코올, t-부틸알코올, 펜타에리스리틸테트라-다이-t-부틸하이드록시하이드로신나메이트, 아미노부티릭애씨드, 미리스틱애씨드, 글라이신, 아라키딕애씨드, 소듐팔미토일사코시네이트, 글루타믹애씨드, 알지닌, 올레익애씨드, 아스파틱애씨드, 라이신, 세린, 트레오닌, 시스테인, 히스티딘, 타이로신, 토코페롤</td></tr><tr class="h2"><th>화장품제조업자</th><td>(주)위노바 / 경기도 평택시 청북읍 청북산단로 178</td></tr><tr class="h2"><th>화장품책임판매업자</th><td>(주)와이엘트레이딩 / 경기도 안양시 동안구 시민대로 401, 2001호(관양동, 대륭테크노타운15차)</td></tr><tr class="h1"><th>사용기한</th><td>별도표기</td></tr><tr class="h1"><th>소비자상담실</th><td>02-6342-9496</td></tr><tr class="h3"><th>주의사항</th><td>화장품 사용 시 또는 사용 직후 직사광선에 의하여 사용부위가 붉은 반점, 부어오름 또는 가려움증 등의 이상 증상이나 부작용이 있는 경우에는 전문의 등과 상담해주세요.<br>상처가 있는 부위 등에는 사용을 자제해주세요.<br>어린이의 손이 닿지 않는 곳에 보관해주세요.<br>직사광선을 피해서 보관해주세요.</td></tr><tr class="h1"><th>제품의 pH</th><td>4.1 (기능성화장품 보고서 기재값)</td></tr></table></details></article>
   </div>
     <button class="sarrow prev" type="button" aria-label="이전 상품 보기">‹</button>
@@ -588,11 +590,10 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
   var more=document.getElementById('dtlmore'), pane=document.getElementById('dtlpane');
   if(!fr||!box) return;
 
-  var 이름={p7:'파머시안 PDRN 7000 크림 30g', p7x10:'파머시안 PDRN 7000 크림 30g × 7개',
+  var 이름={p7:'파머시안 PDRN 7000 크림 30g',
             p12:'파머시안 PDRN 12000 크림 30g', nmn:'파머시안 NMN 30,000 크림 30g',
             mel:'파머시안 멜라리스 100,000 크림 30g'};
-  /* 7개 구성은 ★같은 상세를 쓰고 ?sku=p7x10 로 ★가격만 바꿔 적는다(치환은 detail/p7.html 안에서 한다) */
-  var 상세={p7:'p7.html', p7x10:'p7.html?sku=p7x10', p12:'p12.html', nmn:'nmn.html', mel:'mel.html'};
+  var 상세={p7:'p7.html', p12:'p12.html', nmn:'nmn.html', mel:'mel.html'};
 
   function 높이맞춤(){
     try{ var d=fr.contentDocument; if(!d||!d.body) return;
@@ -653,6 +654,50 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
      리타게팅 모수가 여기서 나온다(2026-09-22 루비 지적). -->
 <script src="track.js"></script>
 <script>
+/* ★구성 고르기(1개 / 3개 · 1+1). 값은 config.js 의 OPTIONS 한 곳에서 온다.
+   ★단추를 .godetail 앵커 ★바깥에 둔다 — 안에 두면 카드 전체가 상세 링크라 누르는 순간 상세가 열린다.
+   ★고르면 카드 가격 · 쿠폰줄 · 담길 품목(data-add/data-buy)이 같이 바뀐다.
+   실제 청구 금액은 서버가 ph_product_price 로 정한다. 여기 숫자는 보여주기다. */
+(function(){
+  var OPT=(window.PHARMACIAN||{}).OPTIONS||{};
+  var 원=function(n){ return n.toLocaleString('ko-KR'); };
+  [].forEach.call(document.querySelectorAll('.grid > article[data-k]'), function(card){
+    var list=OPT[card.getAttribute('data-k')]; if(!list||list.length<2) return;
+    var btns=card.querySelector('.cbtns'); if(!btns) return;
+    var pr=card.querySelector('.pr'), off=pr&&pr.querySelector('.off'), was=pr&&pr.querySelector('.was');
+
+    var box=document.createElement('div'); box.className='copt';
+    box.innerHTML=list.map(function(v,i){
+      return '<button type="button" class="copt-b'+(i?'':' on')+'" data-i="'+i+'">'+
+             v.label+'<br><b>'+원(v.price)+'원</b></button>';
+    }).join('');
+    btns.parentNode.insertBefore(box, btns);
+
+    function 고른다(i){
+      var v=list[i];
+      [].forEach.call(box.children, function(b,j){ b.classList.toggle('on', i===j); });
+      if(off) off.textContent=원(v.price)+'원';
+      if(was) was.textContent = v.n>1 ? ('1개당 '+원(Math.floor(v.price/v.n))+'원 · 무료배송')
+                                      : ('쿠폰 적용 시 '+원(Math.round(v.price*0.85))+'원');
+      /* ★묶음에는 첫 구매 쿠폰이 안 붙는다. 「쿠폰 15%」를 그대로 두면 거짓말이 된다
+         — 대신 ★묶음이 실제로 깎아 주는 비율을 적는다(낱개값 대비). */
+      var pct=card.querySelector('.pct');
+      if(pct) pct.textContent = v.n>1
+        ? (Math.round((1 - v.price/(list[0].price*v.n))*100)+'% 할인')
+        : '쿠폰 15%';
+      var a=card.querySelector('[data-add]'), b2=card.querySelector('[data-buy]');
+      if(a) a.setAttribute('data-add', v.sku);
+      if(b2) b2.setAttribute('data-buy', v.sku);
+    }
+    box.addEventListener('click', function(e){
+      var b=e.target.closest&&e.target.closest('.copt-b'); if(!b) return;
+      e.preventDefault(); e.stopPropagation();
+      고른다(+b.getAttribute('data-i'));
+    });
+    고른다(0);
+  });
+})();
+
 /* 카드의 담기 버튼과 헤더 로그인 상태. 장바구니는 브라우저에만 담고 금액은 서버가 정한다. */
 (function(){
   document.addEventListener('click', function(e){

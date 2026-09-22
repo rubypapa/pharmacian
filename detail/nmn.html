@@ -204,6 +204,7 @@
 <script src="../config.js"></script>
 <script src="../visit.js"></script>
 <script src="../cart.js"></script>
+<script src="../option.js"></script>
 <!-- ★전환 추적. 상세에 없으면 「상품을 들여다본 사람」이 안 잡혀
      상품축(PDRN·NMN·미백) 으로 광고를 가를 수 없다. -->
 <script src="../track.js"></script>
@@ -234,6 +235,14 @@
       PH_CART.add(k, 1);
       if ((PH_CART.read() || {})[k]) location.href = b.getAttribute("href");
     });
+  });
+  /* ★구성 고르기. 값은 config.js 의 OPTIONS 한 곳에 있다(루비 2026-09-22). */
+  if (window.PH_OPTION) PH_OPTION.mount('nmn', {
+    before: '.nmnn-hold-sub',
+    price:  '.nmnn-hold-big',
+    priceTail: '<small style=\"font-size:24px;font-weight:700\"> 원</small>',
+    sub:    '.nmnn-hold-sub',
+    note:   reserve ? null : '[data-salenote]'
   });
 })();
 </script>
