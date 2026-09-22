@@ -226,8 +226,13 @@
   bs.forEach(function (b) {
     b.addEventListener("click", function (e) {
       e.preventDefault();
-      if (window.PH_CART) PH_CART.add(b.getAttribute("data-buy"), 1);
-      location.href = b.getAttribute("href");
+      /* ★비회원이면 PH_CART.add() 가 스스로 join.html 로 보낸다(cart.js:39).
+         그 위에 결제 주소를 덮어쓰면 ★가입을 건너뛰고 빈 장바구니로 결제에 도착한다.
+         → 담겼는지 확인하고 ★담긴 때만 결제로 간다(홈과 같은 처리). */
+      var k = b.getAttribute("data-buy");
+      if (!window.PH_CART) return;
+      PH_CART.add(k, 1);
+      if ((PH_CART.read() || {})[k]) location.href = b.getAttribute("href");
     });
   });
 })();
