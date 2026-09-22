@@ -1,5 +1,5 @@
 id	title	brand	maker	origin	price_pc	shipping	link	image_link	category_name1	category_name2	category_name3	category_name4	search_tag
-p7	파머시안 PDRN 7000 크림 30g	파머시안	린제이앤코스	대한민국	29000	3000	https://pharmacian.kr/detail/p7.html	https://pharmacian.kr/img/prod-p7.jpg	화장품/미용	스킨케어	크림	PDRN	PDRN크림|피디알엔크림|약국화장품|탄력크림|연어PDRN|기능성화장품|파머시안
+p7	파머시안 PDRN 7000 크림 30g	파머시안	린제이앤코스	대한민국	22000	3000	https://pharmacian.kr/detail/p7.html	https://pharmacian.kr/img/prod-p7.jpg	화장품/미용	스킨케어	크림	PDRN	PDRN크림|피디알엔크림|약국화장품|탄력크림|연어PDRN|기능성화장품|파머시안
 p12	파머시안 PDRN 12000 크림 30g	파머시안	주식회사 위노바	대한민국	39000	3000	https://pharmacian.kr/detail/p12.html	https://pharmacian.kr/img/prod-p12.jpg	화장품/미용	스킨케어	크림	PDRN	PDRN크림|피디알엔크림|약국화장품|PDRN탄력크림|기능성화장품|파머시안
 nmn	파머시안 NMN 30,000 크림 30g	파머시안	주식회사 위노바	대한민국	39000	3000	https://pharmacian.kr/detail/nmn.html	https://pharmacian.kr/img/prod-nmn.jpg	화장품/미용	스킨케어	크림	NMN	NMN크림|엔엠엔크림|약국화장품|주름개선크림|기능성화장품|파머시안
-mel	파머시안 멜라리스 100,000 크림 30g	파머시안	주식회사 위노바	대한민국	29000	3000	https://pharmacian.kr/detail/mel.html	https://pharmacian.kr/img/prod-mel.jpg	화장품/미용	스킨케어	크림	미백	미백크림|멜라리스|약국화장품|주름개선크림|기능성화장품|파머시안
+mel	파머시안 멜라리스 100,000 크림 30g	파머시안	주식회사 위노바	대한민국	22000	3000	https://pharmacian.kr/detail/mel.html	https://pharmacian.kr/img/prod-mel.jpg	화장품/미용	스킨케어	크림	미백	미백크림|멜라리스|약국화장품|주름개선크림|기능성화장품|파머시안
