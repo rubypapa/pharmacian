@@ -237,6 +237,9 @@ $('#emjoin').addEventListener('click', async () => {
   const { data, error } = await sb.auth.signUp({ email: v.email, password: v.password });
   $('#emjoin').disabled = false;
   if (error) { 이메일오류('계정 만들기 실패: ' + error.message); return; }
+  /* ★가입이 실제로 성립한 지점. 퍼널 3단계(CompleteRegistration)가 여기서 나간다.
+     소셜 가입은 리디렉션으로 돌아와서 이 자리를 안 지나므로 여기서는 이메일 가입만 잡힌다. */
+  if (window.PHARMACIAN_TRACK) { try { PHARMACIAN_TRACK.signup(); } catch (e) {} }
   /* 확인 메일을 요구하는 설정이면 session 이 없다. 그때는 메일을 열어야 한다고 알린다. */
   if (data && data.session) 로그인끝();
   else 이메일오류('가입 확인 메일을 보냈습니다. 메일의 링크를 누른 뒤 다시 로그인해 주세요.');

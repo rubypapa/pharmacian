@@ -30,6 +30,11 @@
 
   function add(key, qty) {
     if (VALID.indexOf(key) < 0) return;
+    // ★담기를 ★누른 순간 광고쪽에 알린다. 회원·비회원을 가리지 않는다 —
+    //   비회원은 바로 아래에서 가입으로 튕기는데, 그 사람이 ★가장 강한 구매 의사를 보인 층이라
+    //   여기서 안 남기면 리타게팅 모수에서 통째로 빠진다(2026-09-22 루비 지적).
+    //   즉 이 수치의 뜻은 "장바구니에 들어갔다"가 아니라 ★"담기를 눌렀다"이다.
+    if (window.PHARMACIAN_TRACK) { try { PHARMACIAN_TRACK.addToCart({ key: key }); } catch (e) {} }
     // ★로그인부터 받는다. 담아 놓고 결제에서 막는 것보다 낫다.
     if (!signedIn()) {
       var up = location.pathname.indexOf('/detail/') >= 0 ? '../' : '';
