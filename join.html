@@ -111,7 +111,9 @@ h1{font-size:24px;font-weight:800;letter-spacing:-.04em;line-height:1.32}
     <!-- ★이메일 로그인. 소셜만 두면 전자결제 심사에서 테스트 계정을 낼 수 없다
          (토스 가이드 : "소셜 로그인 테스트 계정 사용 불가"). 비밀번호는 Supabase 인증이 해시로 보관하며
          우리 서버·이 코드에는 남지 않는다. -->
-    <details class="emailgate" id="emailgate">
+    <!-- ★기본으로 펼쳐 둔다(2026-09-22 루비 지시). 접혀 있으면 심사자가 못 찾는다 —
+         네이버 가격비교 입점 신청서가 결제 테스트용 ID/PW 를 요구하는데, 그 계정이 이메일 계정이다. -->
+    <details class="emailgate" id="emailgate" open>
       <summary>이메일로 로그인</summary>
       <div class="ef">
         <input class="in" id="em" type="email" autocomplete="email" placeholder="이메일" spellcheck="false">
