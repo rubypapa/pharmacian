@@ -19,12 +19,16 @@ window.PHARMACIAN = {
   //   토스 전자결제 심사가 끝나면 이 한 줄을 'live'로 바꾸고 아래 TOSS_CLIENT를 라이브 키로 갈면 된다.
   //   ★예약으로 두는 이유 = 전상법 24조. 계좌로 미리 돈을 받으면 에스크로 가입 의무가 생긴다.
   //   예약은 돈이 안 오가서 그 의무가 아예 생기지 않는다(2026-08-21 루비 결정).
-  SALE_MODE: "reserve",
+  SALE_MODE: "live",
 
   // 토스페이먼츠 클라이언트 키. ★공개 키다(결제창을 띄우는 용도).
   // 시크릿 키는 여기 없다 — Supabase 함수 환경변수(PG_SECRET_KEY)에만 있다.
   // 지금 값 = 토스 공식 문서에 공개된 "문서용 테스트 키". 계약 후 라이브 키로 바꾼다.
-  TOSS_CLIENT: "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm",
+  TOSS_CLIENT: "live_gck_vZnjEJeQVxmRzejmJRgqrPmOoBN0",
+
+  // ★결제위젯 UI 이름(variantKey). 토스 상점관리자 「결제 UI 설정」에서 만든 것과 같아야 한다.
+  //   2026-09-22 : MID pharmavb1n 전용 라이브 UI 를 따로 만들었다(기존 DEFAULT 는 pharma4maw 것이라 안 건드렸다).
+  TOSS_VARIANT: "PHARMACIAN",
 
   // 광고 전환 추적. ★비워두면 스크립트를 아예 로드하지 않는다(광고 안 켰는데 남 서버로 나가는 일 방지).
   // 여기 값은 전부 공개돼도 되는 식별자다. 서버 전송용 토큰은 함수 환경변수에만 둔다.

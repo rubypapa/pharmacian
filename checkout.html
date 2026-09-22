@@ -351,7 +351,7 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
     // customerKey는 회원마다 고정된 값이어야 한다. 우리 계정 id를 그대로 쓴다.
     widgets = window.TossPayments(C.TOSS_CLIENT).widgets({ customerKey: u.id });
     await widgets.setAmount({ currency: 'KRW', value: total() });
-    await widgets.renderPaymentMethods({ selector: '#payment-method', variantKey: 'DEFAULT' });
+    await widgets.renderPaymentMethods({ selector: '#payment-method', variantKey: (C.TOSS_VARIANT || 'DEFAULT') });
     await widgets.renderAgreement({ selector: '#agreement', variantKey: 'AGREEMENT' });
     drawSum();
   }
