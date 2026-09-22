@@ -47,9 +47,13 @@ header{border-bottom:1px solid var(--rule);position:sticky;top:0;background:#fff
 @media(max-width:900px){.gnb{display:none}}
 .util{margin-left:auto;display:flex;gap:12px;font-size:12.5px;color:var(--muted)}
 
-.hero{position:relative;background:#0e0d0c;overflow:hidden}
+/* ★루비가 빗금.png 에 표시한 ★영상 둘레 검은 테두리를 없앤다(2026-09-16 지시 · 09-22 반영).
+   검정이던 까닭 = transform:scale(0.7) 이 ★보이는 크기만 줄이고 ★자리는 원래대로 차지해서
+   남은 자리에 이 배경색이 드러난 것이다. ★영상 크기는 그대로 두고 배경만 페이지 바탕색으로. */
+.hero{position:relative;background:var(--bg);overflow:hidden}
 /* 히어로 글자 대비 — 밝은 튜브 위 흰 글씨가 2.26:1로 기준(3:1) 미달이라 어둠막을 깐다 */
-.hero::after{content:"";position:absolute;inset:0;pointer-events:none;
+/* ★어둠막이 inset:0 이면 ★흰 여백까지 덮는다. 영상이 차지한 자리(가운데 70%)에만 맞춘다. */
+.hero::after{content:"";position:absolute;inset:0 15%;border-radius:16px;pointer-events:none;
   background:linear-gradient(180deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,.30) 45%,rgba(0,0,0,.46) 100%)}
 .hero .txt{z-index:1}
 .hero img{width:100%;height:min(54vh,440px);object-fit:cover;object-position:62% 40%}
@@ -131,7 +135,9 @@ h2 em{font-style:normal;color:var(--sale)}
 .card .addcart{margin-top:auto}
 .note{margin-top:16px;font-size:12px;color:var(--muted);line-height:1.8}
 
-.hero video.herobg{width:100%;height:min(64vh,560px);object-fit:cover;object-position:center;display:block;transform:scale(0.7);border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.45)}
+/* ★transform:scale(0.7) 대신 ★자리 자체를 0.7 로 줄인다 — 보이는 크기는 전과 같다.
+   전 : 1117×560 자리에 782×392 영상(둘레 검정) / 후 : 1117×392 자리에 782×392 영상(좌우 흰색) */
+.hero video.herobg{width:70%;height:calc(min(64vh,560px)*0.7);margin:0 auto;object-fit:cover;object-position:center;display:block;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.45)}
 
 
 
