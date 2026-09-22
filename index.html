@@ -293,7 +293,10 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
 /* 홈 헤더의 로그인·장바구니도 손가락으로 눌리게. shell.css 규칙은 .sh-util 에만 붙어서
    자기 헤더(.util)를 쓰는 홈 세 벌에는 안 걸렸다(실측 20px). */
 .gnb a{display:inline-flex;align-items:center;min-height:44px}
-.util a{display:inline-flex;align-items:center;min-height:44px;padding:0 4px}
+.util a{display:inline-flex;align-items:center;min-height:44px;padding:0 4px;white-space:nowrap}
+/* 390px 에서 「내 주문」이 「내/주문」으로 쪼개졌다(실측 폭 30px·높이 44px).
+   nowrap 으로 막고, 그만큼 좁아진 자리는 폰에서만 간격·글자를 줄여 흡수한다. */
+@media(max-width:420px){.hd{gap:10px;padding:13px 14px}.util{gap:9px;font-size:12px}.logo{font-size:17px;letter-spacing:.1em}}
 .onair{background:var(--surface,#fff);border:1px solid var(--line,#eee);border-radius:16px;
   margin:22px auto 0;max-width:1140px;padding:26px 24px;text-align:center}
 .onair .oa-tag{font-size:13px;font-weight:800;letter-spacing:.02em;color:var(--sh-hot,#e02b20)}
