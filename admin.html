@@ -34,7 +34,7 @@ tr:last-child td{border-bottom:0}
 td.addr{white-space:normal;min-width:260px;line-height:1.55}
 td.num{font-variant-numeric:tabular-nums}
 .st{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:800}
-.st-reserved{background:#FFF3E0;color:#B45309}
+.st-ordered{background:#E3F2FD;color:#0D47A1}
 .bar button.danger{border-color:#DC2626;color:#DC2626}
 .bar button.danger:hover{background:#FEF2F2}
 .st-paid{background:#E7F6EC;color:#0E7C4A}
@@ -81,19 +81,16 @@ body.po-on .wrap{max-width:none}                 /* 발주서일 때는 화면 �
 <div data-shell></div>
 <div class="wrap">
   <h1>배송 명단</h1>
-  <p class="sub">예약·주문을 받은 순서로 보여줍니다. 이 화면은 관리자에게만 열립니다.</p>
+  <p class="sub">주문을 받은 순서로 보여줍니다. 결제완료 건을 체크해 <b>발주완료로</b> 넘기면 발주완료 칸으로 옮겨갑니다. 이 화면은 관리자에게만 열립니다.</p>
 
   <div class="bar" id="bar" hidden>
     <button type="button" data-f="all" class="on">전체</button>
-    <button type="button" data-f="reserved">예약</button>
     <button type="button" data-f="paid">결제완료</button>
+    <button type="button" data-f="ordered">발주완료</button>
     <button type="button" id="reload">새로고침</button>
     <button type="button" id="csv">CSV로 내려받기</button>
-    <button type="button" id="poBtn">발주서 만들기</button>
-    <button type="button" id="listPaid">체크한 것 결제완료로</button>
-    <button type="button" id="listUndo">되돌리기</button>
-      <button type="button" id="listCancel" class="danger">체크한 것 예약취소</button>
-      <button type="button" id="listUncancel">취소 되돌리기</button>
+    <button type="button" id="listOrdered">체크한 것 발주완료로</button>
+    <button type="button" id="poBtn">발주서 엑셀 만들기</button>
     <span class="grow" id="count"></span>
   </div>
 
@@ -107,8 +104,6 @@ body.po-on .wrap{max-width:none}                 /* 발주서일 때는 화면 �
       <button type="button" id="poAll">전체 선택</button>
       <button type="button" id="poNone">전체 해제</button>
       <button type="button" id="poDown" class="on">엑셀로 내려받기</button>
-      <button type="button" id="poPaid">결제완료로 넘기기</button>
-      <button type="button" id="poUndo">되돌리기</button>
       <span class="grow" id="poCount"></span>
     </div>
     <div class="fill">
@@ -124,10 +119,7 @@ body.po-on .wrap{max-width:none}                 /* 발주서일 때는 화면 �
       스카이물류 <b>YL 통합 발주서</b> 양식입니다. 회색 칸은 주문에서 자동으로 채웠고,
       <b>흰 칸은 직접 적으실 수 있습니다</b>(보내는분·연락처2·배송사·운송장번호·비고).<br>
       세트와 7개 구성은 <b>품목별로 줄을 나눠</b> 폈습니다 — 물류사가 낱개 수량으로 받기 때문입니다.<br>
-      발주서를 넘기고 나서 <b>결제완료로 넘기기</b>를 누르면 체크한 주문의 상태가 <b>결제완료</b>가 됩니다.
-      ★취소·실패 건은 넘어가지 않고, 잘못 눌렀으면 <b>되돌리기</b>로 원래 상태로 돌아갑니다.<br>
-      ★<b>예약취소</b>는 결제 전 건(예약·미결제)만 됩니다. 결제완료 건은 환불 절차로 처리하세요.
-      사람이 넘긴 건은 명단의 <b>수동확인</b> 칸에 표시돼 결제기가 찍은 것과 구분됩니다.<br>
+      명단에서 고른 칸(결제완료·발주완료)의 주문으로 만듭니다. 상태를 바꾸는 단추는 명단의 <b>체크한 것 발주완료로</b> 하나뿐입니다.<br>
       ★<b>미결제·취소·실패 건은 체크가 꺼진 채로 나옵니다</b> — 돈을 안 받은 건에 물건이 나가지 않게 합니다.
       상태 칸은 화면에만 있고 엑셀에는 안 들어갑니다(물류사 양식이 14열 고정입니다).
     </p>
@@ -149,9 +141,10 @@ body.po-on .wrap{max-width:none}                 /* 발주서일 때는 화면 �
   const sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON);
 
   const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  // ★'수동확인' = 사람이 손으로 결제완료로 넘긴 건. 결제기가 찍은 paid 와 눈으로 갈린다
-  // ★'취소' = 누가 취소했나(고객취소/관리자취소)와 그 시각. 함수가 이미 주고 있었는데 표가 안 그렸다.
-  const COLS = ['접수','상태','수동확인','취소','주문번호','품목','금액','받는분','연락처','주소','배송메모'];
+  // ★'발주시각' = 관리자가 발주완료로 넘긴 시각(뷰 ph_order_sheet 의 새 칸).
+  // ★'취소' = 누가 취소했나(고객취소/관리자취소)와 그 시각.
+  const COLS = ['접수','상태','발주시각','취소','주문번호','품목','금액','받는분','연락처','주소','배송메모'];
+  const 상태말 = { paid: '결제완료', ordered: '발주완료', pending: '미결제', canceled: '취소', failed: '실패' };
   let rows = [], filter = 'all';
 
   const view = () => filter === 'all' ? rows : rows.filter(r => r['상태'] === filter);
@@ -165,8 +158,7 @@ body.po-on .wrap{max-width:none}                 /* 발주서일 때는 화면 �
       v.map(r => '<tr>' +
         `<td class="pick"><input type="checkbox" data-oid="${esc(r['주문번호'])}"></td>` +
         COLS.map(c => {
-        if (c === '상태') return `<td><span class="st st-${esc(r[c])}">${esc(r[c])}</span></td>`;
-        if (c === '수동확인') return `<td>${r[c] ? '<span class="st st-reserved">' + esc(r[c]) + '</span>' : ''}</td>`;
+        if (c === '상태') return `<td><span class="st st-${esc(r[c])}">${esc(상태말[r[c]] || r[c])}</span></td>`;
         if (c === '취소') return `<td>${r['취소주체'] ? '<span class="st st-canceled">' + esc(r['취소주체']) + '</span> ' + esc(r['취소시각'] || '') : ''}</td>`;
         if (c === '금액') return `<td class="num">${Number(r[c] || 0).toLocaleString('ko-KR')}원</td>`;
         if (c === '주소') return `<td class="addr">${esc(r[c])} <button class="copy" data-copy="${esc(r[c])}">복사</button></td>`;
@@ -286,8 +278,7 @@ body.po-on .wrap{max-width:none}                 /* 발주서일 때는 화면 �
   let po = [];   // 발주서 행. 화면에서 고친 값이 그대로 남는다
   // ★발주 대상 상태 — pending(결제창에서 이탈)·canceled·failed 는 기본으로 체크를 끈다.
   //   돈을 안 받은 건에 물건이 나가면 그대로 손실이다(2026-08-28 적대검증에서 잡힘).
-  const PO_OK = new Set(['paid', 'reserved']);
-  const 상태말 = { paid: '결제완료', reserved: '예약', pending: '미결제', canceled: '취소', failed: '실패' };
+  const PO_OK = new Set(['paid', 'ordered']);
 
   function buildPO(keep) {
     // ★keep 이면 이미 손으로 친 값을 살린다. 30줄 쳐 놓고 명단 갔다 오면 날아가던 것(적대검증 지적).
@@ -408,11 +399,6 @@ body.po-on .wrap{max-width:none}                 /* 발주서일 때는 화면 �
     return [...out.querySelectorAll('[data-oid]')].filter(b => b.checked).map(b => b.dataset.oid);
   }
 
-  // 발주서에서 체크한 줄들의 주문번호(중복 제거). 세트는 한 주문이 여러 줄이라 묶어야 한다.
-  function pickedOrders() {
-    return [...new Set(po.filter(x => x.쓸것).map(x => x.주문번호))];
-  }
-
   const NL = String.fromCharCode(10);   // 문자열 안에 개행을 직접 쓰지 않는다
 
   async function callAdmin(payload) {
@@ -432,52 +418,24 @@ body.po-on .wrap{max-width:none}                 /* 발주서일 때는 화면 �
     return res.json();
   }
 
-  async function markPaid(undo, ids) {
-    ids = ids || pickedOrders();
+  // ★결제완료 → 발주완료. 이 한 방향뿐이다(2026-09-28 루비 : 결제단 붙기 전 흐름은 전부 없앴다).
+  async function markOrdered() {
+    const ids = listPicked();
     if (!ids.length) { alert('체크된 줄이 없습니다.'); return; }
-    const 말 = undo ? '되돌리' : '결제완료로 넘기';
-    // ★결제 원장을 사람이 바꾸는 자리다. 몇 건인지 보여주고 한 번 묻는다.
-    if (!confirm('주문 ' + ids.length + '건을 ' + 말 + '겠습니까?' + NL + NL + ids.join(NL))) return;
-    const r = await callAdmin({ action: undo ? 'unmarkPaid' : 'markPaid', orderIds: ids });
+    if (!confirm('주문 ' + ids.length + '건을 발주완료로 넘기겠습니까?' + NL + '★결제완료 건만 넘어갑니다. 되돌리기는 없습니다.' + NL + NL + ids.join(NL))) return;
+    const r = await callAdmin({ action: 'markOrdered', orderIds: ids });
     if (!r) return;
     // ★서버(함수·DB)가 아직 이 기능을 모르면 명단이 그대로 돌아온다. 그때 '성공'처럼 보이면 안 된다.
     if (typeof r.done !== 'number') { alert('서버에 이 기능이 아직 올라가지 않았습니다.' + NL + '관리자에게 알려 주세요.'); return; }
-    let msg = r.done + '건 ' + 말 + '었습니다.';
+    let msg = r.done + '건 발주완료로 넘겼습니다.';
     if (r.skipped && r.skipped.length) {
       msg += NL + NL + '넘어가지 않은 건:' + NL + r.skipped.map(s => '· ' + s.id + ' — ' + s.why).join(NL);
     }
     alert(msg);
-    await load();          // 명단을 다시 불러 상태를 최신으로
+    await load();
     if (po.length) buildPO(true);   // 발주서를 만들어 뒀으면 그것도 갱신(기입값은 살린다)
   }
-
-    // ★예약 취소 — 결제 전 건(예약·미결제)만 취소한다.
-    //   결제완료 건은 서버가 막는다(환불은 결제사 절차가 따로 있다).
-    async function cancelOrders(undo, ids) {
-      ids = ids || listPicked();
-      if (!ids.length) { alert('체크된 줄이 없습니다.'); return; }
-      const 말 = undo ? '취소를 되돌리' : '취소하';
-      if (!confirm('주문 ' + ids.length + '건을 ' + 말 + '겠습니까?' + NL +
-                   (undo ? '' : '★결제완료 건은 취소되지 않습니다.' + NL) + NL + ids.join(NL))) return;
-      const r = await callAdmin({ action: undo ? 'uncancelOrder' : 'cancelOrder', orderIds: ids });
-      if (!r) return;
-      if (typeof r.done !== 'number') { alert('서버에 이 기능이 아직 올라가지 않았습니다.' + NL + '관리자에게 알려 주세요.'); return; }
-      let msg = r.done + '건 ' + 말 + '었습니다.';
-      if (r.skipped && r.skipped.length) {
-        msg += NL + NL + '넘어가지 않은 건:' + NL + r.skipped.map(s => '· ' + s.id + ' — ' + s.why).join(NL);
-      }
-      alert(msg);
-      await load();
-      if (po.length) buildPO(true);
-    }
-
-    $('#listCancel').addEventListener('click', () => cancelOrders(false));
-    $('#listUncancel').addEventListener('click', () => cancelOrders(true));
-
-  $('#poPaid').addEventListener('click', () => markPaid(false));
-  $('#poUndo').addEventListener('click', () => markPaid(true));
-  $('#listPaid').addEventListener('click', () => markPaid(false, listPicked()));
-  $('#listUndo').addEventListener('click', () => markPaid(true, listPicked()));
+  $('#listOrdered').addEventListener('click', markOrdered);
 
   // ★onAuthStateChange 콜백은 인증 락을 ★쥔 채로 돈다. 그 안에서 getSession() 을 부르면
   //   자기가 쥔 락을 자기가 기다려 ★영영 안 끝난다(2026-09-01 라이브 실측 — 8.9초 무응답,

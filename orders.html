@@ -1,4 +1,4 @@
-<!-- 내 주문 목록. 고객이 자기 예약을 보고 스스로 취소하는 자리.
+<!-- 내 주문 목록. 고객이 자기 주문을 보고, 결제 전(미결제)이면 스스로 취소하는 자리.
      ★취소는 브라우저가 하지 않는다 — ph-order-cancel(Edge Function)이 "정말 이 사람 주문인가"를
        DB로 확인한 뒤에만 상태를 바꾼다. 브라우저에는 만능키가 없다.
      ★결제완료 건은 여기서 못 취소한다. 환불은 결제사 절차가 따로 있다. -->
@@ -25,7 +25,7 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.03em}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
 .row1{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .st{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px}
-.st-reserved{background:#FFF3E0;color:#B45309}
+.st-ordered{background:#E3F2FD;color:#0D47A1}
 .st-paid{background:#E8F5E9;color:#1B5E20}
 .st-pending{background:#F3F4F6;color:#4B5563}
 .st-canceled{background:#FEE2E2;color:#991B1B}
@@ -51,7 +51,7 @@ button[disabled]{opacity:.45;cursor:default}
 
 <div class="wrap">
   <h1>내 주문</h1>
-  <p class="sub">예약하신 주문을 보시고, 결제 전이라면 직접 취소하실 수 있습니다.<br>
+  <p class="sub">주문을 보시고, 결제 전이라면 직접 취소하실 수 있습니다.<br>
     결제가 끝난 주문은 이 화면에서 취소되지 않습니다 — 환불은 고객센터로 알려 주세요.</p>
 
   <div id="out" class="msg">불러오는 중…</div>
@@ -78,9 +78,9 @@ button[disabled]{opacity:.45;cursor:default}
   //   getSession() 이 영영 안 끝난다(2026-09-01 실측).
   const sb = (window.PH_SB && window.PH_SB()) || window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON);
 
-  const 상태말 = { reserved: '예약', paid: '결제완료', pending: '미결제', canceled: '취소됨', failed: '실패' };
+  const 상태말 = { paid: '결제완료', ordered: '발주완료', pending: '미결제', canceled: '취소됨', failed: '실패' };
   // ★취소 버튼을 보여줄 상태. 결제완료(paid)는 여기 없다 — 서버도 막지만 화면에서도 안 보여준다.
-  const 취소가능 = new Set(['reserved', 'pending']);
+  const 취소가능 = new Set(['pending']);
 
   function fmtWhen(iso) {
     if (!iso) return '';
@@ -112,6 +112,7 @@ button[disabled]{opacity:.45;cursor:default}
           ${can ? `<button type="button" class="cancel" data-cancel="${esc(r.order_id)}">주문 취소</button>` : ''}
           <span class="note">${
             st === 'paid' ? '결제가 끝난 주문입니다. 환불은 고객센터로 알려 주세요.'
+            : st === 'ordered' ? '발주가 나간 주문입니다. 곧 배송됩니다.'
             : st === 'canceled' ? '취소된 주문입니다.'
             : can ? '결제 전이라 직접 취소하실 수 있습니다.' : ''
           }</span>
