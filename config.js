@@ -15,16 +15,17 @@ window.PHARMACIAN = {
   //   그래서 이 표와 DB 가 어긋나면 안 된다. 값 출처 = 루비 2026-09-22 지시:
   //     7000 단품 22,000 / 3개 58,700 · 멜라리스 단품 22,000 / 3개 58,700
   //     12000 단품 39,000 / 1+1 59,000 · NMN 단품 39,000 / 1+1 59,000
+  //   ★2026-09-28 루비 지시 「상품 가격 만원씩 전부 동일하게 올려」 → 8 SKU 전부 +10,000 (단품·묶음 동일 가산).
   //   묶음은 ★첫 구매 15% 쿠폰에서 빠진다(이미 깎은 값이다). 판정은 서버가 한다 — 키가 x2·x3 로 끝나면 제외.
   OPTIONS: {
-    p7:  [{ sku: 'p7',    n: 1, price: 22000, label: '1개' },
-          { sku: 'p7x3',  n: 3, price: 58700, label: '3개' }],
-    mel: [{ sku: 'mel',   n: 1, price: 22000, label: '1개' },
-          { sku: 'melx3', n: 3, price: 58700, label: '3개' }],
-    p12: [{ sku: 'p12',   n: 1, price: 39000, label: '1개' },
-          { sku: 'p12x2', n: 2, price: 59000, label: '1+1 (2개)' }],
-    nmn: [{ sku: 'nmn',   n: 1, price: 39000, label: '1개' },
-          { sku: 'nmnx2', n: 2, price: 59000, label: '1+1 (2개)' }],
+    p7:  [{ sku: 'p7',    n: 1, price: 32000, label: '1개' },
+          { sku: 'p7x3',  n: 3, price: 68700, label: '3개' }],
+    mel: [{ sku: 'mel',   n: 1, price: 32000, label: '1개' },
+          { sku: 'melx3', n: 3, price: 68700, label: '3개' }],
+    p12: [{ sku: 'p12',   n: 1, price: 49000, label: '1개' },
+          { sku: 'p12x2', n: 2, price: 69000, label: '1+1 (2개)' }],
+    nmn: [{ sku: 'nmn',   n: 1, price: 49000, label: '1개' },
+          { sku: 'nmnx2', n: 2, price: 69000, label: '1+1 (2개)' }],
   },
 
   // Supabase (리전 = Northeast Asia / Seoul, ap-northeast-2) — ODEAL과 같은 프로젝트를 쓴다.
