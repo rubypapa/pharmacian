@@ -595,19 +595,14 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
   if(document.readyState!=='complete') window.addEventListener('load', sync);
 })();
 
-/* 상품을 누르면 ★다른 페이지로 가지 않고 바로 아래 패널에 상세를 띄운다. 처음 값은 ★PDRN 7000 이다.
+/* 아래 패널 = 스크롤로 보는 상세(★PDRN 7000). ★상품을 누르면 상품별 주소(detail/*.html)로 이동한다 —
+   네이버 가격비교 「상품별 개별 페이지」 요구(2026-10-01 루비). 전엔 누르면 이 패널에 띄웠다.
    같은 출처라 iframe 안 문서를 만질 수 있다 — 상세 페이지의 「몰로 돌아가기」와 하단 고정 구매바는
    여기서는 군더더기라 숨기고, 안쪽 링크는 ★맨 위 창으로 보낸다(iframe 안에서 결제로 가면 갇힌다). */
 (function(){
   var box=document.getElementById('dtlbox'), fr=document.getElementById('dtlframe');
-  var nm=document.getElementById('dtlname'), full=document.getElementById('dtlfull');
   var more=document.getElementById('dtlmore'), pane=document.getElementById('dtlpane');
   if(!fr||!box) return;
-
-  var 이름={p7:'파머시안 PDRN 7000 크림 30g',
-            p12:'파머시안 PDRN 12000 크림 30g', nmn:'파머시안 NMN 30,000 크림 30g',
-            mel:'파머시안 멜라리스 100,000 크림 30g'};
-  var 상세={p7:'p7.html', p12:'p12.html', nmn:'nmn.html', mel:'mel.html'};
 
   function 높이맞춤(){
     try{ var d=fr.contentDocument; if(!d||!d.body) return;
@@ -641,24 +636,6 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
     높이맞춤();
   });
 
-  function 연다(k){
-    var s=상세[k]; if(!s) return;
-    if(fr.getAttribute('src')!=='detail/'+s){ fr.style.height='600px'; fr.setAttribute('src','detail/'+s); }
-    nm.textContent = 이름[k] || '';
-    full.setAttribute('href','detail/'+s);
-    box.classList.remove('open'); more.textContent='상세 더 보기 ▾';
-    pane.scrollIntoView({behavior:'smooth', block:'start'});
-  }
-
-  document.addEventListener('click', function(e){
-    if(!e.target.closest) return;
-    if(e.target.closest('.addcart')) return;                 /* 담기 버튼은 담기 그대로 */
-    if(e.target.closest('.copt-head')) return;               /* ★옵션 머리는 앵커 안에 있다 — 상세를 열지 않는다 */
-    var card=e.target.closest('.grid > article[data-k]'); if(!card) return;
-    if(!e.target.closest('.godetail')) return;               /* 사진·이름·가격을 눌렀을 때만 */
-    e.preventDefault();
-    연다(card.getAttribute('data-k'));
-  }, true);
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
