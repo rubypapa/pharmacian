@@ -39,7 +39,7 @@
       anchor.parentNode.insertBefore(box, anchor);
 
       function 고른다(i) {
-        var v = list[i], 배송 = v.price >= FREE ? 0 : SHIP;
+        var v = list[i], 배송 = (v.ship === 0 || v.price >= FREE) ? 0 : SHIP;   // ★v.ship 0 = 그 상품 무료배송(2026-10-01)
         [].forEach.call(box.children, function (b, j) { b.classList.toggle('on', i === j); });
         // ★담길 품목을 바꾼다. 가격 옆 단추와 하단 고정바가 같이 바뀐다.
         [].forEach.call(d.querySelectorAll('[data-buy]'), function (b) { b.setAttribute('data-buy', v.sku); });
@@ -60,6 +60,7 @@
         var nt = o.note && d.querySelector(o.note);
         if (nt) nt.textContent = v.n > 1
           ? '무료배송입니다. 이미 값을 낮춘 구성이라 첫 구매 15% 쿠폰은 함께 쓰지 않습니다.'
+          : v.noCoupon ? '무료배송 · 이 상품은 첫 구매 15% 쿠폰 적용 대상이 아닙니다.'
           : '50,000원 이상 무료배송 · 첫 구매 15% 쿠폰은 장바구니에서 적용하십니다.';
       }
 

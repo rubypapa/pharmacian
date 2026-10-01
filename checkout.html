@@ -135,7 +135,10 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
   // 세트·구성(1+1·3개)은 이미 깎인 값이다. 여기에 첫 구매 쿠폰을 또 얹지 않는다.
   //   ★서버(ph-order-create)의 PRESET 과 ★같은 규칙이어야 금액이 어긋나지 않는다.
   const IS_SET = k => k.startsWith('set') || /x\d+$/.test(k);
-  let rows = [], qty = {}, ship = 0, widgets = null, user = null, addr = null;
+  // ★쿠폰 제외 = 묶음·세트 + config NO_COUPON(2026-10-01 p7). 서버 NO_COUPON 과 같아야 한다.
+  const NO_CPN = (window.PHARMACIAN && window.PHARMACIAN.NO_COUPON) || [];
+  const NOCOUPON = k => IS_SET(k) || NO_CPN.includes(k);
+  let rows = [], qty = {}, widgets = null, user = null, addr = null;
   // ★서버가 금액을 정하고 나면 그 값이 진짜다. 이 화면 계산은 어림이다.
   //   둘이 어긋난 채로 결제창을 띄우면 손님이 본 금액과 실제 청구액이 달라진다(쿠폰이 거절되는 경우).
   let srv = null;
@@ -144,10 +147,12 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
   const goods = () => rows.reduce((s, r) => s + r.price * (qty[r.key] || 0), 0);
   const count = () => rows.reduce((s, r) => s + (qty[r.key] || 0), 0);
   const FREE = (window.PHARMACIAN && window.PHARMACIAN.FREE_SHIP_OVER) || 50000;
-  const shipFee = () => (count() && goods() < FREE) ? ship : 0;
+  // ★배송비 = 담긴 상품의 배송비 중 가장 큰 값(주문당 한 번). 전부 무료배송 상품(ship 0)이면 0. 서버와 같은 규칙(2026-10-01).
+  const shipFee = () => (count() && goods() < FREE)
+    ? Math.max(0, ...rows.filter(r => qty[r.key]).map(r => r.ship ?? 3000)) : 0;
   // 첫 구매 15% 쿠폰. 장바구니에서 적용하면 localStorage에 남고 여기로 이어진다. ★실제 적용은 서버가 최종 판정한다.
   const coupon = () => (count() > 0 && localStorage.getItem('ph_coupon') === '1');
-  const couponBase = () => rows.reduce((s, r) => s + (IS_SET(r.key) ? 0 : r.price * (qty[r.key] || 0)), 0);
+  const couponBase = () => rows.reduce((s, r) => s + (NOCOUPON(r.key) ? 0 : r.price * (qty[r.key] || 0)), 0);
   const discount = () => coupon() ? Math.round(couponBase() * 0.15) : 0;
   const total = () => srv ? srv.amount : goods() - discount() + shipFee();
 
@@ -315,7 +320,6 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
     const { data, error } = await sb.from('ph_product_price').select('key,price,ship');
     if (error || !data || !data.length) { $('#items').textContent = '가격을 불러오지 못했습니다.'; return; }
     rows = data.sort((a, b) => a.key.localeCompare(b.key));
-    ship = rows[0].ship;
     // ★장바구니에 담아둔 수량을 이어받는다. 없으면 0에서 시작한다.
     const cart = (window.PH_CART ? PH_CART.read() : {});
     rows.forEach(r => qty[r.key] = cart[r.key] || 0);
