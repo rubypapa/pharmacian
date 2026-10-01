@@ -62,7 +62,7 @@ td.num{font-variant-numeric:tabular-nums}
     <button type="button" data-f="ordered">발주완료</button>
     <button type="button" id="reload">새로고침</button>
     <button type="button" id="csv">CSV로 내려받기</button>
-    <button type="button" id="poCsv">발주서 양식 CSV</button>
+    <button type="button" id="poCsv">발주서 양식 엑셀</button>
     <button type="button" id="listOrdered">체크한 것 발주완료로</button>
     <span class="grow" id="count"></span>
   </div>
@@ -77,6 +77,8 @@ td.num{font-variant-numeric:tabular-nums}
 <script src="config.js"></script>
 <script src="cart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" onerror="window.__nosb=1"></script>
+<!-- 발주서를 엑셀(.xlsx)로 내보낸다. 못 불러오면 CSV로 떨어진다 -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
 (function () {
   const $ = s => document.querySelector(s);
@@ -172,13 +174,16 @@ td.num{font-variant-numeric:tabular-nums}
     URL.revokeObjectURL(a.href);
   });
 
-  /* ★발주서 양식 CSV — 물류사(스카이물류) 「YL_통합 발주서」 칸 그대로(2026-10-01 루비).
+  /* ★발주서 양식 엑셀(.xlsx · 2026-10-01 루비 「xlsx로 바꿔줘」 — CSV는 엑셀이 우편번호 앞 0을 지운다) — 물류사(스카이물류) 「YL_통합 발주서」 칸 그대로(2026-10-01 루비).
      한 줄 = 한 주문 × 한 상품. ★같은 사람이 여러 개를 사도 상품 종류가 다르면 줄을 나눈다.
      묶음(3개·1+1)·세트는 낱개로 펴서 같은 상품끼리 합친다 — 물류사가 낱개 수량으로 받는다.
      ★결제완료·발주완료만 넣는다(돈 안 받은 건에 물건이 나가면 손실). 대응표는 옛 발주서 화면(deploy 0462dcd 이전)에서 왔다. */
   const PO_COLS = ['발주일','순번','상품명','수량(낱개)','보내는분','받는분','받는분 연락처1',
                    '받는분 연락처2','우편번호','주소','배송시요청사항','배송사','운송장번호','비고'];
   const PO_OK = new Set(['paid', 'ordered']);
+  // ★원본 양식 열 너비. SheetJS 는 wch 에 패딩 0.832 를 더해 쓰므로 미리 뺀다(옛 발주서 화면에서 실측).
+  const PO_WCH = [9.875,4.625,31.25,11,17.875,15,15.25,13.75,7.5,41.875,19.125,11.5,13.125,12.875].map(w => w - 0.832);
+  const PO_NUM = new Set(['발주일','순번','수량(낱개)']);   // 원본이 숫자로 들고 있는 칸. 우편번호·연락처는 글자(앞 0 보존)
   // 우리 상품 이름표·키 → 물류사 보유품목 정식 상품명(보유품목 시트 표기 그대로) × 낱개 배수
   const P7 = 'VCXO 파머시안 피디알엔 7000 크림 30g', P12 = 'VCXO 파머시안 피디알엔 12000 크림 30g',
         NMN = 'VCXO 파머시안 엔엠엔 30000 크림 30g',  MEL = 'VCXO 파머시안 멜라리스 100000 크림 30g';
@@ -228,12 +233,23 @@ td.num{font-variant-numeric:tabular-nums}
     if (빈주문.length) 경고.push('★품목이 비어 빠진 주문 ' + 빈주문.length + '건: ' + 빈주문.join(', '));
     $('#poWarn').textContent = 경고.join(' / ');
     if (!줄.length) { $('#poWarn').textContent = '보이는 명단에 결제완료·발주완료 주문이 없습니다.' + (경고.length ? ' ' + 경고.join(' / ') : ''); return; }
-    const csv = '﻿' + [PO_COLS.join(',')].concat(
-      줄.map(x => PO_COLS.map(c => `"${String(x[c] == null ? '' : x[c]).replace(/"/g, '""')}"`).join(','))
-    ).join('\r\n');
+    const 이름 = 'YL_통합 발주서_스카이물류_' + 발주일.replace(/(\d{4})(\d{2})(\d{2})/, '$1.$2.$3') + ' (택배).';
+    const aoa = [PO_COLS].concat(줄.map(x => PO_COLS.map(c => PO_NUM.has(c) ? Number(x[c]) : String(x[c] == null ? '' : x[c]))));
+    if (window.XLSX) {
+      const ws = window.XLSX.utils.aoa_to_sheet(aoa);
+      ws['!cols'] = PO_WCH.map(w => ({ wch: w }));    // 원본 열 너비 그대로
+      const wb = window.XLSX.utils.book_new();
+      window.XLSX.utils.book_append_sheet(wb, ws, '발주서');
+      window.XLSX.writeFile(wb, 이름 + 'xlsx');
+      return;
+    }
+    // ★엑셀 라이브러리를 못 불러온 경우에도 손이 멈추지 않게 CSV로 내보낸다(한글 BOM).
+    //   ★엑셀은 따옴표로 감싼 "06236" 도 숫자로 읽어 6236 으로 만든다. ="..." 로 줘야 글자로 남는다
+    const csv = '﻿' + aoa.map(r => r.map(v => { const t = String(v).replace(/"/g, '""');
+      return /^0\d+$/.test(t) ? '="' + t + '"' : '"' + t + '"'; }).join(',')).join('\r\n');
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-    a.download = `YL_통합 발주서_파머시안_${발주일}.csv`;
+    a.download = 이름 + 'csv';
     a.click();
     URL.revokeObjectURL(a.href);
   });
