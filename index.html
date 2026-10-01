@@ -113,6 +113,14 @@ h2 em{font-style:normal;color:var(--sale)}
   background:linear-gradient(to bottom,rgba(255,255,255,0),#fff)}
 .dtlbox.open::after{display:none}
 .dtlframe{display:block;width:100%;border:0;min-height:600px;background:#faf6f0}
+/* ★상세 4개를 가로 한 줄로 놓고 좌·우 화살표(와 가로 스크롤)로 넘긴다(2026-10-01 루비). 줄 높이 = 지금 보는 상세 높이. */
+.dtlwrap{position:relative}
+.dtltrack{display:flex;align-items:flex-start;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
+  scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch}
+.dtltrack::-webkit-scrollbar{display:none}
+.dtltrack .dtlframe{flex:0 0 100%;scroll-snap-align:start}
+.dtlwrap .sarrow{top:280px}
+@media(max-width:560px){.dtlwrap .sarrow{top:180px}}
 .dtlmore{display:block;margin:14px auto 0;font:inherit;font-size:14px;font-weight:700;cursor:pointer;
   padding:13px 30px;border:1px solid var(--rule);border-radius:999px;background:#fff;color:var(--ink)}
 .dtlmore:hover{border-color:var(--ink)}
@@ -420,8 +428,17 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
   <div class="dtlpane" id="dtlpane">
     <div class="dtlhead"><b id="dtlname">파머시안 PDRN 7000 크림 30g</b>
       <a id="dtlfull" href="detail/p7.html" target="_blank" rel="noopener">상세만 따로 보기 ↗</a></div>
+    <div class="dtlwrap">
     <div class="dtlbox" id="dtlbox">
-      <iframe class="dtlframe" id="dtlframe" title="상품 상세" src="detail/p7.html" scrolling="no"></iframe>
+      <div class="dtltrack" id="dtltrack">
+      <iframe class="dtlframe" data-k="p7" title="상품 상세 — 파머시안 PDRN 7000 크림 30g" src="detail/p7.html" scrolling="no"></iframe>
+      <iframe class="dtlframe" data-k="p12" title="상품 상세 — 파머시안 PDRN 12000 크림 30g" data-src="detail/p12.html" scrolling="no"></iframe>
+      <iframe class="dtlframe" data-k="nmn" title="상품 상세 — 파머시안 NMN 30,000 크림 30g" data-src="detail/nmn.html" scrolling="no"></iframe>
+      <iframe class="dtlframe" data-k="mel" title="상품 상세 — 파머시안 멜라리스 100,000 크림 30g" data-src="detail/mel.html" scrolling="no"></iframe>
+      </div>
+    </div>
+    <button class="sarrow prev" type="button" aria-label="이전 상품 상세" id="dtlprev" hidden>‹</button>
+    <button class="sarrow next" type="button" aria-label="다음 상품 상세" id="dtlnext">›</button>
     </div>
     <button type="button" class="dtlmore" id="dtlmore">상세 더 보기 ▾</button>
   </div>
@@ -595,20 +612,28 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
   if(document.readyState!=='complete') window.addEventListener('load', sync);
 })();
 
-/* 아래 패널 = 스크롤로 보는 상세(★PDRN 7000). ★상품을 누르면 상품별 주소(detail/*.html)로 이동한다 —
-   네이버 가격비교 「상품별 개별 페이지」 요구(2026-10-01 루비). 전엔 누르면 이 패널에 띄웠다.
+/* 아래 패널 = 스크롤로 보는 상세. ★상세 4개를 가로 한 줄로 두고 좌·우 화살표·가로 스크롤로 넘긴다(2026-10-01 루비).
+   ★상품 카드를 누르면 상품별 주소(detail/*.html)로 이동한다 — 네이버 가격비교 「상품별 개별 페이지」 요구.
+   상세 이미지가 무거워 ★지금 보는 것과 바로 옆 것만 불러온다(data-src → src).
    같은 출처라 iframe 안 문서를 만질 수 있다 — 상세 페이지의 「몰로 돌아가기」와 하단 고정 구매바는
    여기서는 군더더기라 숨기고, 안쪽 링크는 ★맨 위 창으로 보낸다(iframe 안에서 결제로 가면 갇힌다). */
 (function(){
-  var box=document.getElementById('dtlbox'), fr=document.getElementById('dtlframe');
+  var box=document.getElementById('dtlbox'), track=document.getElementById('dtltrack');
   var more=document.getElementById('dtlmore'), pane=document.getElementById('dtlpane');
-  if(!fr||!box) return;
+  var nm=document.getElementById('dtlname'), full=document.getElementById('dtlfull');
+  var prev=document.getElementById('dtlprev'), next=document.getElementById('dtlnext');
+  if(!box||!track) return;
+  var frs=[].slice.call(track.querySelectorAll('.dtlframe')), 지금=0;
 
-  function 높이맞춤(){
-    try{ var d=fr.contentDocument; if(!d||!d.body) return;
-         fr.style.height = Math.max(600, d.documentElement.scrollHeight) + 'px'; }catch(e){}
+  function 높이(fr){
+    try{ var d=fr.contentDocument; if(!d||!d.body) return 600;
+         return Math.max(600, d.documentElement.scrollHeight); }catch(e){ return 600; }
   }
-  function 안쪽정리(){
+  function 높이맞춤(){
+    frs.forEach(function(fr){ fr.style.height = 높이(fr) + 'px'; });
+    track.style.height = 높이(frs[지금]) + 'px';
+  }
+  function 안쪽정리(fr){
     try{
       var d=fr.contentDocument; if(!d||!d.body) return;
       var s=d.getElementById('_embed_css');
@@ -626,8 +651,36 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
     }catch(e){}
     높이맞춤();
   }
-  fr.addEventListener('load', 안쪽정리);
-  window.addEventListener('resize', 높이맞춤);
+  function 불러온다(i){
+    var fr=frs[i]; if(!fr) return;
+    var ds=fr.getAttribute('data-src'); if(ds){ fr.removeAttribute('data-src'); fr.setAttribute('src', ds); }
+  }
+  function 표시(i){
+    지금=i; var fr=frs[i];
+    불러온다(i); 불러온다(i+1);
+    nm.textContent = (fr.getAttribute('title')||'').replace('상품 상세 — ','');
+    full.setAttribute('href', fr.getAttribute('src')||fr.getAttribute('data-src'));
+    prev.hidden = i<=0; next.hidden = i>=frs.length-1;
+    높이맞춤();
+  }
+  function 간다(i){
+    i=Math.max(0, Math.min(frs.length-1, i));
+    표시(i);
+    track.scrollTo({left: i*track.clientWidth, behavior:'smooth'});
+  }
+  frs.forEach(function(fr){ fr.addEventListener('load', function(){ 안쪽정리(fr); }); });
+  prev.addEventListener('click', function(){ 간다(지금-1); });
+  next.addEventListener('click', function(){ 간다(지금+1); });
+  /* 손가락·휠로 가로로 밀어도 같은 자리로 맞춘다 */
+  var 대기;
+  track.addEventListener('scroll', function(){
+    clearTimeout(대기);
+    대기=setTimeout(function(){
+      var i=Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
+      if(i!==지금) 표시(i);
+    }, 120);
+  });
+  window.addEventListener('resize', function(){ track.scrollLeft = 지금*track.clientWidth; 높이맞춤(); });
 
   more.addEventListener('click', function(){
     var 폈나 = box.classList.toggle('open');
@@ -635,7 +688,7 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
     if(!폈나) pane.scrollIntoView({behavior:'smooth', block:'start'});
     높이맞춤();
   });
-
+  표시(0);
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
