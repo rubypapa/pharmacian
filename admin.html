@@ -102,7 +102,7 @@ td.num{font-variant-numeric:tabular-nums}
     $('#count').textContent = `전체 ${rows.length}건 · 보이는 것 ${v.length}건`;
     if (!v.length) { say('아직 들어온 주문이 없습니다.'); return; }
     out.innerHTML =
-      '<table><thead><tr><th class="pick"></th>' + COLS.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>' +
+      '<table><thead><tr><th class="pick"><input type="checkbox" id="pickAll" title="보이는 줄 전체 선택"></th>' + COLS.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>' +
       v.map(r => '<tr>' +
         `<td class="pick"><input type="checkbox" data-oid="${esc(r['주문번호'])}"></td>` +
         COLS.map(c => {
@@ -115,6 +115,8 @@ td.num{font-variant-numeric:tabular-nums}
     out.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => {
       navigator.clipboard.writeText(b.dataset.copy).then(() => { b.textContent = '복사됨'; setTimeout(() => b.textContent = '복사', 1200); });
     }));
+    const all = $('#pickAll');
+    if (all) all.addEventListener('change', () => out.querySelectorAll('[data-oid]').forEach(b => { b.checked = all.checked; }));
   }
 
   let 세션 = null;   // ★현재 세션. 콜백이 채운다 — getSession() 을 다시 부르지 않는다.
@@ -156,9 +158,16 @@ td.num{font-variant-numeric:tabular-nums}
     draw();
   });
   $('#reload').addEventListener('click', load);
+  /* ★두 내려받기(CSV·발주서 엑셀) 모두 ★체크한 줄만 받는다(2026-10-01 루비 「선택한거 다운로드할수있게 · 지금은 전체가 다운로드됨」).
+     전부 받으려면 표 머리의 체크박스로 보이는 줄 전체를 고른다. 하나도 안 골랐으면 받지 않고 알린다. */
+  function pickedRows() {
+    const ids = new Set(listPicked());
+    return view().filter(r => ids.has(String(r['주문번호'])));
+  }
   $('#csv').addEventListener('click', () => {
-    const v = view();
-    if (!v.length) return;
+    const v = pickedRows();
+    if (!v.length) { $('#poWarn').textContent = '체크한 주문이 없습니다. 내려받을 주문을 체크해 주세요(표 맨 위 칸 = 전체 선택).'; return; }
+    $('#poWarn').textContent = '';
     // 엑셀이 한글을 깨뜨리지 않게 BOM을 앞에 붙인다
     const csv = '﻿' + [COLS.join(',')].concat(
       v.map(r => COLS.map(c => {
@@ -227,12 +236,14 @@ td.num{font-variant-numeric:tabular-nums}
   }
   $('#poCsv').addEventListener('click', () => {
     const d = new Date(), 발주일 = String(d.getFullYear()) + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
-    const { 줄, 모름, 빈주문 } = 발주서행(view(), 발주일);
+    const 고른 = pickedRows();
+    if (!고른.length) { $('#poWarn').textContent = '체크한 주문이 없습니다. 내려받을 주문을 체크해 주세요(표 맨 위 칸 = 전체 선택).'; return; }
+    const { 줄, 모름, 빈주문 } = 발주서행(고른, 발주일);
     const 경고 = [];
     if (모름.length) 경고.push('★물류사 상품명으로 못 바꾼 품목(원래 이름 그대로 넣음): ' + [...new Set(모름)].join(', '));
     if (빈주문.length) 경고.push('★품목이 비어 빠진 주문 ' + 빈주문.length + '건: ' + 빈주문.join(', '));
     $('#poWarn').textContent = 경고.join(' / ');
-    if (!줄.length) { $('#poWarn').textContent = '보이는 명단에 결제완료·발주완료 주문이 없습니다.' + (경고.length ? ' ' + 경고.join(' / ') : ''); return; }
+    if (!줄.length) { $('#poWarn').textContent = '체크한 주문 중 결제완료·발주완료 주문이 없습니다.' + (경고.length ? ' ' + 경고.join(' / ') : ''); return; }
     const 이름 = 'YL_통합 발주서_스카이물류_' + 발주일.replace(/(\d{4})(\d{2})(\d{2})/, '$1.$2.$3') + ' (택배).';
     const aoa = [PO_COLS].concat(줄.map(x => PO_COLS.map(c => PO_NUM.has(c) ? Number(x[c]) : String(x[c] == null ? '' : x[c]))));
     if (window.XLSX) {
