@@ -218,11 +218,31 @@ function 이메일값(){
   if (pw.length < 6) { 이메일오류('비밀번호는 6자 이상입니다.'); return null; }
   이메일오류(''); return { email: em, password: pw };
 }
-function 로그인끝(){
+/* 로그인·가입이 끝나면 갈 곳. ① 결제·관리자에서 온 사람은 거기로
+   ② ★비회원일 때 담으려던 상품이 있으면 여기서 담고 결제 화면으로(원래 누른 「구매하기」의 목적지 · 2026-10-02)
+   ③ 그 밖은 홈. 주소에 붙이지 않고 저장소로 넘기는 이유 = 카카오·Supabase 복귀 주소를 그대로 두려고. */
+function 돌아갈곳(){
   const back = new URLSearchParams(location.search).get('back');
   const BACK = { checkout: 'checkout.html', admin: 'admin.html' };
-  location.replace(BACK[back] || 'index.html');
+  const PC = window.PH_CART;
+  let 담음 = false;
+  if (BACK[back]) {
+    // 결제로 가는 사람은 대기 상품도 원하던 것이라 담아서 간다. 관리자는 버린다.
+    if (PC && PC.applyPending && back === 'checkout') 담음 = !!PC.applyPending();
+    else if (PC && PC.discardPending) PC.discardPending();
+    return { 곳: BACK[back], 담음 };
+  }
+  const r = PC && PC.applyPending ? PC.applyPending() : false;
+  if (r === 'checkout') return { 곳: 'checkout.html', 담음: true };
+  return { 곳: 'index.html', 담음: r === 'stay' };     // 홈 「담기」로 왔으면 담아 두고 홈으로
 }
+// 담았으면 장바구니 추적 요청이 나갈 틈을 조금 준 뒤 이동한다
+async function 이동(){
+  const d = 돌아갈곳();
+  if (d.담음) await new Promise(r => setTimeout(r, 400));
+  location.replace(d.곳);
+}
+function 로그인끝(){ 이동(); }
 $('#emlogin').addEventListener('click', async () => {
   const v = 이메일값(); if (!v || !sb) return;
   $('#emlogin').disabled = true;
@@ -239,7 +259,8 @@ $('#emjoin').addEventListener('click', async () => {
   if (error) { 이메일오류('계정 만들기 실패: ' + error.message); return; }
   /* ★가입이 실제로 성립한 지점. 퍼널 3단계(CompleteRegistration)가 여기서 나간다.
      소셜 가입은 리디렉션으로 돌아와서 이 자리를 안 지나므로 여기서는 이메일 가입만 잡힌다. */
-  if (window.PHARMACIAN_TRACK) { try { PHARMACIAN_TRACK.signup(); } catch (e) {} }
+  if (window.PHARMACIAN_TRACK) { try { PHARMACIAN_TRACK.signup('email'); } catch (e) {} }
+  try { if (data && data.user) localStorage.setItem('ph_su_' + data.user.id, '1'); } catch (e) {}
   /* 확인 메일을 요구하는 설정이면 session 이 없다. 그때는 메일을 열어야 한다고 알린다. */
   if (data && data.session) 로그인끝();
   else 이메일오류('가입 확인 메일을 보냈습니다. 메일의 링크를 누른 뒤 다시 로그인해 주세요.');
@@ -293,10 +314,20 @@ $('#back').addEventListener('click', () => go(1));
   dropProviderToken();                             // 카카오·구글 액세스 토큰은 먼저 지운다
   if (data && data.user) {
     myId = data.user.id;
-    // ★결제하다 로그인하러 온 사람은 결제 화면으로 돌려보낸다. 전에는 무조건 홈이었다.
-    const back = new URLSearchParams(location.search).get('back');
-    const BACK = { checkout: 'checkout.html', admin: 'admin.html' };
-    location.replace(BACK[back] || 'index.html');
+    /* ★소셜(카카오·구글) 가입 기록. 소셜은 리디렉션으로 돌아와서 이메일 가입 자리를 안 지난다.
+       계정이 방금(10분 안) 만들어졌고 이 브라우저에서 아직 안 보냈으면 = 가입 성공 1회. 기존 회원 로그인은 안 센다. */
+    try {
+      const u = data.user, prov = (u.app_metadata && u.app_metadata.provider) || 'email';
+      const flag = 'ph_su_' + u.id;
+      const fresh = u.created_at && (Date.now() - Date.parse(u.created_at) < 10 * 60 * 1000);
+      if (fresh && prov !== 'email' && !localStorage.getItem(flag) && window.PHARMACIAN_TRACK) {
+        localStorage.setItem(flag, '1');
+        PHARMACIAN_TRACK.signup(prov);
+        await new Promise(r => setTimeout(r, 400));   // 이동 전에 추적 요청이 나가게
+      }
+    } catch (e) {}
+    // ★결제하다 로그인하러 온 사람은 결제 화면으로, 담으려던 상품이 있으면 담고 결제 화면으로 보낸다.
+    await 이동();
   }
 })();
 

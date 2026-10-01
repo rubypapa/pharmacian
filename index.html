@@ -780,7 +780,9 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
     var b = e.target.closest && e.target.closest('.addcart');
     if(!b) return;
     e.preventDefault(); e.stopPropagation();      /* 카드 전체가 상세 링크라 막아야 한다 */
-    PH_CART.add(b.getAttribute('data-add'), 1);
+    var ak = b.getAttribute('data-add');
+    PH_CART.add(ak, 1, { stay: true });             /* 담고 계속 둘러보는 단추 — 비회원이면 가입 뒤 홈으로 돌아와 담겨 있다 */
+    if(!(PH_CART.read()||{})[ak]) return;           /* 비회원이면 안 담겼다 — 「담았습니다」를 띄우지 않는다 */
     var s = b.querySelector('span'), old = s.textContent;
     b.classList.add('done'); s.textContent = '담았습니다';
     setTimeout(function(){ b.classList.remove('done'); s.textContent = old; }, 1200);

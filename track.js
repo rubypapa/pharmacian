@@ -85,10 +85,11 @@
   };
 
   // 3단계 · 회원가입한 사람
-  T.signup = function () {
+  //   method = 가입 방식(email · kakao · google). 전에는 이메일 가입도 'social' 로 찍혔다.
+  T.signup = function (method) {
     if (!only('signup')) return;
     fb('CompleteRegistration');
-    gt('sign_up', { method: 'social' });
+    gt('sign_up', { method: method || 'email' });
   };
 
   // 4단계 · ★배송지까지 입력한 사람 (구매 의사가 가장 뚜렷한 층)
@@ -99,11 +100,30 @@
     gt('add_shipping_info');
   };
 
-  // 5단계 · 장바구니에 담은 사람
+  // 5단계 · 장바구니
+  //   ★2026-10-02 루비 「비회원일때 장바구니담기한사람, 회원상태에서 장바구니한사람 나누고」
+  //   회원 = ★실제로 장바구니에 들어간 뒤 add_to_cart (GA4 표준 · 구글애즈 전환)
+  //   비회원 = 담기를 눌렀지만 담기지 않고 가입으로 넘어간 사람 add_to_cart_guest (리타게팅용)
+  //   메타는 9/22 리타게팅 모수가 그대로여야 해서 둘 다 AddToCart 로 보내고 member 로 가른다.
+  //   o = { key, name, price(그 구성 1개 가격 · 모르면 0), qty }
+  function atcParams(o) {
+    var q = o.qty || 1;
+    var item = { item_id: o.key, item_name: o.name || o.key, quantity: q };
+    var p = { currency: 'KRW', items: [item] };
+    if (o.price) { item.price = o.price; p.value = o.price * q; }
+    return p;
+  }
   T.addToCart = function (o) {
     if (!only('atc' + o.key)) return;
-    fb('AddToCart', { content_name: o.name, value: o.value, currency: 'KRW' });
-    gt('add_to_cart', { value: o.value, currency: 'KRW', items: [{ item_id: o.key, item_name: o.name }] });
+    var p = atcParams(o);
+    fb('AddToCart', { content_name: o.name, value: p.value, currency: 'KRW', member: true });
+    gt('add_to_cart', p);
+  };
+  T.addToCartGuest = function (o) {
+    if (!only('atcg' + o.key)) return;
+    var p = atcParams(o);
+    fb('AddToCart', { content_name: o.name, value: p.value, currency: 'KRW', member: false });
+    gt('add_to_cart_guest', p);
   };
 
   // 6단계 · 결제를 시작한 사람

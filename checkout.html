@@ -188,7 +188,7 @@ h1{font-size:26px;font-weight:800;letter-spacing:-.04em}
       // ★5단계 전환: 0에서 1로 올라간 순간이 '담았다'이다
       if (before === 0 && qty[k] === 1 && window.PHARMACIAN_TRACK) {
         const r = rows.find(x => x.key === k);
-        window.PHARMACIAN_TRACK.addToCart({ key: k, name: NAMES[k] || k, value: r ? r.price : 0 });
+        window.PHARMACIAN_TRACK.addToCart({ key: k, name: NAMES[k] || k, price: r ? r.price : 0, qty: 1 });
       }
       drawSum();
     }));

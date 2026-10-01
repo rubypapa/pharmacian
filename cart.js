@@ -29,23 +29,69 @@
   }
   function count() { var o = read(), n = 0; for (var k in o) n += o[k]; return n; }
 
-  function add(key, qty) {
+  // ★추적에 실을 상품 이름·가격. 가격은 config.js OPTIONS(화면 표시가)에서 찾는다.
+  //   세트(set1·set2)는 가격이 서버 가격표에만 있어서 0 → 금액 없이 보낸다. 실제 결제 금액은 서버가 정한다.
+  var NAMES = { p7: 'PDRN 7000 크림', p12: 'PDRN 12000 크림', nmn: 'NMN 30,000 크림', mel: '멜라리스 100,000 크림',
+                set1: '꿀조합SET · PDRN 라인 2종', set2: '꿀조합SET · 아침밤 2종',
+                p7x3: 'PDRN 7000 크림 3개 구성', melx3: '멜라리스 100,000 크림 3개 구성',
+                p12x2: 'PDRN 12000 크림 1+1', nmnx2: 'NMN 30,000 크림 1+1' };
+  function info(key, qty) {
+    var opts = ((w.PHARMACIAN || {}).OPTIONS || {})[key.replace(/x\d$/, '')] || [];
+    var price = 0;
+    opts.forEach(function (x) { if (x.sku === key) price = x.price; });
+    return { key: key, name: NAMES[key] || key, price: price, qty: qty || 1 };
+  }
+  function track(fn, it) {
+    if (w.PHARMACIAN_TRACK && w.PHARMACIAN_TRACK[fn]) { try { w.PHARMACIAN_TRACK[fn](it); } catch (e) {} }
+  }
+
+  // ★비회원이 담으려던 상품. 가입·로그인이 끝나면 그 페이지로 돌아가 자동으로 담는다(2026-10-02).
+  //   전에는 가입 뒤 홈으로 가고 장바구니가 비어 있어서, 광고로 온 손님이 상품을 다시 찾아야 했다.
+  //   ★복귀 주소(join.html?back=index)는 그대로 둔다 — 카카오·Supabase 허용 주소를 건드리지 않으려고.
+  var PEND = 'ph_cart_pending';
+  var PEND_TTL = 30 * 60 * 1000;   // 30분. 길면 한참 뒤 상관없는 로그인에 옛 상품이 붙는다.
+  function pending() {
+    try {
+      var p = JSON.parse(localStorage.getItem(PEND) || 'null');
+      if (p && VALID.indexOf(p.key) >= 0 && Date.now() - p.t < PEND_TTL) return p;
+    } catch (e) {}
+    return null;
+  }
+
+  // opt.stay = 담고 계속 둘러보는 단추(홈 「담기」). 없으면 구매하기 = 담고 결제 화면으로.
+  function add(key, qty, opt) {
     if (VALID.indexOf(key) < 0) return;
-    // ★담기를 ★누른 순간 광고쪽에 알린다. 회원·비회원을 가리지 않는다 —
-    //   비회원은 바로 아래에서 가입으로 튕기는데, 그 사람이 ★가장 강한 구매 의사를 보인 층이라
-    //   여기서 안 남기면 리타게팅 모수에서 통째로 빠진다(2026-09-22 루비 지적).
-    //   즉 이 수치의 뜻은 "장바구니에 들어갔다"가 아니라 ★"담기를 눌렀다"이다.
-    if (window.PHARMACIAN_TRACK) { try { PHARMACIAN_TRACK.addToCart({ key: key }); } catch (e) {} }
+    var it = info(key, qty);
     // ★로그인부터 받는다. 담아 놓고 결제에서 막는 것보다 낫다.
     if (!signedIn()) {
+      // ★비회원 = 담기를 눌렀지만 아직 담기지 않은 사람. 리타게팅 모수에서 빠지면 안 된다(2026-09-22 루비 지적).
+      track('addToCartGuest', it);
+      try { localStorage.setItem(PEND, JSON.stringify({ key: key, qty: qty || 1, page: location.pathname,
+        go: (opt && opt.stay) ? 'stay' : 'checkout', t: Date.now() })); } catch (e) {}
       var up = location.pathname.indexOf('/detail/') >= 0 ? '../' : '';
-      location.href = up + 'join.html?back=index';
+      // 이동하면 추적 요청이 끊길 수 있어 아주 잠깐 기다린다
+      setTimeout(function () { location.href = up + 'join.html?back=index'; }, 300);
       return;
     }
     var o = read();
     o[key] = Math.min((o[key] || 0) + (qty || 1), MAX);
     write(o);
+    // ★회원 = 실제로 장바구니에 들어간 뒤에 보낸다
+    track('addToCart', it);
   }
+  // 가입·로그인을 마친 join.html 이 부른다. 대기 상품이 있으면 담고 'checkout'(구매하기) 또는 'stay'(홈 담기)를 돌려준다.
+  //   ★join.html 한 곳에서만 부른다. 상세에서 또 담으면 손님이 단추를 다시 눌렀을 때 수량이 2가 된다.
+  //   ★대기 상품은 실제로 담긴 뒤에만 지운다 — 세션을 아직 못 읽으면 다음 기회에 담는다.
+  function applyPending() {
+    var p = pending();
+    if (!p) { discardPending(); return false; }       // 없거나 30분 지남
+    if (!signedIn()) return false;
+    add(p.key, p.qty);
+    if (!read()[p.key]) return false;
+    discardPending();
+    return p.go === 'stay' ? 'stay' : 'checkout';
+  }
+  function discardPending() { try { localStorage.removeItem(PEND); } catch (e) {} }
   function set(key, qty) {
     var o = read();
     if (qty > 0) o[key] = Math.min(qty, MAX); else delete o[key];
@@ -121,5 +167,6 @@
 
   w.PH_CART = { read: read, add: add, set: set, clear: clear, count: count, paint: paint,
                 syncOwner: syncOwner, ownerGate: ownerGate, signedIn: signedIn,
+                pending: pending, applyPending: applyPending, discardPending: discardPending, info: info,
                 KEY: KEY, OWNER: OWNER };
 })(window);
