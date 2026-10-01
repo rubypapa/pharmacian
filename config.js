@@ -24,7 +24,7 @@ window.PHARMACIAN = {
     // ★2026-10-01 루비 「pdrn 7000만 19800원 배송비무료로 구글광고 · 할인쿠폰은 pdrn 7000만 못쓰도록」 → p7 단품 = 19,800 · 무료배송(ship 0) · 첫 구매 쿠폰 제외.
     //   ship 0 = 이 상품은 혼자 담아도 무료배송. noCoupon = 첫 구매 쿠폰 계산에서 뺀다(서버 ph-order-create NO_COUPON 과 같아야 한다).
     p7:  [{ sku: 'p7',    n: 1, price: 19800, label: '1개', ship: 0, noCoupon: true },
-          { sku: 'p7x3',  n: 3, price: 104000, label: '3개' }],
+          { sku: 'p7x3',  n: 3, price: 52500, label: '3개' }],   // ★2026-10-01 루비 「3개 52500원으로해」(단품 19,800 뒤 · 1개당 17,500)
     mel: [{ sku: 'mel',   n: 1, price: 39000, label: '1개' },
           { sku: 'melx3', n: 3, price: 104000, label: '3개' }],
     p12: [{ sku: 'p12',   n: 1, price: 49000, label: '1개' },
