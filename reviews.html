@@ -91,7 +91,7 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.03em}
   </div>
 
   <div class="tools" id="tools" hidden>
-    <b id="tn"></b><span style="font-size:12.5px;color:var(--ink-3)" id="tsrc"></span>
+    <b id="tn"></b>
     <select id="sort"><option value="new">최신순</option><option value="high">평점 높은순</option><option value="low">평점 낮은순</option><option value="help">도움순</option></select>
   </div>
   <div class="list" id="list"></div>
@@ -170,10 +170,8 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.03em}
     const { data, error } = await qy.limit(1000);
     if (error) { $('#msg').textContent = '상품평을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'; return; }
     rows = data || []; shown = 0; $('#list').innerHTML = '';
-    const nSite = rows.filter((r) => r.source === 'site').length, nH = rows.length - nSite;
     $('#tools').hidden = rows.length === 0;
     $('#tn').textContent = '상품평 ' + rows.length.toLocaleString('ko-KR') + '건';
-    $('#tsrc').textContent = nH ? '(공식몰 ' + nSite + ' · 현대홈쇼핑 구매후기 ' + nH + ')' : '';
     if (!rows.length) { $('#msg').textContent = '아직 상품평이 없습니다. 첫 상품평을 남겨 주세요.'; $('#more').hidden = true; return; }
     $('#msg').hidden = true; draw();
   }
