@@ -224,6 +224,13 @@ function 이메일값(){
 function 돌아갈곳(){
   const back = new URLSearchParams(location.search).get('back');
   const BACK = { checkout: 'checkout.html', admin: 'admin.html' };
+  // ★상품평 쓰기에서 온 사람은 그 상품의 상품평 화면으로(2026-10-07). 주소는 reviews.html 이 저장소에 남겨 둔다.
+  if (back === 'reviews') {
+    let to = 'reviews.html';
+    try { to = sessionStorage.getItem('ph_back_reviews') || to; sessionStorage.removeItem('ph_back_reviews'); } catch (e) {}
+    if (PC && PC.discardPending) PC.discardPending();
+    return { 곳: to, 담음: false };
+  }
   const PC = window.PH_CART;
   let 담음 = false;
   if (BACK[back]) {

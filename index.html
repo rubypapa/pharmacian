@@ -124,6 +124,8 @@ h2 em{font-style:normal;color:var(--sale)}
 .dtlmore{display:block;margin:14px auto 0;font:inherit;font-size:14px;font-weight:700;cursor:pointer;
   padding:13px 30px;border:1px solid var(--rule);border-radius:999px;background:#fff;color:var(--ink)}
 .dtlmore:hover{border-color:var(--ink)}
+.dtlbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px auto 0}
+.dtlbtns .dtlmore{margin:0;text-decoration:none}
 .card .godetail{cursor:pointer}
 .grid>.card{flex:0 0 calc((100% - 48px)/4);min-width:0;scroll-snap-align:start}
 @media(max-width:900px){.grid>.card{flex-basis:calc((100% - 16px)/2)}}
@@ -440,7 +442,8 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
     <button class="sarrow prev" type="button" aria-label="이전 상품 상세" id="dtlprev" hidden>‹</button>
     <button class="sarrow next" type="button" aria-label="다음 상품 상세" id="dtlnext">›</button>
     </div>
-    <button type="button" class="dtlmore" id="dtlmore">상세 더 보기 ▾</button>
+    <!-- ★2026-10-07 루비 「상세 더보기 옆에 상품평 보기 버튼」 — 보고 있는 상품의 상품평 화면(reviews.html?k=)으로. 표시(i) 가 주소를 바꾼다. -->
+    <div class="dtlbtns"><button type="button" class="dtlmore" id="dtlmore">상세 더 보기 ▾</button><a class="dtlmore" id="dtlreview" href="reviews.html?k=p7">상품평 보기</a></div>
   </div>
 </section>
 
@@ -660,6 +663,7 @@ footer a{display:inline-block;min-height:34px;line-height:34px;padding:0 2px}
     불러온다(i); 불러온다(i+1);
     nm.textContent = (fr.getAttribute('title')||'').replace('상품 상세 — ','');
     full.setAttribute('href', fr.getAttribute('src')||fr.getAttribute('data-src'));
+    var rv=document.getElementById('dtlreview'); if(rv) rv.setAttribute('href', 'reviews.html?k='+(fr.getAttribute('data-k')||'p7'));
     prev.hidden = i<=0; next.hidden = i>=frs.length-1;
     높이맞춤();
   }

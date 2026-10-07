@@ -1,0 +1,262 @@
+<!-- 상품평. 2026-10-07 루비 「상품평은 구매한 사람만 남길 수 있도록 · 메인 상세 더보기 옆에 상품평 보기 버튼 ·
+       현대홈쇼핑(Hmall) 상품평 형식을 참고 · 거기 상품평을 긁어 임시값으로」.
+     꼴은 Hmall 상품평 탭을 따랐다 : 총 평점 · 한줄평 비율 막대 셋(지속력/흡수력/발림성) · 건수·정렬 · 후기 = 별점·가린 이름·날짜·한줄평·본문·도움.
+     ★쓰기 규칙은 화면이 아니라 DB(RLS · 20261007_ph_reviews.sql)가 지킨다 — 로그인 회원이 결제된 자기 주문에 담긴 상품에만.
+       화면은 ph_my_reviewable(내가 쓸 수 있는 주문·상품)이 비어 있으면 쓰기 칸을 아예 안 보여 준다.
+     ★임시값(source=hmall · 현대홈쇼핑 264건)은 「현대홈쇼핑 구매후기」 표로 구분해 보여 준다. 사진은 안 띄운다. -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>상품평 · PHARMACIAN</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="shell.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--sh-bg);color:var(--sh-ink);min-height:100dvh}
+.wrap{max-width:820px;margin:0 auto;padding:26px 18px 80px}
+h1{font-size:22px;font-weight:800;letter-spacing:-.03em}
+.sub{margin-top:6px;font-size:14px;color:var(--ink-2);line-height:1.6}
+.pick{margin-top:14px;display:flex;gap:6px;flex-wrap:wrap}
+.pick a{font-size:13px;font-weight:700;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);text-decoration:none}
+.pick a.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.head{margin-top:20px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 20px;text-align:center}
+.head .t{font-size:13px;color:var(--ink-3);font-weight:700}
+.head .big{margin-top:6px;font-size:30px;font-weight:800;letter-spacing:-.02em;display:flex;justify-content:center;align-items:center;gap:10px}
+.stars{color:#F59E0B;letter-spacing:1px;font-size:22px;line-height:1}
+.stars.sm{font-size:15px}
+.bars{margin:18px auto 0;max-width:460px;display:flex;flex-direction:column;gap:9px;text-align:left}
+.bar{display:grid;grid-template-columns:62px 1fr 44px;align-items:center;gap:10px;font-size:13.5px}
+.bar .k{font-weight:800;color:#C2410C;background:#FFF1E8;border-radius:999px;text-align:center;padding:3px 0;font-size:12px}
+.bar .g{height:8px;background:var(--page);border-radius:999px;overflow:hidden}
+.bar .g i{display:block;height:100%;background:#C2410C;border-radius:999px}
+.bar .v{text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
+.bar .l{font-size:12px;color:var(--ink-3);margin-left:6px;font-weight:400}
+.tools{margin-top:22px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tools b{font-size:16px}
+.tools select{margin-left:auto;font:inherit;font-size:13px;padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink)}
+.list{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.rv{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.rv .r1{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.rv .src{font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--page);color:var(--ink-2)}
+.rv .src.site{background:#E8F5E9;color:#1B5E20}
+.rv .tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.rv .tags span{font-size:12px;padding:4px 9px;border-radius:8px;background:var(--page);color:var(--ink-2)}
+.rv .tags span b{color:var(--ink);margin-right:4px}
+.rv .body{margin-top:10px;font-size:15px;line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.rv .help{margin-top:10px;font-size:12.5px;color:var(--ink-3)}
+.more{display:block;margin:16px auto 0;font:inherit;font-size:14px;font-weight:700;cursor:pointer;padding:12px 28px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink)}
+.more:hover{border-color:var(--ink)}
+.msg{margin-top:20px;padding:18px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font-size:14.5px;color:var(--ink-2);text-align:center;line-height:1.6}
+.msg a{color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+/* 쓰기 칸 */
+.write{margin-top:26px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 18px}
+.write h2{font-size:17px;font-weight:800}
+.write .hint{margin-top:4px;font-size:13px;color:var(--ink-3);line-height:1.6}
+.f{margin-top:14px}
+.f label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+.f select,.f textarea{width:100%;font:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--page);color:var(--ink)}
+.f textarea{min-height:120px;resize:vertical;line-height:1.6}
+.starpick{display:flex;gap:4px;font-size:30px;line-height:1;cursor:pointer;user-select:none}
+.starpick span{color:#D1D5DB}
+.starpick span.on{color:#F59E0B}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{font:inherit;font-size:13px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--page);color:var(--ink);cursor:pointer}
+.chips button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.submit{margin-top:16px;font:inherit;font-size:15px;font-weight:800;padding:13px 26px;border:0;border-radius:999px;background:#C2410C;color:#fff;cursor:pointer}
+.submit[disabled]{opacity:.45;cursor:default}
+.cnt{font-size:12px;color:var(--ink-3);text-align:right;margin-top:4px}
+.err{margin-top:12px;font-size:13.5px;color:#991B1B;line-height:1.6}
+.ok{margin-top:12px;font-size:13.5px;color:#1B5E20;line-height:1.6}
+</style>
+</head>
+<body>
+<div data-shell></div>
+
+<div class="wrap">
+  <h1>상품평</h1>
+  <p class="sub">구매하신 분만 남길 수 있습니다. 묶음·세트는 들어 있는 단품의 상품평을 함께 보여 드립니다.</p>
+  <div class="pick" id="pick"></div>
+
+  <div class="head" id="head" hidden>
+    <p class="t" id="pname"></p>
+    <p class="big"><span class="stars" id="hstars"></span><span id="havg"></span><span style="font-size:14px;color:var(--ink-3);font-weight:600" id="hn"></span></p>
+    <div class="bars">
+      <div class="bar"><span class="k">지속력</span><span class="g"><i id="b1"></i></span><span class="v" id="v1"></span></div>
+      <div class="bar"><span class="k">흡수력</span><span class="g"><i id="b2"></i></span><span class="v" id="v2"></span></div>
+      <div class="bar"><span class="k">발림성</span><span class="g"><i id="b3"></i></span><span class="v" id="v3"></span></div>
+    </div>
+  </div>
+
+  <div class="tools" id="tools" hidden>
+    <b id="tn"></b><span style="font-size:12.5px;color:var(--ink-3)" id="tsrc"></span>
+    <select id="sort"><option value="new">최신순</option><option value="high">평점 높은순</option><option value="low">평점 낮은순</option><option value="help">도움순</option></select>
+  </div>
+  <div class="list" id="list"></div>
+  <button type="button" class="more" id="more" hidden>더보기</button>
+  <div class="msg" id="msg">불러오는 중…</div>
+
+  <div class="write" id="write" hidden>
+    <h2>상품평 쓰기</h2>
+    <p class="hint" id="whint"></p>
+    <div class="f"><label>어느 주문의 상품인가요</label><select id="worder"></select></div>
+    <div class="f"><label>별점</label><div class="starpick" id="wstars"><span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span></div></div>
+    <div class="f"><label>지속력</label><div class="chips" data-g="tag_last"><button type="button" data-v="오래가요">오래가요</button><button type="button" data-v="보통이에요">보통이에요</button><button type="button" data-v="짧아요">짧아요</button></div></div>
+    <div class="f"><label>흡수력</label><div class="chips" data-g="tag_absorb"><button type="button" data-v="흡수잘돼요">흡수잘돼요</button><button type="button" data-v="보통이에요">보통이에요</button><button type="button" data-v="별로예요">별로예요</button></div></div>
+    <div class="f"><label>발림성</label><div class="chips" data-g="tag_spread"><button type="button" data-v="부드러워요">부드러워요</button><button type="button" data-v="보통이에요">보통이에요</button><button type="button" data-v="뻑뻑해요">뻑뻑해요</button></div></div>
+    <div class="f"><label>내용 (10자 이상)</label><textarea id="wbody" maxlength="1000" placeholder="써 보신 느낌을 적어 주세요."></textarea><div class="cnt"><span id="wcnt">0</span> / 1000</div></div>
+    <button type="button" class="submit" id="wsubmit" disabled>등록하기</button>
+    <div class="err" id="werr" hidden></div>
+    <div class="ok" id="wok" hidden></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="visit.js"></script>
+<script src="shell.js"></script>
+<script src="track.js"></script>
+<script>
+(async function () {
+  const $ = (s) => document.querySelector(s);
+  const C = window.PHARMACIAN || {};
+  const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  // 바탕 단품 네 개. 묶음·세트 키는 바탕 단품으로 묶는다(DB 의 ph_review_base 와 같은 규칙).
+  const NAME = { p7: '파머시안 PDRN 7000 크림 30g', p12: '파머시안 PDRN 12000 크림 30g', nmn: '파머시안 NMN 30,000 크림 30g', mel: '파머시안 멜라리스 100,000 크림 30g' };
+  const KEYS = { p7: ['p7', 'p7x3', 'set1'], p12: ['p12', 'p12x2'], nmn: ['nmn', 'nmnx2'], mel: ['mel', 'melx3', 'set2'] };
+  const base = (k) => k === 'set1' ? 'p7' : k === 'set2' ? 'mel' : String(k || '').replace(/x\d+$/, '');
+  const q = new URLSearchParams(location.search);
+  const K = NAME[base(q.get('k'))] ? base(q.get('k')) : 'p7';
+
+  $('#pick').innerHTML = Object.keys(NAME).map((k) => `<a href="reviews.html?k=${k}" class="${k === K ? 'on' : ''}">${esc(NAME[k]).replace('파머시안 ', '')}</a>`).join('');
+
+  if (!C.SUPABASE_URL || !C.SUPABASE_ANON || !window.supabase) { $('#msg').textContent = '설정이 아직 준비되지 않았습니다.'; return; }
+  const sb = (window.PH_SB && window.PH_SB()) || window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON);
+
+  const star = (n) => '★'.repeat(n) + '☆'.repeat(5 - n);
+  const fmtD = (d) => String(d || '').slice(0, 10).replace(/-/g, '.');
+
+  // ── 머리 : 요약
+  const { data: st } = await sb.from('ph_review_stats').select('*').eq('key', K).maybeSingle();
+  $('#pname').textContent = NAME[K];
+  if (st && st.n > 0) {
+    $('#head').hidden = false;
+    $('#hstars').textContent = star(Math.round(Number(st.avg_rating)));
+    $('#havg').textContent = Number(st.avg_rating).toFixed(1) + '점';
+    $('#hn').textContent = '(' + st.n.toLocaleString('ko-KR') + '건)';
+    [['b1', 'v1', st.pct_last, '오래가요'], ['b2', 'v2', st.pct_absorb, '흡수잘돼요'], ['b3', 'v3', st.pct_spread, '부드러워요']].forEach(([b, v, p, l]) => {
+      const n = p == null ? 0 : Number(p);
+      $('#' + b).style.width = n + '%';
+      $('#' + v).innerHTML = (p == null ? '-' : n + '%') + '<span class="l">' + l + '</span>';
+    });
+  }
+
+  // ── 목록
+  const PAGE = 20;
+  let rows = [], shown = 0;
+  function orderOf(v) {
+    return v === 'high' ? [['rating', false], ['written_at', false]]
+      : v === 'low' ? [['rating', true], ['written_at', false]]
+      : v === 'help' ? [['helpful', false], ['written_at', false]]
+      : [['written_at', false], ['created_at', false]];
+  }
+  async function load() {
+    $('#msg').hidden = false; $('#msg').textContent = '불러오는 중…';
+    let qy = sb.from('ph_reviews').select('id,source,key,rating,body,tag_last,tag_absorb,tag_spread,helpful,author,written_at,created_at').in('key', KEYS[K]);
+    for (const [c, asc] of orderOf($('#sort').value)) qy = qy.order(c, { ascending: asc });
+    const { data, error } = await qy.limit(1000);
+    if (error) { $('#msg').textContent = '상품평을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'; return; }
+    rows = data || []; shown = 0; $('#list').innerHTML = '';
+    const nSite = rows.filter((r) => r.source === 'site').length, nH = rows.length - nSite;
+    $('#tools').hidden = rows.length === 0;
+    $('#tn').textContent = '상품평 ' + rows.length.toLocaleString('ko-KR') + '건';
+    $('#tsrc').textContent = nH ? '(공식몰 ' + nSite + ' · 현대홈쇼핑 구매후기 ' + nH + ')' : '';
+    if (!rows.length) { $('#msg').textContent = '아직 상품평이 없습니다. 첫 상품평을 남겨 주세요.'; $('#more').hidden = true; return; }
+    $('#msg').hidden = true; draw();
+  }
+  function draw() {
+    const part = rows.slice(shown, shown + PAGE);
+    $('#list').insertAdjacentHTML('beforeend', part.map((r) => `
+      <article class="rv">
+        <div class="r1"><span class="stars sm">${star(r.rating)}</span><span>${esc(r.author)}</span><span>·</span><span>${fmtD(r.written_at)}</span>
+          <span class="src ${r.source === 'site' ? 'site' : ''}">${r.source === 'site' ? '공식몰 구매' : '현대홈쇼핑 구매후기'}</span></div>
+        ${(r.tag_last || r.tag_absorb || r.tag_spread) ? `<div class="tags">${r.tag_last ? `<span><b>지속력</b>${esc(r.tag_last)}</span>` : ''}${r.tag_absorb ? `<span><b>흡수력</b>${esc(r.tag_absorb)}</span>` : ''}${r.tag_spread ? `<span><b>발림성</b>${esc(r.tag_spread)}</span>` : ''}</div>` : ''}
+        <div class="body">${esc(r.body)}</div>
+        ${r.helpful ? `<div class="help">도움 ${r.helpful}</div>` : ''}
+      </article>`).join(''));
+    shown += part.length;
+    $('#more').hidden = shown >= rows.length;
+    $('#more').textContent = '더보기 (' + Math.ceil(shown / PAGE) + '/' + Math.ceil(rows.length / PAGE) + ')';
+  }
+  $('#more').addEventListener('click', draw);
+  $('#sort').addEventListener('change', load);
+  await load();
+
+  // ── 쓰기 : 로그인 + 결제된 내 주문에 이 상품이 있을 때만
+  const w = { rating: 0, tag_last: null, tag_absorb: null, tag_spread: null };
+  let 세션 = null, reviewable = [];
+  function 검사() {
+    const ok = 세션 && reviewable.length && w.rating > 0 && $('#wbody').value.trim().length >= 10 && $('#worder').value;
+    $('#wsubmit').disabled = !ok;
+  }
+  $('#wstars').addEventListener('click', (e) => {
+    const v = +((e.target.closest('[data-v]') || {}).dataset || {}).v; if (!v) return;
+    w.rating = v; [...$('#wstars').children].forEach((s) => s.classList.toggle('on', +s.dataset.v <= v)); 검사();
+  });
+  document.querySelectorAll('.chips').forEach((g) => g.addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    const on = b.classList.contains('on');
+    [...g.children].forEach((x) => x.classList.remove('on'));
+    if (!on) b.classList.add('on');
+    w[g.dataset.g] = on ? null : b.dataset.v;
+  }));
+  $('#wbody').addEventListener('input', () => { $('#wcnt').textContent = $('#wbody').value.length; 검사(); });
+  $('#worder').addEventListener('change', 검사);
+
+  async function 쓰기준비() {
+    if (!세션) {
+      $('#write').hidden = true;
+      if (!$('#loginmsg')) $('#msg').insertAdjacentHTML('afterend', `<div class="msg" id="loginmsg">상품평은 구매하신 분만 남길 수 있습니다. <a href="join.html?back=reviews">로그인</a> 후 작성해 주세요.</div>`);
+      try { sessionStorage.setItem('ph_back_reviews', location.href); } catch (e) {}
+      return;
+    }
+    const { data, error } = await sb.from('ph_my_reviewable').select('*').in('key', KEYS[K]).order('ordered_at', { ascending: false });
+    reviewable = (error ? [] : data) || [];
+    const lm = $('#loginmsg'); if (lm) lm.remove();
+    if (!reviewable.length) {
+      $('#write').hidden = true;
+      if (!$('#nobuy')) $('#msg').insertAdjacentHTML('afterend', `<div class="msg" id="nobuy">이 상품을 구매하신 주문이 없거나, 이미 상품평을 남기셨습니다. 결제가 끝난 주문에만 남길 수 있습니다.</div>`);
+      return;
+    }
+    const nb = $('#nobuy'); if (nb) nb.remove();
+    $('#write').hidden = false;
+    $('#whint').textContent = '결제가 끝난 주문에 담긴 상품에만 남길 수 있습니다. 가린 이름(이메일 앞 3자)과 날짜가 함께 보입니다.';
+    $('#worder').innerHTML = reviewable.map((r) => `<option value="${esc(r.order_id)}|${esc(r.key)}">${fmtD(r.ordered_at)} 주문 · ${esc((r.key in NAME) ? NAME[r.key] : r.key)} ${r.qty > 1 ? r.qty + '개' : ''}</option>`).join('');
+    검사();
+  }
+  $('#wsubmit').addEventListener('click', async () => {
+    $('#werr').hidden = true; $('#wok').hidden = true; $('#wsubmit').disabled = true;
+    const [order_id, key] = $('#worder').value.split('|');
+    const { error } = await sb.from('ph_reviews').insert({ order_id, key, rating: w.rating, body: $('#wbody').value.trim(), tag_last: w.tag_last, tag_absorb: w.tag_absorb, tag_spread: w.tag_spread });
+    if (error) {
+      $('#werr').hidden = false;
+      $('#werr').textContent = /duplicate|unique/i.test(error.message) ? '이 주문의 이 상품에는 이미 상품평을 남기셨습니다.'
+        : /row-level security|policy/i.test(error.message) ? '결제가 끝난 본인 주문에 담긴 상품에만 남길 수 있습니다.'
+        : '등록하지 못했습니다. 잠시 후 다시 시도해 주세요.';
+      $('#wsubmit').disabled = false; return;
+    }
+    $('#wok').hidden = false; $('#wok').textContent = '상품평이 등록되었습니다. 고맙습니다.';
+    if (window.PHARMACIAN_TRACK && PHARMACIAN_TRACK.event) { try { PHARMACIAN_TRACK.event('write_review', { key }); } catch (e) {} }
+    $('#wbody').value = ''; $('#wcnt').textContent = '0'; w.rating = 0; [...$('#wstars').children].forEach((s) => s.classList.remove('on'));
+    await load(); await 쓰기준비();
+  });
+
+  // ★onAuthStateChange 콜백은 인증 락을 쥔 채로 돈다 — 그 안에서 getSession() 을 부르지 않는다(orders.html 과 같은 처리).
+  sb.auth.onAuthStateChange((_e, s) => { 세션 = s; setTimeout(쓰기준비, 0); });
+})();
+</script>
+</body>
+</html>
