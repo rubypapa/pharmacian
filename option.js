@@ -17,6 +17,7 @@
     // o.before = 단추 줄을 이 요소 ★앞에 끼운다
     // o.price  = 큰 가격 글자 / o.priceTail = 그 뒤에 붙는 「원」 조각
     // o.rows   = 판매가·배송비·실결제 세 줄  / o.sub = 배송 안내 한 줄
+    // o.defaultSku = 처음 고른 채로 열 구성(묶음 전용 상세 detail/p7x3.html 등 · 2026-10-07 네이버 EP 착지용). 없으면 첫째.
     mount: function (base, o) {
       var C = w.PHARMACIAN || {}, list = (C.OPTIONS || {})[base];
       if (!list || list.length < 2) return;
@@ -25,6 +26,8 @@
       if (!anchor) return;
 
       var st = d.createElement('style'); st.textContent = CSS; d.head.appendChild(st);
+      var start = 0;
+      list.forEach(function (v, i) { if (o.defaultSku && v.sku === o.defaultSku) start = i; });
 
       var box = d.createElement('div');
       box.className = 'phopt';
@@ -32,7 +35,7 @@
       //   나중에 붙인 <style> 이 특이도에서 밀린다(실측 : margin-top 22px → 0 이 돼 글자에 붙었다).
       box.style.cssText = 'display:flex;gap:8px;margin:22px auto 0;max-width:460px;flex-wrap:wrap';
       box.innerHTML = list.map(function (v, i) {
-        return '<button type="button" class="phopt-b' + (i ? '' : ' on') + '" data-i="' + i + '">' +
+        return '<button type="button" class="phopt-b' + (i === start ? ' on' : '') + '" data-i="' + i + '">' +
           '<b>' + v.label + '</b><span>' + 원(v.price) + '원' +
           (v.n > 1 ? '<br>1개당 ' + 원(Math.floor(v.price / v.n)) + '원' : '') + '</span></button>';
       }).join('');
@@ -68,7 +71,7 @@
         var b = e.target.closest && e.target.closest('.phopt-b');
         if (b) 고른다(+b.getAttribute('data-i'));
       });
-      고른다(0);
+      고른다(start);
     }
   };
 })(window, document);
