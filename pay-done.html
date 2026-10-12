@@ -93,7 +93,8 @@ dt{color:var(--ink-3)} dd{font-weight:700;font-variant-numeric:tabular-nums;word
           window.PHARMACIAN_TRACK.purchase({ value: body.amount, orderId: body.orderId });
         }
         // ★장바구니는 승인이 끝난 여기서 비운다. 결제창을 닫고 돌아온 사람 것은 그대로 남는다.
-        if (window.PH_CART) PH_CART.clear();
+        //   true = 서버(ph_cart) 줄도 지운다. 서버 함수(ph-pay-confirm)도 지우므로 둘 중 하나만 돌아도 된다(2026-10-12).
+        if (window.PH_CART) PH_CART.clear(true);
       } else {
         show('no', '결제가 승인되지 않았습니다',
           body.error || '승인 과정에서 문제가 발생했습니다. 결제가 되었다면 자동으로 취소됩니다.',

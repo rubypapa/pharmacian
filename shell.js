@@ -102,6 +102,7 @@
     var sb = PH_SB();
     function put(u) {
       // ★화면을 열 때마다 장바구니 주인을 맞춰 본다. 로그아웃 이벤트를 놓쳐도 여기서 정리된다.
+      //   로그인 상태면 서버 장바구니를 끌어온다(cart.js syncOwner → sync).
       if (w.PH_CART && PH_CART.syncOwner) PH_CART.syncOwner(u ? u.id : null);
       // 이미 로그인한 사람에게 "1초 가입"을 보여줄 이유가 없다
       var cta = d.getElementById('joincta');
@@ -117,8 +118,9 @@
     }
     sb.auth.getSession().then(function (r) { put(r.data.session && r.data.session.user); });
     sb.auth.onAuthStateChange(function (e, s) {
-      // ★로그아웃하면 담아둔 것도 지운다(2026-08-23 루비 지시).
+      // ★로그아웃하면 이 브라우저의 장바구니(거울)를 비운다(2026-08-23 루비 지시).
       //   공용 PC에서 다음 사람에게 앞사람 장바구니가 남으면 안 된다.
+      //   ★서버(ph_cart)의 줄은 그대로다 — 다시 로그인하면 put → syncOwner → sync 가 끌어온다(2026-10-12 루비 「B로」).
       //   SIGNED_OUT 은 실제로 로그아웃할 때만 온다 — 비로그인 손님이 담아둔 것은 건드리지 않는다.
       if (e === 'SIGNED_OUT' && w.PH_CART) PH_CART.clear();   // 즉시 반응(주인 대조는 put 이 또 한다)
       put(s && s.user);
