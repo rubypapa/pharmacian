@@ -39,6 +39,7 @@ td.num{font-variant-numeric:tabular-nums}
 .bar button.danger:hover{background:#FEF2F2}
 .st-paid{background:#E7F6EC;color:#0E7C4A}
 .st-pending{background:#F1F1F1;color:#666}
+.st-awaiting{background:#FFF4E5;color:#8A4B00}
 .st-canceled,.st-failed{background:#FDECEA;color:#B3261E}
 .msg{padding:44px 22px;text-align:center;font-size:14.5px;color:var(--sh-muted);line-height:1.7}
 .msg a{color:var(--sh-pt);font-weight:700}
@@ -60,6 +61,7 @@ td.num{font-variant-numeric:tabular-nums}
     <button type="button" data-f="all" class="on">전체</button>
     <button type="button" data-f="paid">결제완료</button>
     <button type="button" data-f="ordered">발주완료</button>
+    <button type="button" data-f="awaiting">입금대기</button>
     <button type="button" id="reload">새로고침</button>
     <button type="button" id="csv">CSV로 내려받기</button>
     <button type="button" id="poCsv">발주서 양식 엑셀</button>
@@ -92,7 +94,7 @@ td.num{font-variant-numeric:tabular-nums}
   // ★'발주시각' = 관리자가 발주완료로 넘긴 시각(뷰 ph_order_sheet 의 새 칸).
   // ★'취소' = 누가 취소했나(고객취소/관리자취소)와 그 시각.
   const COLS = ['접수','상태','발주시각','취소','주문번호','품목','금액','받는분','연락처','주소','배송메모'];
-  const 상태말 = { paid: '결제완료', ordered: '발주완료', pending: '미결제', canceled: '취소', failed: '실패' };
+  const 상태말 = { paid: '결제완료', ordered: '발주완료', awaiting: '입금대기(가상계좌)', pending: '미결제', canceled: '취소', failed: '실패' };
   let rows = [], filter = 'all';
 
   const view = () => filter === 'all' ? rows : rows.filter(r => r['상태'] === filter);

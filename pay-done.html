@@ -83,6 +83,13 @@ dt{color:var(--ink-3)} dd{font-weight:700;font-variant-numeric:tabular-nums;word
   })
     .then(async r => ({ ok: r.ok, body: await r.json() }))
     .then(({ ok, body }) => {
+      if (ok && body.ok && body.awaiting) {
+        // 가상계좌 : 아직 입금 전. 입금이 확인되면(토스 웹훅) 결제완료로 바뀐다. (2026-10-15 G-97)
+        const va = body.virtualAccount || {};
+        show('ok', '가상계좌가 발급되었습니다', '아래 계좌로 입금하시면 결제가 완료됩니다. 입금 기한이 지나면 주문이 취소됩니다.',
+          [['주문번호', orderId], ['입금 은행', va.bank || '-'], ['계좌번호', va.accountNumber || '-'], ['입금 기한', va.dueDate ? String(va.dueDate).replace('T', ' ').slice(0, 16) : '-'], ['입금액', (body.amount || 0).toLocaleString('ko-KR') + '원']]);
+        return;
+      }
       if (ok && body.ok) {
         show('ok', '결제가 완료되었습니다', '주문번호를 남겨 두었습니다. 배송이 시작되면 등록하신 연락처로 안내드립니다.',
           [['주문번호', body.orderId], ['결제 금액', won(body.amount) + '원']]);
